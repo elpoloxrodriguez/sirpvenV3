@@ -1,0 +1,710 @@
+<div class="card content-wrapper container-xxl p-0">
+  <div class="card-body">
+
+    <!-- <section class="users-list-wrapper">
+
+      <div class="card">
+        <h5 class="card-header">Filtro de búsqueda</h5>
+        <div class="card-body">
+          <div class="users-list-filter">
+            <form>
+              <div class="row">
+                <div class="col-12 col-md-4">
+                  <fieldset class="form-group">
+                    <ng-select [items]="yearsList" [(ngModel)]="anioObligaciones" [ngModelOptions]="{standalone: true}"
+                      (change)="FiltarObligacionAnio($event)" bindValue="year" bindLabel="year"
+                      placeholder="Seleccione Año" autocomplete="off">
+                    </ng-select>
+                  </fieldset>
+                </div>
+                <div class="col-12 col-md-4">
+                  <fieldset class="form-group">
+                    <ng-select [items]="SelectCategoriaPagos" [(ngModel)]="tipoCategoriaPago"
+                      [ngModelOptions]="{standalone: true}" (change)="FiltarObligacionCategoriaPago($event)"
+                      bindValue="id" bindLabel="name" placeholder="Seleccione Categoria de Pago" autocomplete="off">
+                    </ng-select>
+                  </fieldset>
+                </div>
+                <div class="col-12 col-md-4">
+                  <fieldset class="form-group">
+                    <ng-select [items]="SelectTipoPagos" [(ngModel)]="tipoPago" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccionar Tipo de Pago"
+                      (change)="FiltarObligacionStatusTipoPago($event)"></ng-select>
+                  </fieldset>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              <label class="d-flex align-items-center">Mostrar
+                <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                Registros</label>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+              <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                  name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre Empresa"
+                  (keyup)="filterUpdatePagos($event)" (search)="filterUpdatePagos($event)" /></label>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="loadingIndicator">
+          <div class="loading-overlay">
+            <div class="spinner-border" role="status"></div>
+            <div class="loading-message">Cargando datos por favor espere!..</div>
+          </div>
+        </ng-container>
+
+        <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50">
+
+          <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+            <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold">{{ nombre_empresa }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+            <ng-template let-rif="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ rif }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Fecha Pago" prop="fecha" [width]="5">
+            <ng-template let-fecha="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ fecha }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="60">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="badge badge-pill" ngClass="badge-light-primary">
+                <font size="1"> {{row.nombre_tipo_pagos}} </font>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Monto Adeudado" prop="monto_pagar" [width]="5">
+            <ng-template let-monto_pagar="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ monto_pagar }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Monto Pagado" prop="monto_pc" [width]="5">
+            <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ monto_pc }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+            <ng-template let-status_pc="value" ngx-datatable-cell-template>
+              <div *ngIf="status_pc == 0" class="badge badge-pill" ngClass="badge-light-warning">
+                En Revisión
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
+                      [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
+                  <a (click)="ConciliarPago(ModalConciliarPago,row)" ngbDropdownItem><span [size]="16"
+                      [data-feather]="'edit'" [class]="'mr-50'"></span> Conciliar Pago</a>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+        </ngx-datatable>
+
+
+      </div>
+    </section> -->
+
+
+    <ul ngbNav #nav="ngbNav" class="nav nav-pills nav-pill-primary my-2 justify-content-center">
+      <li ngbNavItem>
+        <a ngbNavLink (click)="CapturarNav($event)">PAGOS POR LIQUIDAR</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-3 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+                <div class="col-md-3 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <ng-select [items]="yearsList" [(ngModel)]="anioObligaciones" [ngModelOptions]="{standalone: true}"
+                      (change)="FiltarObligacionAnio($event)" bindValue="year" bindLabel="year" placeholder="Seleccione"
+                      required autocomplete="off">
+                    </ng-select>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre OPP"
+                        (keyup)="filterUpdatePagos($event)" (search)="filterUpdatePagos($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ng-container *ngIf="loadingIndicator">
+                <div class="loading-overlay">
+                  <div class="spinner-border" role="status"></div>
+                  <div class="loading-message">Cargando datos por favor espere!..</div>
+                </div>
+              </ng-container>
+
+              <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ rif }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Fecha Pago" prop="fecha" [width]="5">
+                  <ng-template let-fecha="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ fecha }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="120">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" ngClass="badge-light-primary">
+                      <font size="1"> {{row.nombre_tipo_pagos}} </font>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Monto Adeudado" prop="monto_pagar" [width]="5">
+                  <ng-template let-monto_pagar="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ monto_pagar }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Monto Pagado" prop="monto_pc" [width]="5">
+                  <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ monto_pc }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+                  <ng-template let-status_pc="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_pc == 0" class="badge badge-pill" ngClass="badge-light-warning">
+                      En Revisión
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
+                        <a (click)="ConciliarPago(ModalConciliarPago,row)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'edit'" [class]="'mr-50'"></span> Conciliar Pago</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink (click)="CapturarNav($event)">PAGOS NO LIQUIDADOS</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre OPP"
+                        (keyup)="filterUpdatePagosNoLiquidados($event)"
+                        (search)="filterUpdatePagosNoLiquidados($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ rif }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="60">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" ngClass="badge-light-primary">
+                      <font size="1"> {{row.nombre_tipo_pagos}} </font>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Monto" prop="monto_pc" [width]="5">
+                  <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ monto_pc }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+                  <ng-template let-status_pc="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_pc == 1" class="badge badge-pill" ngClass="badge-light-warning">
+                      Pago No Liquidado
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
+                        <a (click)="ConciliarPago(ModalConciliarPago,row)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'edit'" [class]="'mr-50'"></span> Conciliar Pago</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink (click)="CapturarNav($event)">PAGOS RECHAZADOS</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre OPP"
+                        (keyup)="filterUpdatePagosNoLiquidados($event)"
+                        (search)="filterUpdatePagosNoLiquidados($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ rif }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="60">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" ngClass="badge-light-primary">
+                      <font size="1"> {{row.nombre_tipo_pagos}} </font>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Monto" prop="monto_pc" [width]="5">
+                  <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ monto_pc }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+                  <ng-template let-status_pc="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_pc == 3" class="badge badge-pill" ngClass="badge-light-danger">
+                      Pago Rechazado
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
+                        <a (click)="ConciliarPago(ModalConciliarPago,row)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'edit'" [class]="'mr-50'"></span> Conciliar Pago</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink (click)="CapturarNav($event)">PAGOS APROBADOS</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre OPP"
+                        (keyup)="filterUpdatePagosNoLiquidados($event)"
+                        (search)="filterUpdatePagosNoLiquidados($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ rif }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="60">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" ngClass="badge-light-primary">
+                      <font size="1"> {{row.nombre_tipo_pagos}} </font>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Monto" prop="monto_pc" [width]="5">
+                  <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ monto_pc }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+                  <ng-template let-status_pc="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_pc == 2" class="badge badge-pill" ngClass="badge-light-success">
+                      Pago Aprobado
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
+                        <a (click)="DescargarFactura(row)" ngbDropdownItem><span [size]="16" [data-feather]="'download'"
+                            [class]="'mr-50'"></span> Descargar Factura</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-1"></div>
+
+
+
+  </div>
+</div>
+
+
+
+
+<ng-template #ModalConciliarPago let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Declaración de Pago <font color="red"><strong>{{ title_modal
+          }}</strong></font>
+    </h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm"
+        class="invoice-repeater">
+        <div class="row d-flex align-items-end">
+
+          <div class="col-md-8 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">
+                <font color="red"><strong>NOMBRE DEL OPERADOR POSTAL</strong></font>
+              </label>
+              <input type="text" class="form-control" autocomplete="off" readonly [value]="nombreOPP"
+                placeholder="NOMBRE OPP" />
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">
+                <font color="red"><strong>RIF DEL OPERADOR POSTAL</strong></font>
+              </label>
+              <input type="text" class="form-control" autocomplete="off" readonly [value]="rifOPP"
+                placeholder="RIF OPP" />
+            </div>
+          </div>
+
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">
+                <font color="red"><strong>Monto Deuda</strong></font>
+              </label>
+              <input type="text" class="form-control" autocomplete="off" readonly [value]="Mpagar"
+                placeholder="Monto a Pagar" />
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Monto Pagado</label>
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="Mpc"
+                [ngModelOptions]="{standalone: true}" placeholder="Ingrese Monto a Pagar" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Fecha de Pago</label>
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="FechaPago"
+                [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Banco Emisor</label>
+              <ng-select [items]="SelectBancos" [(ngModel)]="ActualizarPago.id_banco_pc"
+                [ngModelOptions]="{standalone: true}" bindLabel="nombre" disabled bindValue="id_banco"
+                placeholder="Seleccione Entidad Banco Emisora" required autocomplete="off">
+              </ng-select>
+              <!-- <input type="text" class="form-control"  autocomplete="off" [(ngModel)]="NombreBancoEmisor"
+              [ngModelOptions]="{standalone: true}" readonly  placeholder="Banco Emisor" /> -->
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">N# de Referencia</label>
+              <input type="text" class="form-control" readonly autocomplete="off"
+                [(ngModel)]="ActualizarPago.referencia_bancaria" [ngModelOptions]="{standalone: true}"
+                placeholder="Ingrese Numero de Referencia Bancaria" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Cambio de Estatus</label>
+              <ng-select [items]="SelectStatusConciliacion" [(ngModel)]="ActualizarPago.status_pc"
+                [ngModelOptions]="{standalone: true}" bindValue="id" bindLabel="name" placeholder="Seleccione Status"
+                required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="basicInputFile">Observación de Pago</label>
+              <div class="custom-file">
+                <textarea class="form-control" [(ngModel)]="ActualizarPago.observacion_pc"
+                  [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3"
+                  placeholder="Ingrese Observación de Pago"></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="ConciliarPagoRecaudacion()" rippleEffect
+      class="btn btn-success mr-1">Reportar Pago</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>

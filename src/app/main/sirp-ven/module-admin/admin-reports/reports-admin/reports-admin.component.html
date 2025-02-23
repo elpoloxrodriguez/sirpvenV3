@@ -1,0 +1,41 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+    <div class="card-body">
+
+        <div class="col-12">
+            <div class="form-group">
+              <label for="basicInput">Seleccione Reporte</label>
+              <ng-select
+              [items]="ListReport"
+              placeholder="Seleccione Reporte"
+              bindLabel="name"
+              bindValue="id"
+              [(ngModel)]="itemReports"
+              [ngModelOptions]="{standalone: true}"
+              (ngModelChange)="ReportEmpresasAprobadas($event)"
+              required
+              >
+            </ng-select>
+            </div>
+          </div>
+          
+          <div class="card-body"  *ngIf="inputShow">
+          <div class="row">
+          <div class="col-6" >
+            <div class="form-group">
+              <label for="basicInput">Seleccione Operador Postal Privado</label>
+              <ng-select
+              [items]="Opp"
+              placeholder="Seleccione Operador Postal Privado"
+              bindLabel="nombre_empresa"
+              bindValue="id_opp"
+              [(ngModel)]="id_opp_select"
+              [ngModelOptions]="{standalone: true}"
+              (ngModelChange)="GenerarReportesHistoricos($event)"
+              required
+              >
+            </ng-select>
+            </div>
+          </div>
+
+  </div>
+  </div>

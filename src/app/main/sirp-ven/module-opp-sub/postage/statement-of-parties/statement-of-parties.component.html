@@ -1,0 +1,627 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="card-body">
+
+    <div align="center">
+      <div class="row">
+        <div class="col-md-6 col-12" *ngIf="btnShowDatePayment != false">
+          <div class="d-flex justify-content-between align-items-center m-1">
+            <button type="button" (click)="SIDeclararPiezasIPOSTEL(ModalSiDeclarar)" class="btn btn-primary btn-block"
+              rippleEffect>
+              <span [data-feather]="'truck'" [class]="'mr-25'"></span>
+              DECLARAR MOVILIZACIÓN DE PIEZAS A IPOSTEL <small>({{ cantidadMovilidad }})</small></button>
+          </div>
+        </div>
+        <div class="col-md-6 col-12" *ngIf="btnShowDatePayment !== false">
+          <div class="d-flex justify-content-between align-items-center m-1">
+            <button type="button" (click)="NODeclararPiezasIPOSTEL(ModalNoDeclarar)" class="btn btn-danger btn-block"
+              rippleEffect>
+              <span [data-feather]="'shield-off'" [class]="'mr-25'"></span>
+              DECLARACIÓN DE NO MOVILIZACIÓN DE PIEZAS A IPOSTEL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-3 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              <label class="d-flex align-items-center">Mostrar
+                <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                Registros</label>
+            </div>
+          </div>
+          <div class="col-md-3 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              <button type="button" (click)="AddMovilizacionPiezas(ModalAddRegistrarPiezas)" class="btn btn-success"
+                rippleEffect>
+                Declarar Movilización de Piezas</button>
+            </div>
+          </div>
+          <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+              <button type="button" (click)="RegresarAtras()" class="btn btn-info" rippleEffect>
+                Regresar Atras</button>
+            </div>
+          </div>
+          <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+              <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                  name="searchValue" type="search" class="form-control ml-25" placeholder="Peso de Envio"
+                  (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" /></label>
+            </div>
+          </div>
+        </div>
+
+        <ngx-datatable [rows]="rowsDeclaracionPiezas" [rowHeight]="50" class="bootstrap core-bootstrap"
+          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+          [scrollbarH]="true">
+
+          <ngx-datatable-column name="Escala Peso" prop="nombre_peso_envio" [width]="200">
+            <ng-template let-nombre_peso_envio="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold">{{ nombre_peso_envio }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Mes" prop="mes" [width]="50">
+            <ng-template let-mes="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold">{{ mes }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Franqueo" prop="nombre_servicios_franqueo" [width]="200">
+            <ng-template let-nombre_servicios_franqueo="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold">{{ nombre_servicios_franqueo }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Tarifa Servicio" prop="tarifa_servicio" [width]="20">
+            <ng-template let-tarifa_servicio="value" ngx-datatable-cell-template>
+              <div>
+                <div class="badge badge-pill" ngClass="badge-light-info">
+                  {{ tarifa_servicio }}
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Tarifa %" prop="porcentaje_tarifa" [width]="20">
+            <ng-template let-porcentaje_tarifa="value" ngx-datatable-cell-template>
+              <div>
+                <div class="badge badge-pill" ngClass="badge-light-warning">
+                  {{ porcentaje_tarifa }} %
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Monto FPO" prop="monto_fpo" [width]="20">
+            <ng-template let-monto_fpo="value" ngx-datatable-cell-template>
+              <div class="badge badge-pill" ngClass="badge-light-info">
+                {{ monto_fpo }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Piezas Movilizadas" prop="cantidad_piezas" [width]="20">
+            <ng-template let-cantidad_piezas="value" ngx-datatable-cell-template>
+              <div class="badge badge-pill" ngClass="badge-light-warning">
+                {{ cantidad_piezas }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Monto Causado" prop="monto_causado" [width]="20">
+            <ng-template let-monto_causado="value" ngx-datatable-cell-template>
+              <div class="badge badge-pill" ngClass="badge-light-success">
+                {{ monto_causado }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <button type="button" (click)="DeletePiezas(row)" class="btn btn-icon btn-outline-danger" rippleEffect>
+                <span [data-feather]="'trash'"></span></button>
+            </ng-template>
+          </ngx-datatable-column>
+
+        </ngx-datatable>
+
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+
+<ng-template #ModalAddRegistrarPiezas let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Declaración de Piezas</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+
+    <div class="col-12">
+      <small>
+        <strong>
+          <font color="red">Nota: Para registrar la movilización de piezas, primero debe llenar los campos que
+            se encuentran en la parte inferior y darle click al boton <font color="#008f39">verde</font> con el
+            simbolo <font color="#008f39"><i data-feather="check" class="mr-25"></i></font> Una vez finalice la carga de
+            sus registros, darle
+            click al boton verde Registrar Movilización</font>
+        </strong>
+      </small>
+    </div>
+
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">IVA</label>
+            <input type="number" class="form-control" autocomplete="off" [(ngModel)]="montoIVA"
+              [ngModelOptions]="{standalone: true}" placeholder="Monto IVA" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">TARIFA</label>
+            <input type="text" class="form-control" readonly autocomplete="off"
+              [value]="montoTASA+' % '+ montoTASAnombre" placeholder="Tasa Postal" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">MES</label>
+            <input type="month" class="form-control" readonly [value]="fechaUri" autocomplete="off" [(ngModel)]="fechax"
+              [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <!-- <div *blockUI="'section-block'"> -->
+      <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm"
+        class="invoice-repeater">
+        <div *ngFor="let item of items; let i = index" @heightIn>
+          <div class="row d-flex align-items-end">
+            <!-- <div class="col-md-1 col-12">
+                  <div class="form-group">
+                      <span>{{ i }}</span>
+                  </div>
+                </div> -->
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label for="id_peso_envio">Servicio de Franqueo </label>
+                <ng-select [items]="itemsSelectTipoServicio" [(ngModel)]="servicio_franqueo"
+                  (ngModelChange)="ListaPesoEnvio($event)" [ngModelOptions]="{standalone: true}" bindLabel="name"
+                  bindValue="id" placeholder="Seleccionar Tipo de Servicio de Franqueo"></ng-select>
+              </div>
+            </div>
+
+
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <!-- <label for="id_peso_envio{{ i }}">Escala de Peso</label> -->
+                <label for="id_peso_envio">Escala de Peso</label>
+                <ng-select [items]="itemsSelectPesoEnvio" id="miNgSelect" [(ngModel)]="peso_envio"
+                  [ngModelOptions]="{standalone: true}" bindLabel="name"
+                  placeholder="Seleccionar Peso de Envio"></ng-select>
+              </div>
+            </div>
+
+            <div class="col-md-2 col-12">
+              <div class="form-group">
+                <label for="itempmvp">Cantidad Piezas Movilizadas</label>
+                <input type="number" class="form-control" [(ngModel)]="cantidad_piezas" autocomplete="off"
+                  [ngModelOptions]="{standalone: true}" placeholder="Cantidad de Piezas Movilizadas" />
+              </div>
+            </div>
+
+
+            <!-- <div class="col-md-2 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Tarifa de Servicio {{ item.tarifa_servicio }}</label>
+                <input type="number" class="form-control" [(ngModel)]="item.tarifa_servicio" autocomplete="off"
+                  [ngModelOptions]="{standalone: true}" name="itempmvp{{ i }}" id="itempmvp{{ i }}"
+                  placeholder="Monto PMVP" />
+              </div>
+            </div> -->
+
+            <!-- <div class="col-md-2 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Cantidad Piezas Movilizadas</label>
+                <input type="number" class="form-control" [(ngModel)]="item.cantidad_piezas" autocomplete="off"
+                  [ngModelOptions]="{standalone: true}" name="itemcantidad{{ i }}" id="itempmvp{{ i }}"
+                  placeholder="Cantidad de Piezas Movilizadas" />
+              </div>
+            </div> -->
+
+
+            <div class="col-md-1 col-12">
+              <div class="form-group">
+                <!-- <button class="btn btn-danger text-nowrap px-1" (click)="deleteItem(i)" rippleEffect>
+                  <i data-feather="trash" class="mr-25"></i>
+                </button> -->
+                <button class="btn btn-success text-nowrap px-1"
+                  (click)="registro(servicio_franqueo,cantidad_piezas,peso_envio)" rippleEffect>
+                  <i data-feather="check" class="mr-25"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <hr />
+        </div>
+      </form>
+
+
+
+      <!-- ngx-datatables responsive -->
+      <ngx-datatable #table class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
+        [rowHeight]="58" [footerHeight]="50" rowHeight="auto" [limit]="10" [rows]="rows" [scrollbarH]="true">
+
+
+        <ngx-datatable-column name="Escala Pesos" prop="nombre_peso_envio" [width]="300">
+          <ng-template let-nombre_peso_envio="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold"> {{ nombre_peso_envio }}</span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+        <ngx-datatable-column name="Franqueo" prop="nombre_servicios_franqueo" [width]="200">
+          <ng-template let-nombre_servicios_franqueo="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold"> {{ nombre_servicios_franqueo }}</span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+        <ngx-datatable-column name="Tarifa Servicio" prop="tarifa_servicio" [width]="20">
+          <ng-template let-tarifa_servicio="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-info">
+                {{ tarifa_servicio }}
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Tarifa %" prop="porcentaje_tarifa" [width]="20">
+          <ng-template let-porcentaje_tarifa="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-warning">
+                {{ porcentaje_tarifa }} %
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+        <ngx-datatable-column name="Monto FPO" prop="monto_fpo" [width]="20">
+          <ng-template let-monto_fpo="value" ngx-datatable-cell-template>
+            <div class="badge badge-pill" ngClass="badge-light-info">
+              {{ monto_fpo }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Piezas Movilizadas" prop="cantidad_piezas" [width]="20">
+          <ng-template let-cantidad_piezas="value" ngx-datatable-cell-template>
+            <div class="badge badge-pill" ngClass="badge-light-warning">
+              {{ cantidad_piezas }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Monto Causado" prop="monto_causado" [width]="20">
+          <ng-template let-monto_causado="value" ngx-datatable-cell-template>
+            <div class="badge badge-pill" ngClass="badge-light-success">
+              {{ monto_causado }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Actions" [width]="10" [sortable]="false">
+          <ng-template ngx-datatable-cell-template let-row="row">
+            <div class="d-flex align-items-center">
+              <!-- <i data-feather="trash"  class="text-danger cursor-pointer"></i> -->
+              <button class="btn btn-danger btn-sm text-nowrap px-1" (click)="borrarRegistro(row.index)" rippleEffect>
+                <i data-feather="trash" class="mr-25"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+      </ngx-datatable>
+      <!--/ ngx-datatables responsive -->
+
+
+
+      <!-- <div class="row">
+        <div class="col-12" align="center">
+          <button class="btn btn-icon btn-primary" type="button" (click)="addItem()" rippleEffect>
+            <i data-feather="plus" class="mr-25"></i>
+            <span>Agregar Movilización de PIezas</span>
+          </button>
+        </div>
+      </div> -->
+      <!-- </div> -->
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarDeclaracionPiezas()" rippleEffect
+      class="btn btn-success mr-1">Registrar Movilización</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click');LimpiarSelects()" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<!-- Andres Rodriguez -->
+
+<ng-template #ModalSiDeclarar let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Declaración de Movilización de Piezas</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-md-12 col-12" align="center">
+      <label><strong>
+          <font color="red">Declaración de Movilización de Piezas</font>
+        </strong></label>
+    </div>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm"
+        class="invoice-repeater">
+
+        <section class="users-list-wrapper">
+
+          <ngx-datatable [rows]="rowsDeclaracionPiezas" [rowHeight]="50" class="bootstrap core-bootstrap"
+            [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+            [scrollbarH]="true">
+
+            <ngx-datatable-column name="Escala Peso" prop="nombre_peso_envio" [width]="200">
+              <ng-template let-nombre_peso_envio="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ nombre_peso_envio }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Mes" prop="mes" [width]="50">
+              <ng-template let-mes="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ mes }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Franqueo" prop="nombre_servicios_franqueo" [width]="200">
+              <ng-template let-nombre_servicios_franqueo="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ nombre_servicios_franqueo }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Tarifa Servicio" prop="tarifa_servicio" [width]="20">
+              <ng-template let-tarifa_servicio="value" ngx-datatable-cell-template>
+                <div>
+                  <div class="badge badge-pill" ngClass="badge-light-info">
+                    {{ tarifa_servicio }}
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Tarifa %" prop="porcentaje_tarifa" [width]="20">
+              <ng-template let-porcentaje_tarifa="value" ngx-datatable-cell-template>
+                <div>
+                  <div class="badge badge-pill" ngClass="badge-light-warning">
+                    {{ porcentaje_tarifa }} %
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+
+            <ngx-datatable-column name="Monto FPO" prop="monto_fpo" [width]="20">
+              <ng-template let-monto_fpo="value" ngx-datatable-cell-template>
+                <div class="badge badge-pill" ngClass="badge-light-info">
+                  {{ monto_fpo }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Piezas Movilizadas" prop="cantidad_piezas" [width]="20">
+              <ng-template let-cantidad_piezas="value" ngx-datatable-cell-template>
+                <div class="badge badge-pill" ngClass="badge-light-warning">
+                  {{ cantidad_piezas }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Monto Causado" prop="monto_causado" [width]="20">
+              <ng-template let-monto_causado="value" ngx-datatable-cell-template>
+                <div class="badge badge-pill" ngClass="badge-light-success">
+                  {{ monto_causado }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+
+          </ngx-datatable>
+
+
+        </section>
+
+        <hr>
+        <div class="col-md-12 col-12" align="center">
+          <label><strong>
+              <font color="red">Descripcion del Monto Total de la Declaración de Piezas</font>
+            </strong></label>
+        </div>
+        <div class="row d-flex align-items-end">
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Monto Total de Declaración</label>
+              <input type="text" class="form-control" autocomplete="off" [(ngModel)]="MontoCausadoX"
+                [ngModelOptions]="{standalone: true}" readonly placeholder="Monto a Pagar" />
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Total de Declaraciones</label>
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="selected"
+                [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Piezas Movilizadas</label>
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="TotalPiezas"
+                [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+          <!-- <div class="col-md-3 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Monto Total a Pagar en Bolivares</label>
+              <input type="text" class="form-control" autocomplete="off" [(ngModel)]="PrecioMantenimientoXTF"
+                [ngModelOptions]="{standalone: true}" readonly placeholder="Monto a Pagar" />
+            </div>
+          </div> -->
+
+        </div>
+        <hr>
+        <!-- <div class="col-md-12 col-12" align="center">
+          <label><strong>
+              <font color="red">Monto Total a Declarar</font>
+            </strong></label>
+          <div class="row d-flex align-items-end">
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Monto Total a Pagar en Bolivares</label>
+                <input type="text" class="form-control" autocomplete="off" [(ngModel)]="PrecioMantenimientoXTF"
+                  [ngModelOptions]="{standalone: true}" readonly placeholder="Monto a Pagar" />
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Monto Total a Pagar en Petros</label>
+                <input type="text" class="form-control" autocomplete="off" [(ngModel)]="MontoPetroTotalSumaServicio"
+                  [ngModelOptions]="{standalone: true}" readonly placeholder="Monto a Pagar" />
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </form>
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" *ngIf="selected != 0"
+      (click)="RegistrarSIDeclaracionPiezas()" rippleEffect class="btn btn-success mr-1">Declarar Movilización de
+      Piezas</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+
+<ng-template #ModalNoDeclarar let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Declaración de NO Movilización de Piezas</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+      <!-- <form method="post" enctype="multipart/form-data"  id="forma" name="forma"> -->
+      <form class="form" method="post" enctype="multipart/form-data" id="forma" name="forma"
+        (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater">
+        <div class="row d-flex align-items-end">
+
+          <!-- Reportar en Cero -->
+
+          <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Monto</label>
+              <input type="text" name="montoNO" class="form-control" autocomplete="off" readonly [value]="montoPagar"
+                placeholder="Monto a Pagar" />
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">Fecha</label>
+              <input type="text" name="fechaNO" class="form-control" readonly [value]="fechaActual" autocomplete="off"
+                [(ngModel)]="fechaActual" [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="basicInputFile">Ingrese Comprobante de Declaración en Cero (VEF 0,00) de SENIAT <strong>
+                  <font color="red">(Solo formato PDF)</font>
+                </strong></label>
+              <div>
+                <input (change)="fileSelected($event)" class="form-control" name="archivos" type="file" accept=".pdf">
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </form>
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarNoDeclaracionPiezas()"
+      rippleEffect class="btn btn-success mr-1">Declarar No Movilización de Piezas</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>

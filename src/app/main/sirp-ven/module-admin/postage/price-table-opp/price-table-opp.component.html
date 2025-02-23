@@ -1,0 +1,229 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+    <div class="card-body">
+        <section class="users-list-wrapper">
+            <div class="card">
+              <h5 class="card-header">Filtro de búsqueda</h5>
+              <div class="card-body">
+                <div class="users-list-filter">
+                  <form>
+                    <div class="row">
+                      <div class="col-12">
+                        <fieldset class="form-group">
+                            <ng-select [items]="itemsSelectListaOPP" [(ngModel)]="SelectidOPP"
+                            [ngModelOptions]="{standalone: true}"
+                            name="ServicioFranqueo" bindLabel="name" bindValue="id"
+                            placeholder="Seleccionar Operador Postal Privado"
+                            (ngModelChange)="ListaTarifasFranqueoAll($event)"></ng-select>
+                        </fieldset>
+                      </div>
+                      <div class="col-12 col-md-3">
+                        <fieldset class="form-group">
+                          <input type="month" class="form-control" autocomplete="off" [(ngModel)]="selectedMes"
+                            [ngModelOptions]="{standalone: true}" placeholder="Seleccione Fecha"
+                            (change)="filterByFecha(selectedMes)"
+                            />
+                        </fieldset>
+                      </div>
+                      <div class="col-12 col-md-3">
+                        <fieldset class="form-group">
+                          <ng-select [items]="selectServicioFranqueo" [(ngModel)]="ServicioFranqueo"
+                            name="ServicioFranqueo" bindLabel="name" bindValue="id"
+                            placeholder="Seleccionar Servicio Franqueo"
+                            (change)="filterByServicio($event)"></ng-select>
+                        </fieldset>
+                      </div>
+                      <div class="col-12 col-md-3">
+                        <fieldset class="form-group">
+                          <ng-select [items]="itemsSelectPesoEnvio" [(ngModel)]="selectedPesoEnvio"
+                            name="selectedPesoEnvio" bindLabel="name" bindValue="id" placeholder="Seleccionar Peso de Envio"
+                            (change)="filterByPeso($event)"></ng-select>
+                        </fieldset>
+                      </div>
+                      <div class="col-12 col-md-3">
+                        <fieldset class="form-group">
+                          <ng-select [items]="itemsSelectStatus" [(ngModel)]="selectedStatus"
+                            name="selectedPesoEnvio" bindLabel="name" bindValue="id" placeholder="Seleccionar Status"
+                            (change)="filterByStatus($event)"></ng-select>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+
+                <div class="d-flex justify-content-center align-items-center">
+                  <div class="text-center">
+                    <button type="button" *ngIf="selected.length >= 1" class="btn btn-success mx-3"  (click)="ItemSeleccionadosAprobados($event)"  rippleEffect>
+                      Autorizar Tarifas Seleccionadas <small>({{ selected.length }})</small></button>
+                      
+                    <button type="button" *ngIf="selected.length >= 1" class="btn btn-danger mx-3"  (click)="ItemSeleccionadosRechazados($event)"  rippleEffect>
+                      Rechazar Tarifas Seleccionadas <small>({{ selected.length }})</small></button>
+                  </div>
+                </div>
+
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Buscar Status"
+                        (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" /></label>
+                  </div>
+                </div>
+                
+              </div>
+
+                
+                <ngx-datatable [rows]="rows" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="10" [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
+                [selectionType]="SelectionType.checkbox" [limit]="basicSelectedOption"
+                (select)="onSelect($event)">
+
+                <ngx-datatable-column *ngIf="RowsLengthConciliacion >= 1" [width]="50" [sortable]="false"
+                  [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+                  <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected"
+                    let-selectFn="selectFn">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
+                        (change)="selectFn(!allRowsSelected)" id="headerChkbxRef" />
+                      <label class="custom-control-label" for="headerChkbxRef"></label>
+                    </div>
+                  </ng-template>
+                  <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
+                    let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" [checked]="isSelected"
+                        (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
+                      <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Peso Envio" prop="nombre_peso_envio" [width]="20">
+                  <ng-template let-nombre_peso_envio="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_peso_envio }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Mes" prop="mes" [width]="20">
+                  <ng-template let-mes="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ mes }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- <ngx-datatable-column name="Mes" prop="mes" [width]="20">
+                  <ng-template let-mes="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ mes }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column> -->
+                
+
+                <ngx-datatable-column name="Descripcion" prop="descripcion" [width]="20">
+                  <ng-template let-descripcion="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ descripcion }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipo Franqueo" prop="nombre_servicios_franqueo" [width]="20">
+                  <ng-template let-nombre_servicios_franqueo="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_servicios_franqueo }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="PMVP" prop="pmvpx" [width]="20">
+                  <ng-template let-pmvpx="value" ngx-datatable-cell-template>
+                    <div>
+                      <div class="badge badge-pill" ngClass="badge-light-info">
+                        {{ pmvpx }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!-- <ngx-datatable-column name="I.V.A" prop="ivax" [width]="20">
+                  <ng-template let-ivax="value" ngx-datatable-cell-template>
+                    <div>
+                      <div class="badge badge-pill" ngClass="badge-light-danger">
+                        {{ ivax }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column> -->
+
+
+                <ngx-datatable-column name="TASA POSTAL" prop="tasa_postalx" [width]="20">
+                  <ng-template let-tasa_postalx="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" ngClass="badge-light-warning">
+                      {{ tasa_postalx }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+                
+                                <!-- <ngx-datatable-column name="TOTAL PAGAR" prop="total_pagarx" [width]="20">
+                                  <ng-template let-total_pagarx="value" ngx-datatable-cell-template>
+                                    <div class="badge badge-pill" ngClass="badge-light-success">
+                                      {{ total_pagarx }}
+                                    </div>
+                                  </ng-template>
+                                </ngx-datatable-column> -->
+
+                <ngx-datatable-column name="Status" prop="status_pef" [width]="20">
+                  <ng-template let-status_pef="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" *ngIf="status_pef == 1" ngClass="badge-light-success">
+                      Autorizado
+                    </div>
+                    <div class="badge badge-pill" *ngIf="status_pef == 0" ngClass="badge-light-danger">
+                     No  Autorizado
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion"  [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body" *ngIf="row.montoReal != '0.00'">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect >
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a (click)="DeleteTarifaOpp(row)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'trash'" [class]="'mr-50'"></span>Eliminar</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+
+              </ngx-datatable>
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+    </div>
+</div>

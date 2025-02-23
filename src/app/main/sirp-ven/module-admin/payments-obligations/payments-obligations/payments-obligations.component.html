@@ -1,0 +1,335 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="card-body">
+
+    <div class="col-6 mx-auto">
+      <div class="col-12 d-flex justify-content-between align-items-centerr">
+        <div class="d-flex justify-content-between align-items-center">
+          <button type="button" (click)="ModalMultasObligaciones(ModalMultas)" class="btn btn-warning" rippleEffect>
+            Obligaciones Individuales</button>
+          &nbsp;
+          <button type="button" (click)="ModalMultasColectivas(ModalMultasColectiva)" class="btn btn-danger"
+            rippleEffect>
+            Obligaciones Colectivas</button>
+        </div>
+        &nbsp;
+        <ng-select [items]="yearsList" [(ngModel)]="anioObligaciones" [ngModelOptions]="{standalone: true}"
+          (change)="FiltarObligacionAnio($event)" bindValue="year" bindLabel="year" placeholder="Seleccione" required
+          autocomplete="off">
+        </ng-select>
+      </div>
+    </div>
+
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              <label class="d-flex align-items-center">Mostrar
+                <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                Registros</label>
+            </div>
+          </div>
+          <div class="col-md-6 d-flex justify-content-start justify-content-md-end">
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+              <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                  name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre OPP"
+                  (keyup)="filterUpdatePagos($event)" (search)="filterUpdatePagos($event)" /></label>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="loadingIndicator">
+          <div class="loading-overlay">
+            <div class="spinner-border" role="status"></div>
+            <div class="loading-message">Cargando datos por favor espere!..</div>
+          </div>
+        </ng-container>
+
+
+        <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50">
+
+          <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+            <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold">{{ nombre_empresa | uppercase }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+            <ng-template let-rif="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ rif }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Fecha Pago" prop="fecha" [width]="5">
+            <ng-template let-fecha="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ fecha }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Tipo Obligacion" prop="iniciales_tipo_pagos" [width]="90">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="badge badge-pill" ngClass="badge-light-primary">
+                <font size="1"> {{row.nombre_tipo_pagos}} </font>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Monto Adeudado" prop="monto_pagar" [width]="5">
+            <ng-template let-monto_pagar="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ monto_pagar }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Monto Pagado" prop="monto_pc" [width]="5">
+            <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold"> {{ monto_pc }}</span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+            <ng-template let-status_pc="value" ngx-datatable-cell-template>
+              <div *ngIf="status_pc == 0" class="badge badge-pill" ngClass="badge-light-warning">
+                En Revisión
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <a (click)="EliminarPagoConciliacion(row)" ngbDropdownItem><span [size]="16" [data-feather]="'trash'"
+                      [class]="'mr-50'"></span> Eliminar</a>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+        </ngx-datatable>
+
+
+        <!--/ Invoice List -->
+      </div>
+    </section>
+
+
+  </div>
+</div>
+
+
+
+
+<ng-template #ModalMultas let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Generar Obligaciones Indivisual a <strong>Operadores Postales Privados
+        y
+        Subcontratistas</strong> </h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <!-- <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater"> -->
+      <form #formUsersRegister="ngForm" (ngSubmit)="submitForm()" novalidate>
+        <div class="row d-flex align-items-end">
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="tiposubopp">Seleccione Tipo OPP - SUBCONTRATISTA</label>
+              <ng-select [items]="ListaOPPSUB" required [(ngModel)]="tipooppsub" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="ListaOppSub($event)" bindValue="id" bindLabel="name" placeholder="Seleccione Tipo"
+                required autocomplete="off" #NombresEncagado="ngModel"
+                [class.error]="!NombresEncagado.valid && formUsersRegister.submitted">
+              </ng-select>
+              <span *ngIf="formUsersRegister.submitted && NombresEncagado.invalid" class="invalid-form">
+                <small class="form-text text-danger" *ngIf="NombresEncagado.errors.required">Nombres es
+                  requerido!</small>
+              </span>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="oppsub">Seleccion Operador Postal y/o Subcontratista</label>
+              <ng-select [items]="selecOPPSUB" bindValue="id" bindLabel="name" [(ngModel)]="oppsub"
+                [ngModelOptions]="{standalone: true}" placeholder="Seleccione OPP y/o SUB" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="obligacion">Seleccion Tipo Obligación</label>
+              <ng-select [items]="ListaTipoObligacion" [(ngModel)]="obligacion" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="CapturarObligacion($event)" bindLabel="name"
+                placeholder="Seleccione Tipo de Obligación" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="obligacion">Tasa de Obligación</label>
+              <input type="text" class="form-control" placeholder="Tasa de Obligación" readonly autocomplete="off"
+                [(ngModel)]="tasa_petro" [ngModelOptions]="{standalone: true}" />
+            </div>
+          </div>
+
+
+          <div class="col-md-12 col-12" *ngIf="showIncumplimiento">
+            <div class="form-group">
+              <label for="incumplimiento">Lista de Incumplimientos</label>
+              <ng-select [items]="List_incumplimiento" [(ngModel)]="incumplimiento"
+                [ngModelOptions]="{standalone: true}" (ngModelChange)="CapturarIncumplimiento($event)" bindLabel="name"
+                placeholder="Seleccione Incumplimiento" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="observacion">Observación de Pago</label>
+              <div class="custom-file">
+                <textarea class="form-control" [(ngModel)]="observacion" [ngModelOptions]="{standalone: true}"
+                  id="basicTextarea" rows="3" placeholder="Ingrese Observación de Pago"></textarea>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+      </form>
+
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="ProcesarOblicacion()" rippleEffect
+      class="btn btn-success mr-1">Procesar Obligación</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #ModalMultasColectiva let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Generar Obligaciones Colectivas a <strong>Operadores Postales Privados
+        y
+        Subcontratistas</strong> </h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <!-- <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater"> -->
+      <form #formUsersRegister="ngForm" (ngSubmit)="submitForm()" novalidate>
+        <div class="row d-flex align-items-end">
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="tiposubopp">Seleccione Tipo OPP - SUBCONTRATISTA</label>
+              <ng-select [items]="ListaOPPSUB" required [(ngModel)]="tipooppsub" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="ListaOppSub($event)" bindValue="id" bindLabel="name" placeholder="Seleccione Tipo"
+                required autocomplete="off" #NombresEncagado="ngModel"
+                [class.error]="!NombresEncagado.valid && formUsersRegister.submitted">
+              </ng-select>
+              <span *ngIf="formUsersRegister.submitted && NombresEncagado.invalid" class="invalid-form">
+                <small class="form-text text-danger" *ngIf="NombresEncagado.errors.required">Nombres es
+                  requerido!</small>
+              </span>
+            </div>
+          </div>
+
+          <!-- <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="oppsub">Seleccion Operador Postal y/o Subcontratista {{selecOPPSUB.length}}</label>
+              <ng-select [items]="selecOPPSUB"  bindLabel="name" [(ngModel)]="oppsub"
+                [ngModelOptions]="{standalone: true}" placeholder="Seleccione OPP y/o SUB" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div> -->
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="obligacion">Seleccion Tipo Obligación</label>
+              <ng-select [items]="ListaTipoObligacion" [(ngModel)]="obligacion" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="CapturarObligacion($event)" bindLabel="name"
+                placeholder="Seleccione Tipo de Obligación" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="obligacion">Tasa de Obligación</label>
+              <input type="text" class="form-control" placeholder="Tasa de Obligación" readonly autocomplete="off"
+                [(ngModel)]="tasa_petro" [ngModelOptions]="{standalone: true}" />
+            </div>
+          </div>
+
+
+          <div class="col-md-12 col-12" *ngIf="showIncumplimiento">
+            <div class="form-group">
+              <label for="incumplimiento">Lista de Incumplimientos</label>
+              <ng-select [items]="List_incumplimiento" [(ngModel)]="incumplimiento"
+                [ngModelOptions]="{standalone: true}" (ngModelChange)="CapturarIncumplimiento($event)" bindLabel="name"
+                placeholder="Seleccione Incumplimiento" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="observacion">Observación de Pago</label>
+              <div class="custom-file">
+                <textarea class="form-control" [(ngModel)]="observacion" [ngModelOptions]="{standalone: true}"
+                  id="basicTextarea" rows="3" placeholder="Ingrese Observación de Pago"></textarea>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+      </form>
+
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="ProcesarOblicacionColectivas()"
+      rippleEffect class="btn btn-success mr-1">Procesar Obligación</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,425 @@
+<div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="content-body">
+
+    <div class="row match-height">
+      <!-- Medal Card -->
+      <div class="col-xl-12 col-md-6 col-12"  *ngIf="usuario">
+        <div class="card card-statistics">
+          <div class="card-header">
+            <h4 class="card-title">{{ title }}</h4>
+            <div class="d-flex align-items-center">
+              <!-- <p class="card-text font-small-2 mr-25 mb-0">Actualizado: 29-08-2022 04:34 AM</p> -->
+            </div>
+          </div>
+
+
+          <div class="card-body statistics-body" *ngIf="empresaOPP">
+            <div class="row">
+              <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                <div class="media">
+                  <div class="avatar bg-light-primary mr-2">
+                    <div class="avatar-content">
+                      <i data-feather="file" class="avatar-icon"></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <p class="card-text font-small-3 mb-0">Certificado Uníco de Inscripción</p>
+                    <button type="button" *ngIf="statusEmpresaOPP != false" (click)="GenerarCertificadoInscripcion()" class="btn btn-success" rippleEffect><i data-feather="download" class="avatar-icon"></i> Certificado</button>
+                    <div class="badge badge-pill" *ngIf="statusEmpresaOPP != true" ngClass="badge-light-warning">
+                     Estatus OPP en revisión
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                <div class="media">
+                  <div class="avatar bg-light-info mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>1 $</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ dolar }}</h4>
+                    <p class="card-text font-small-3 mb-0">Divisas BCV</p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                <div class="media">
+                  <div class="avatar bg-light-danger mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>1 P</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ petro }} </h4>
+                    <p class="card-text font-small-3 mb-0">Petros BCV</p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                <div class="media">
+                  <div class="avatar bg-light-warning mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>BS</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ bolivares }} </h4>
+                    <p class="card-text font-small-3 mb-0">Bolivares BCV</p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+          </div>
+
+          <div class="card-body statistics-body" *ngIf="empresaSUB">
+            <div class="row">
+              <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                <div class="media">
+                  <div class="avatar bg-light-primary mr-2">
+                    <div class="avatar-content">
+                      <i data-feather="file" class="avatar-icon"></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <p class="card-text font-small-3 mb-0">Autorización Uníco de Inscripción</p>
+                    <button type="button"  *ngIf="statusEmpresaSUB != false" (click)="GenerarAutorizacionInscripcion()" class="btn btn-success" rippleEffect><i data-feather="download" class="avatar-icon"></i> Autorización</button>
+                    <div class="badge badge-pill"*ngIf="statusEmpresaSUB != true" ngClass="badge-light-warning">
+                      Estatus SUB en revisión
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                <div class="media">
+                  <div class="avatar bg-light-info mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>1 $</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ dolar }}</h4>
+                    <p class="card-text font-small-3 mb-0">Divisas BCV</p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                <div class="media">
+                  <div class="avatar bg-light-danger mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>1 P</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ petro }} </h4>
+                    <p class="card-text font-small-3 mb-0">Petros BCV</p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                <div class="media">
+                  <div class="avatar bg-light-warning mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>BS</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ bolivares }} </h4>
+                    <p class="card-text font-small-3 mb-0">Bolivares BCV</p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+          </div>
+
+          
+
+          </div>
+        </div>
+
+
+      <!--/ Medal Card -->
+
+      <!-- Statistics Card -->
+      <div class="col-xl-12 col-md-6 col-12" *ngIf="empresa">
+        <div class="card card-statistics">
+          <div class="card-header">
+            <h3 class="card-title"><strong> {{ role == 3 ? 'Liquidación de Franqueo Postal Obligatorio (F.P.P)' : 'Panel Principal' }}</strong></h3>
+            <div class="d-flex align-items-center">
+              <p class="card-text font-small-5 mr-25 mb-0"> <strong>{{ fecha_Actual_convert }}</strong></p>
+            </div>
+          </div>
+          <div class="card-body statistics-body">
+            <div class="row">
+              <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="role == 3 || role == 6">
+                <div class="media">
+                  <div class="avatar bg-light-primary mr-2">
+                    <div class="avatar-content">
+                      <i data-feather="activity" class="avatar-icon"></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <p class="card-text font-small-3 mb-0">Actualizar Monto</p>
+                    <button type="button"   (click)="ModalCambiarMontos(ModalEditarPetroDolar)" class="btn btn-success" rippleEffect><i data-feather="activity" class="avatar-icon"></i> Actualizar Monto</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                <div class="media">
+                  <div class="avatar bg-light-info mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>1 $</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ dolar }}</h4>
+                    <p class="card-text font-small-3 mb-0"><a [href]="urlBcv" target="_blank"><strong>BCV VE</strong></a></p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                <div class="media">
+                  <div class="avatar bg-light-danger mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>1 P</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ petro }} </h4>
+                    <p class="card-text font-small-3 mb-0"><a [href]="urlPetro" target="_blank"><strong>PETRO VE</strong></a></p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                <div class="media">
+                  <div class="avatar bg-light-warning mr-2">
+                    <div class="avatar-content">
+                      <i  class="avatar-icon"><strong><h3>BS</h3></strong></i>
+                    </div>
+                  </div>
+                  <div class="media-body my-auto">
+                    <h4 class="font-weight-bolder mb-0">{{ bolivares }} </h4>
+                    <p class="card-text font-small-3 mb-0"><a [href]="urlPetro" target="_blank"><strong>PETRO VE</strong></a></p>
+                    <p class="card-text font-small-3 mb-0">Via Web Scraping</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <br>
+          
+          <div class="col-12" *ngIf="role == 3">
+            <br>
+            <div class="datos-generales" align="center">
+            <h4 class="card-title" align="center"> <font color="#FFFFFF"><strong>CONSOLIDADO MENSUAL DE INGRESOS POR FRANQUEO POSTAL OBLIGATORIO</strong></font></h4>
+            </div>
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th style="background-color: #3d3d3a;"><font color="white">FRANQUEO</font></th>
+                  <th style="background-color: #3d3d3a;"><font color="white">EMPRESAS LIQUIDADAS</font></th>
+                  <th style="background-color: #3d3d3a;"><font color="white">% RECAUDACIÓN</font></th>
+                  <th style="background-color: #3d3d3a;"><font color="white">INGRESOS</font></th>
+                  <th style="background-color: #3d3d3a;"><font color="white"># PIEZAS</font></th>
+                  <th style="background-color: #3d3d3a;"><font color="white">EMPRESAS REPAROS</font></th>
+                  <th style="background-color: #3d3d3a;"><font color="white">% EVASIÓN</font></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td align="center" style="background-color: #0964d4;"><font color="white"> {{ mes_consultar }}</font></td>
+                  <td style="background-color: #18e25b;"  align="center"><strong>{{EmpresasLiquidadasResult}}</strong></td>
+                  <td  align="center"><strong>{{recaudacionPorcentajeLiquidado}} %</strong></td>
+                  <td  style="background-color: #18e25b;" align="center"><strong>{{IngresosTotales}}</strong></td>
+                  <td  align="center" style="background-color: #e8e819;"><strong>{{TotalPiezas}}</strong></td>
+                  <td  align="center" style="background-color: #e8e819;"><strong><font color="red">{{EmpresasReparosResult}}</font></strong></td>
+                  <td  align="center"><strong>{{recaudacionPorcentajeReparos}} %</strong></td>
+                </tr>
+                <tr>
+                  <td  style="background-color: #3d3d3a;" colspan="2" align="center"><strong><font color="white">Estimación en Divisas {{ dolar  }} | Estimación en Petro {{ petro }} </font></strong></td>
+                  <td  style="background-color: #18e25b;"  align="center"><strong>{{EstimadoDolar}}</strong></td>
+                  <td  style="background-color: #18e25b;"  align="center"><strong> P {{EstimadoPetros}}</strong></td>
+                  <td  style="background-color: #3d3d3a;" colspan="3" align="center"><strong><font color="white">Incluido los pagos no liquidados</font></strong></td>
+                </tr>
+              </tbody>
+            </table>
+
+
+            <div class="row">
+              <div class="col-md-7 col-12">
+                <br>
+               <div class="datos-generales" align="center">
+                <h4 class="card-title" align="center"> <font color="#FFFFFF"><strong>REPORTE DETALLADO POR OPERADORAS POSTALES PRIVADAS</strong></font></h4>
+                </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th style="background-color: #3d3d3a;"><font color="white">ESTATUS</font></th>
+                      <th style="background-color: #3d3d3a;"><font color="white">CLASIFICACIÓN</font></th>
+                      <th style="background-color: #3d3d3a;"><font color="white">CANTIDAD</font></th>
+                      <th style="background-color: #3d3d3a;"><font color="white">GENERAL</font></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td rowspan="3" align="center" style="background-color: #3d88e4;"><font color="white"><strong>FRANQUEO POSTAL OBLIGATORIO</strong></font></td>
+                      <td align="justify" style="background-color: #18e25b;">Liquidados</td>
+                      <td align="center"><strong>{{CantidadLiquidados}}</strong></td>
+                      <td rowspan="3" align="center"><strong>{{TotalFPO}}</strong></td>
+                    </tr>
+                    <tr>
+              
+                      <td align="justify" style="background-color: #18e25b;">Cartas de no Movilización</td>
+                      <td align="center"><strong>{{CartasNoMovilizacion}}</strong></td>
+                      
+                    </tr>
+                    <tr>
+                      <td align="justify" style="background-color: #18e25b;">Otros Pagos</td>
+                      <td align="center"><strong>{{OtrosPagos}}</strong></td>
+                     
+                    </tr>
+                    <tr>
+                      <td rowspan="3" align="center" style="background-color: #3d88e4;"><font color="white"><strong>PIEZAS MOVILIZADAS</strong></font></td>
+                      <td align="justify" style="background-color: #e8e819;">Piezas Servicio Nacional</td>
+                      <td align="center"><strong>{{ServicioNacional}}</strong></td>
+                      <td rowspan="3" align="center"><strong>{{TotalServicios}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify" style="background-color: #e8e819;">Piezas Ser. Int. de Llegada</td>
+                      <td align="center"><strong>{{ServicioIntLlegada}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify" style="background-color: #e8e819;">Piezas Ser. Int. de Salida</td>
+                      <td align="center"><strong>{{ServicioIntSalida}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td colspan="2" align="center">
+                        <input class="form-control" [(ngModel)]="mes_consultar" autocomplete="off"
+                        [ngModelOptions]="{standalone: true}" type="month">
+                      </td>
+                      <td colspan="2" align="center">
+                        <button type="button" class="btn btn-primary" (click)="GenerarReporteLiquidacionFPO()">Descargar Reporte</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+  
+              <div class="col-md-5 col-12">
+                <br>
+                <div class="datos-generales" align="center">
+                  <h4 class="card-title" align="center"> <font color="#FFFFFF"><strong>CONCEPTOS DE INGRESOS</strong></font></h4>
+                  </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th  style="background-color: #3d3d3a;"><font color="white">DESCRIPCIÓN</font></th>
+                      <th style="background-color: #3d3d3a;"><font color="white">MONTO</font></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td align="justify">F.P.O {{ MesAnio }}</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{fpo}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify">F.P.O OTROS MESES</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{fpo_OtrosMeses}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify">DERECHOS SEMESTRALES 1</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{derechosSemestral1}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify">DERECHOS SEMESTRALES 2</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{derechosSemestral2}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify">ANUALIDAD</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{anualidad}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify">SUBCONTRATISTAS</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{subcontratistas}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="justify">PAGOS NO LIQUIDADOS</td>
+                      <td align="center" style="background-color: #e8e819;"><strong>{{pagosNoLiquidados}}</strong></td>
+                    </tr>
+                    <tr>
+                      <td align="center"><strong>TOTAL GENERAL</strong></td>
+                      <td align="center" style="background-color: #18e25b;"><strong>{{TotalPagosFPO}}</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+          </div>
+            
+        </div>
+      </div>
+      <!--/ Statistics Card -->
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<ng-template #ModalEditarPetroDolar let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Modificar Montos</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Dolar</label>
+            <input type="text" class="form-control" autocomplete="off" [(ngModel)]="I_UpdateMontosPetroDolar.dolar"  [ngModelOptions]="{standalone: true}" placeholder="Dolar" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Petro</label>
+            <input type="text" class="form-control"  autocomplete="off"[(ngModel)]="I_UpdateMontosPetroDolar.petro" [ngModelOptions]="{standalone: true}" placeholder="Petro" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Bolivares</label>
+            <input type="text" class="form-control" autocomplete="off" [(ngModel)]="I_UpdateMontosPetroDolar.petro_bolivares"
+              [ngModelOptions]="{standalone: true}" placeholder="Bolivares" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+      <button type="submit"  (click)="UpdateMontos()"
+      rippleEffect class="btn btn-success mr-1">Modificar Montos</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+

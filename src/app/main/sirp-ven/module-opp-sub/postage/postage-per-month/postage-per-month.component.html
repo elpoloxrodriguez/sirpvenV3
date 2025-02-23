@@ -1,0 +1,215 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="card-body">
+    <section id="feather-icons">
+      <div class="row">
+
+
+        <div class="col-12 col-md-8">
+          <fieldset class="form-group">
+            <input type="text" class="form-control" id="icons-search" [(ngModel)]="searchText"
+              placeholder="Busqueda..." />
+          </fieldset>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <fieldset class="form-group">
+            <ng-select [items]="anios" [(ngModel)]="nuevafechaActual" [ngModelOptions]="{standalone: true}"
+              bindLabel="name" bindValue="id" placeholder="Seleccionar Año"
+              (ngModelChange)="validar($event)"></ng-select>
+          </fieldset>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-md-6 col-xl-4" [id]="i" [ngbTooltip]="dat.key"
+          *ngFor="let dat of Xdata  | filter: searchText:'name'; let i = index">
+          <div>
+
+            <div class="card shadow-none bg-transparent border-black" >
+              <div class="card-body" style="position: relative;">
+                <span style="color: #000000;">
+                  <p class="card-text">
+                    <strong>{{ dat.name }} - {{ dat.fecha }}</strong>
+                    &nbsp;
+                    <button type="submit" class="btn btn-warning btn-sm" *ngIf="dat.monto == 0" (click)="rutaDeclarar(dat.mes)">Declarar</button>
+                    &nbsp;
+                    <button type="submit" class="btn btn-success btn-sm" *ngIf="dat.monto != 0" (click)="rutaVisualizar(ModalVisualizar,dat.value)">Visualizar</button>
+                  </p>
+                  <small>
+                    <strong>
+                      <p style="color: #002aff;" *ngIf="dat.btn == true">Tiempo de Declaración Activo</p>
+                      <p style="color: #ff0000;" *ngIf="dat.btn == false">Tiempo de Declaración Finalizado</p>
+                    </strong>
+                  </small>
+                </span>
+                <p class="card-text">
+                  <span style="color: #000000;">
+                    <strong>Piezas:</strong> {{ dat.piezas | number }} - <strong>Monto:</strong> {{ dat.monto }}
+                  </span>
+                </p>
+                <img *ngIf="dat.monto == 0" src="assets/images/icons/warning.webp" style="position: absolute; top: 20px; right: 10px; width: 35px; height: auto;" alt="image">
+                <img *ngIf="dat.monto != 0" src="assets/images/icons/success.webp" style="position: absolute; top: 20px; right: 10px; width: 25px; height: auto;" alt="image">
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+        <br>
+      </div>
+
+
+    </section>
+  </div>
+</div>
+
+
+<ng-template #ModalVisualizar let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Declaración de Movilización de Piezas</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button> 
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm"
+        class="invoice-repeater">
+
+
+        <div class="col-md-12 col-12" align="center">
+          <label><strong>
+              <font color="red">Declaración de Piezas</font>
+            </strong></label>
+        </div>
+
+
+        <section class="users-list-wrapper">
+
+          <ngx-datatable [rows]="rowsDeclaracionPiezas" [rowHeight]="50" class="bootstrap core-bootstrap"
+            [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+            [scrollbarH]="true">
+
+            <ngx-datatable-column name="Escala Peso" prop="nombre_peso_envio" [width]="200">
+              <ng-template let-nombre_peso_envio="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ nombre_peso_envio }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Mes" prop="mes" [width]="50">
+              <ng-template let-mes="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ mes }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Franqueo" prop="nombre_servicios_franqueo" [width]="200">
+              <ng-template let-nombre_servicios_franqueo="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ nombre_servicios_franqueo }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Tarifa Servicio" prop="tarifa_servicio" [width]="20">
+              <ng-template let-tarifa_servicio="value" ngx-datatable-cell-template>
+                <div>
+                  <div class="badge badge-pill" ngClass="badge-light-info">
+                    {{ tarifa_servicio }}
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Tarifa %" prop="porcentaje_tarifa" [width]="20">
+              <ng-template let-porcentaje_tarifa="value" ngx-datatable-cell-template>
+                <div>
+                  <div class="badge badge-pill" ngClass="badge-light-warning">
+                    {{ porcentaje_tarifa }} %
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+
+            <ngx-datatable-column name="Monto FPO" prop="monto_fpo" [width]="20">
+              <ng-template let-monto_fpo="value" ngx-datatable-cell-template>
+                <div class="badge badge-pill" ngClass="badge-light-info">
+                  {{ monto_fpo }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Piezas Movilizadas" prop="cantidad_piezas" [width]="20">
+              <ng-template let-cantidad_piezas="value" ngx-datatable-cell-template>
+                <div class="badge badge-pill" ngClass="badge-light-warning">
+                  {{ cantidad_piezas }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Monto Causado" prop="monto_causado" [width]="20">
+              <ng-template let-monto_causado="value" ngx-datatable-cell-template>
+                <div class="badge badge-pill" ngClass="badge-light-success">
+                  {{ monto_causado }}
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+
+          </ngx-datatable>
+
+
+        </section>
+
+        <hr>
+
+        <div class="col-md-12 col-12" align="center">
+          <label><strong>
+              <font color="red">Descripcion Total de la Declaración de Piezas</font>
+            </strong></label>
+        </div>
+
+        <div class="row d-flex align-items-end">
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label>Monto Total de Piezas</label>
+              <input type="text" class="form-control" autocomplete="off" [(ngModel)]="MontoCausadoX"
+                [ngModelOptions]="{standalone: true}" readonly placeholder="Monto a Pagar" />
+            </div>
+          </div>
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label>Total de Declaraciones</label>
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="selected"
+                [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+          <div class="col-md-4 col-12">
+            <div class="form-group">
+              <label>Piezas Movilizadas</label>
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="TotalPiezas"
+                [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+        </div>
+
+
+      </form>
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+  </div>
+</ng-template>

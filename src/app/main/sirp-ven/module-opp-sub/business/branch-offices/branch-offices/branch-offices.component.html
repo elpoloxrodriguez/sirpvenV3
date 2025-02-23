@@ -1,0 +1,408 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="card-body">
+
+    <section class="users-list-wrapper">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-3 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              <label class="d-flex align-items-center">Mostrar
+                <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                Registros</label>
+            </div>
+          </div>
+          <div class="col-md-3 col-12">
+            <div class="d-flex justify-content-between align-items-center m-1">
+              <button type="button" (click)="ModalAgregarSucursal(AgregarSucursal)" class="btn btn-success"
+                rippleEffect>
+                Agregar Agencia </button>
+            </div>
+          </div>
+          <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+              <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                  name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre Empresa"
+                  (keyup)="filterUpdateSubcontratistas($event)"
+                  (search)="filterUpdateSubcontratistas($event)" /></label>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="isLoading == 0">
+          <div class="loading-overlay">
+            <div class="spinner-border text-success" role="status"></div>
+            <div class="loading-message">Cargando datos, por favor espere...</div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isLoading == 2">
+          <div class="loading-overlay">
+            <div class="spinner-border text-danger" role="status"></div>
+            <div class="loading-message">No hay registros...</div>
+          </div>
+        </ng-container>
+
+        <ngx-datatable [rows]="rowsSucursales" rowHeight="auto" class="bootstrap core-bootstrap"
+          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+          [scrollbarH]="true">
+
+          <ngx-datatable-column name="Empresa" prop="nombre_empresa" [width]="200">
+            <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+              <div>
+                <span class="font-weight-bold">{{ nombre_empresa }} </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Rif" prop="rif" [width]="100">
+            <ng-template let-rif="value" ngx-datatable-cell-template>
+              <div>
+                {{ rif }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Estado" prop="estado_empresa" [width]="100">
+            <ng-template let-estado_empresa="value" ngx-datatable-cell-template>
+              <div>
+                {{ estado_empresa }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Ciudad" prop="ciudad_empresa" [width]="100">
+            <ng-template let-ciudad_empresa="value" ngx-datatable-cell-template>
+              <div>
+                {{ ciudad_empresa }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Municipio" prop="municipio_empresa" [width]="100">
+            <ng-template let-municipio_empresa="value" ngx-datatable-cell-template>
+              <div>
+                {{ municipio_empresa }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column name="Parroquia" prop="parroquia_empresa" [width]="100">
+            <ng-template let-parroquia_empresa="value" ngx-datatable-cell-template>
+              <div>
+                {{ parroquia_empresa }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+
+
+          <ngx-datatable-column name="Tipo" prop="tipo_sub" [width]="20">
+            <ng-template let-tipo_sub="value" ngx-datatable-cell-template>
+              <div *ngIf="tipo_sub == 0" class="badge badge-pill" ngClass="badge-light-success">
+                Principal
+              </div>
+              <div *ngIf="tipo_sub == 1" class="badge badge-pill" ngClass="badge-light-info">
+                Sucursal
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+
+          <ngx-datatable-column name="Accion" [width]="20" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div ngbDropdown container="body">
+                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                </button>
+                <div ngbDropdownMenu>
+                  <div>
+                    <a (click)="AgregarContrato(AgregarSubcontrato,row)" ngbDropdownItem><span
+                        [data-feather]="'file-text'" [size]="16" [class]="'mr-50'"></span> Agregar Operador</a>
+                    <a (click)="ModificarAgencia(AgregarSucursal,row)" ngbDropdownItem><span [data-feather]="'edit'"
+                        [size]="16" [class]="'mr-50'"></span>
+                      Modificar Agencia</a>
+                    <a (click)="VerSubContratistas(ModalVerSubContratistas,row)" ngbDropdownItem><span
+                        [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span> Ver Aliados</a>
+                    <!-- <a (click)="EliminarContrato(row)" ngbDropdownItem><span [data-feather]="'trash'" [size]="16"
+                        [class]="'mr-50'"></span> Eliminar Agencia</a> -->
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+        </ngx-datatable>
+
+
+        <!--/ Invoice List -->
+      </div>
+    </section>
+
+  </div>
+</div>
+
+
+
+
+<ng-template #AgregarSucursal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">{{titleModal}}</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <!-- <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater"> -->
+      <form method="post" enctype="multipart/form-data" id="forma" name="forma" class="invoice-repeater">
+        <div class="row d-flex align-items-end">
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="nombre">Nombre Empresa</label>
+              <input type="text" class="form-control" autocomplete="off" placeholder="Nombre de la Empresa"
+                [(ngModel)]="ICrearSucursalSUB.nombre_empresa" [ngModelOptions]="{standalone: true}" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="empresa">Rif Empresa</label>
+              <input type="text" class="form-control" autocomplete="off" placeholder="Rif de la Empresa"
+                [(ngModel)]="ICrearSucursalSUB.rif_empresa" [ngModelOptions]="{standalone: true}" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="tipo">Tipo Agencia</label>
+              <ng-select [items]="tipoSucursal" [(ngModel)]="ICrearSucursalSUB.tipo_sub"
+                [ngModelOptions]="{standalone: true}" bindValue="id" bindLabel="name"
+                placeholder="Seleccione Tipo Agencia" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="estado">Seleccione Estado</label>
+              <ng-select [items]="SelectEstado" [(ngModel)]="ICrearSucursalSUB.estado_empresa"
+                [ngModelOptions]="{standalone: true}" bindLabel="estado" (ngModelChange)="Select_Ciudad($event)"
+                placeholder="Seleccione Estado" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="ciudad">Seleccione Ciudad</label>
+              <ng-select [items]="SelectCiudad" [(ngModel)]="ICrearSucursalSUB.ciudad_empresa"
+                [ngModelOptions]="{standalone: true}" bindLabel="ciudad" (ngModelChange)="Select_Municipo($event)"
+                placeholder="Seleccione Ciudad" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="municipio">Seleccione Municipio</label>
+              <ng-select [items]="SelectMunicipio" [(ngModel)]="ICrearSucursalSUB.municipio_empresa"
+                [ngModelOptions]="{standalone: true}" bindLabel="municipio" (ngModelChange)="Select_Parroquia($event)"
+                placeholder="Seleccione Municipio" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for="parroquia">Seleccione Parroquia</label>
+              <ng-select [items]="SelectParroquia" [(ngModel)]="ICrearSucursalSUB.parroquia_empresa"
+                [ngModelOptions]="{standalone: true}" (ngModelChange)="CapParroquia($event)" bindLabel="parroquia"
+                placeholder="Seleccione Parroquia" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="zona">Zona Referencia</label>
+              <textarea type="text" class="form-control" rows="3" autocomplete="off"
+                [(ngModel)]="ICrearSucursalSUB.zona_empresa" [ngModelOptions]="{standalone: true}"
+                placeholder="Ingrese Zona"></textarea>
+            </div>
+          </div>
+
+
+        </div>
+      </form>
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <button type="submit" *ngIf="!showBtn" (click)="GuardarSucursal()" rippleEffect
+      class="btn btn-success mr-1">{{titleBtn}}</button>
+    <button type="submit" *ngIf="showBtn" (click)="ActualizarAgencia()" rippleEffect
+      class="btn btn-warning mr-1">{{titleBtn}}</button>
+    <button type="button" class="btn btn-danger" (click)="cerrarModal()" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+
+
+
+<ng-template #AgregarSubcontrato let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Agregar Subcontrato</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+
+      <div class="align-items-center">
+        <font color="red">
+          <p>Estimado Subcontratista debe seleccionar los Operadores Postales Privado a quienes brinda el
+            servicio.</p>
+        </font>
+      </div>
+      <!-- Header Starts -->
+      <!-- <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater"> -->
+      <form method="post" enctype="multipart/form-data" id="forma" name="forma" class="invoice-repeater">
+        <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+        <div class="row d-flex align-items-end">
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="estado">Seleccione OPP</label>
+              <ng-select [items]="SelectOPP" [multiple]="true" [(ngModel)]="idcontrato"
+                [ngModelOptions]="{standalone: true}" (ngModelChange)="onSelectChange($event)" bindLabel="name"
+                placeholder="Seleccione OPP" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+
+        </div>
+      </form>
+    </div>
+    <!-- Header Starts -->
+    <!-- </div> -->
+    <!-- Header Ends -->
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="GuardarSubcontrato()" rippleEffect class="btn btn-success mr-1">Agregar</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #ModalVerSubContratistas let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Lista de Operadores Postales Privado de <strong>{{ TitleModal
+        }}</strong></h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+
+
+      <section class="users-list-wrapper">
+        <div class="card">
+          <div class="row">
+            <div class="col-md-6 col-12">
+              <div class="d-flex justify-content-between align-items-center m-1">
+                <label class="d-flex align-items-center">Mostrar
+                  <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  Registros</label>
+              </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+              <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValueListaSubC"
+                    autocomplete="off" name="searchValue" type="search" class="form-control ml-25"
+                    placeholder="Nombre Operador" (keyup)="filterOPPSUB($event)"
+                    (search)="filterOPPSUB($event)" /></label>
+              </div>
+            </div>
+          </div>
+
+          <ng-container *ngIf="loadingIndicatorOPP">
+            <div class="loading-overlay">
+              <div class="spinner-border" role="status"></div>
+              <div class="loading-message">Cargando datos por favor espere!..</div>
+            </div>
+          </ng-container>
+
+          <ngx-datatable [rows]="rowsOPPSub" rowHeight="auto" class="bootstrap core-bootstrap" [limit]="selectedOption"
+            [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true">
+
+            <ngx-datatable-column name="Empresa" prop="opp_nombre_empresa" [width]="300">
+              <ng-template let-opp_nombre_empresa="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold">{{ opp_nombre_empresa }} </span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="RIF" prop="opp_rif" [width]="100">
+              <ng-template let-opp_rif="value" ngx-datatable-cell-template>
+                <div>
+                  <span class="font-weight-bold"> {{ opp_rif }}</span>
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+
+
+            <ngx-datatable-column name="Status Empresa" prop="opp_status_empresa" [width]="100">
+              <ng-template let-opp_status_empresa="value" ngx-datatable-cell-template>
+                <div *ngIf="opp_status_empresa == 1" class="badge badge-pill" ngClass="badge-light-success">
+                  Activa
+                </div>
+                <div *ngIf="opp_status_empresa == 0" class="badge badge-pill" ngClass="badge-light-danger">
+                  Inactiva
+                </div>
+              </ng-template>
+            </ngx-datatable-column>
+
+
+
+          </ngx-datatable>
+
+
+          <!--/ Invoice List -->
+        </div>
+      </section>
+
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,111 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+    <div class="card-body">
+
+     
+  <!-- Nav tabs -->
+  <ul ngbNav #navFilled="ngbNav" [activeId]="'service'" class="nav nav-fill nav-pills">
+    <li [ngbNavItem]="'home'">
+      <a ngbNavLink>Tiempo Sistema</a>
+      <ng-template ngbNavContent>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+          <div class="col-xl-12 col-md-12 col-12">
+            <!-- Header Starts -->
+            <div class="row">
+                      
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">Punto de Cuenta</label>
+                  <input required  type="text" class="form-control"
+                  
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">Fecha Punto de Cuenta</label>
+                  <input required  type="date" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+      
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">N# Concesión Postal</label>
+                  <input required  type="text" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">N# Contrato</label>
+                  <input required  type="text" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+      
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">Periodo del Contrato</label>
+                  <input required  type="date" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">N# de Archivo</label>
+                  <input required  type="text" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+      
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">Tomo del Archivo</label>
+                  <input required  type="text" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label class="form-label">Fecha de Autenticación</label>
+                  <input required  type="date" class="form-control"
+                  placeholder="Nombre de Empresa" />
+                </div>
+              </div>
+              
+              </div>
+            <!-- Header Ends -->
+          </div>
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="'service'">
+      <a ngbNavLink>Boton Declaración</a>
+      <ng-template ngbNavContent>
+        <p>
+          Pudding candy canes sugar plum cookie chocolate cake powder croissant. Carrot cake tiramisu danish
+          candy cake muffin croissant tart dessert. Tiramisu caramels candy canes chocolate cake sweet roll
+          liquorice icing cupcake.Bear claw chocolate chocolate cake jelly-o pudding lemon drops sweet roll
+          sweet candy. Chocolate sweet chocolate bar candy chocolate bar chupa chups gummi bears lemon
+          drops.
+        </p>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="'json'">
+      <a ngbNavLink>Account</a>
+      <ng-template ngbNavContent>
+        <p>
+          Chocolate croissant cupcake croissant jelly donut. Cheesecake toffee apple pie chocolate bar
+          biscuit tart croissant. Lemon drops danish cookie. Oat cake macaroon icing tart lollipop cookie
+          sweet bear claw. Toffee jelly-o pastry cake dessert chocolate bar jelly beans fruitcake. Dragée
+          sweet fruitcake dragée biscuit halvah wafer gingerbread dessert. Gummies fruitcake brownie gummies
+          tart pudding.
+        </p>
+      </ng-template>
+    </li>
+  </ul>
+  <div [ngbNavOutlet]="navFilled" class="mt-1"></div>
+  
+
+    </div>
+</div>

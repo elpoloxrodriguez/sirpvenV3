@@ -1,0 +1,868 @@
+<div class="auth-wrapper auth-v2" *blockUI="'section-block'">
+  <div class="auth-inner row m-0">
+
+    <!-- <div class="brand-logo img" align="center"> -->
+    <img src="assets/images/banner/cintillo-ipostel-carabobo.jpg" class="d-none d-sm-none d-md-block banner-fona"
+      alt="banner" width="100%" />
+    <!-- </div>  -->
+
+    <!-- /Left Text-->
+    <!-- Login-->
+    <div class="d-flex col-lg-12 align-items-center auth-bg px-2 p-lg-5">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+        <h1 class="card-title font-weight-bold mb-1 text-primary" align="center">
+          <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" height="28" />
+          <strong>{{ coreConfig.app.appName }}</strong>
+        </h1>
+        <!-- </a> -->
+        <p class="card-text mb-8" align="center"><strong>RESUMEN DE OPERADOR POSTAL PRIVADO</strong></p>
+
+
+
+        <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm">
+          <div class="datos-generales" align="center">
+            <h3>
+              <font color="#FFFFFF"><strong>DATOS GENERALES DEL SUBCONTRATISTA</strong></font>
+            </h3>
+          </div>
+          <div class="row">
+
+            <div class="col-md-12 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Seleccione Oficina Postal Privada</label>
+                <ng-select [items]="SelectOpp"  bindValue="id_opp" bindLabel="nombre_empresa" placeholder="Seleccione Oficina Postal Privada"
+                  [(ngModel)]="IFormOPP.opp" [multiple]="true" [ngModelOptions]="{standalone: true}" required
+                  #Opp="ngModel"
+                  [class.error]="!Opp.valid && formUsersRegister.submitted"  
+                  autocomplete="off">
+                </ng-select>
+                <span *ngIf="formUsersRegister.submitted && Opp.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="Opp.errors.required"
+                    >Oficina Postal Privada es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+              
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label">Nombre de la Empresa</label>
+                <input required  type="text" class="form-control"
+                #NombreEmpresa="ngModel"
+                [class.error]="!NombreEmpresa.valid && formUsersRegister.submitted"
+                [(ngModel)]="IFormOPP.nombre_empresa" [ngModelOptions]="{standalone: true}"
+                placeholder="Nombre de Empresa" />
+                <span *ngIf="formUsersRegister.submitted && NombreEmpresa.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="NombreEmpresa.errors.required"
+                    >Nombre de Empresa es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label">Numero de RIF</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.rif" [ngModelOptions]="{standalone: true}"
+                #NumeroRif="ngModel"
+                [class.error]="!NumeroRif.valid && formUsersRegister.submitted"
+                  class="form-control" placeholder="Numero de RIF" />
+                  <span *ngIf="formUsersRegister.submitted && NumeroRif.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="NumeroRif.errors.required"
+                    >Numero de RIF es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Dirección Fiscal</label>
+                <textarea class="form-control" [(ngModel)]="IFormOPP.direccion_empresa"
+                  [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3" class="form-control"
+                  #DireccionFiscal="ngModel"
+                  [class.error]="!DireccionFiscal.valid && formUsersRegister.submitted"  
+                  placeholder="Dirección Fiscal"></textarea>
+                  <span *ngIf="formUsersRegister.submitted && DireccionFiscal.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="DireccionFiscal.errors.required"
+                      >Dirección Fiscal es requerido!</small
+                    >
+                  </span>
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Estado</label>
+                <ng-select [items]="SelectEstado" bindLabel="estado" placeholder="Seleccione Estado"
+                  [(ngModel)]="IFormOPP.estado_empresa" [ngModelOptions]="{standalone: true}" required
+                  #Estado="ngModel"
+                  [class.error]="!Estado.valid && formUsersRegister.submitted"  
+                  autocomplete="off" (ngModelChange)="Select_Ciudad($event.id_estado)">
+                </ng-select>
+                <span *ngIf="formUsersRegister.submitted && Estado.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="Estado.errors.required"
+                    >Estado es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Ciudad</label>
+                <ng-select [items]="SelectCiudad" [(ngModel)]="IFormOPP.ciudad_empresa"
+                  [ngModelOptions]="{standalone: true}" (ngModelChange)="Select_Municipo($event.id_estado)"
+                  #Ciudad="ngModel"
+                  [class.error]="!Ciudad.valid && formUsersRegister.submitted"  
+                  bindLabel="ciudad" placeholder="Seleccione Ciudad" required autocomplete="off">
+                </ng-select>
+                <span *ngIf="formUsersRegister.submitted && Ciudad.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="Ciudad.errors.required"
+                    >Ciudad es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Municipios</label>
+                <ng-select [items]="SelectMunicipio" [(ngModel)]="IFormOPP.municipio_empresa"
+                  [ngModelOptions]="{standalone: true}" (ngModelChange)="Select_Parroquia($event.id_municipio)"
+                  #Municipio="ngModel"
+                  [class.error]="!Municipio.valid && formUsersRegister.submitted"  
+                  bindLabel="municipio" placeholder="Seleccione Municipios" required autocomplete="off">
+                </ng-select>
+                <span *ngIf="formUsersRegister.submitted && Municipio.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="Municipio.errors.required"
+                    >Municipio es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label">Parroquia</label>
+                <ng-select [items]="SelectParroquia" [(ngModel)]="IFormOPP.parroquia_empresa"
+                  [ngModelOptions]="{standalone: true}" bindLabel="parroquia" placeholder="Seleccione Parroquia"
+                  #Parroquia="ngModel"
+                  [class.error]="!Parroquia.valid && formUsersRegister.submitted"  
+                  required autocomplete="off">
+                </ng-select>
+                <span *ngIf="formUsersRegister.submitted && Parroquia.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="Parroquia.errors.required"
+                    >Parroquia es requerido!</small
+                  >
+                </span>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Correo Electronico OPP</label>
+                <input required email type="text" [(ngModel)]="IFormOPP.correo_electronico"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  #CorreoElectronico="ngModel"
+                  [class.error]="!CorreoElectronico.valid && formUsersRegister.submitted"  
+                  placeholder="Ingrese Correo Electronico OPP" />
+                  <span *ngIf="formUsersRegister.submitted && CorreoElectronico.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="CorreoElectronico.errors.required"
+                      >Correo Electronico OPP es requerido!</small
+                    >
+                  </span>
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Facebook</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.empresa_facebook"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Correo Principal" />
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Instagram</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.empresa_instagram"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Correo Electronico Secundario" />
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Twitter</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.empresa_twitter"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Correo Electronico Secundario" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Tipo de Agencia</label>
+                <ng-select [items]="SelectTipoAgencia" bindValue="id_tipo_agencia" [(ngModel)]="IFormOPP.tipo_agencia"
+                  [ngModelOptions]="{standalone: true}" bindLabel="nombre_tipo_agencia"
+                  placeholder="Seleccione Tipo de Agencia" required autocomplete="off">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Cantidad de Sucursales</label>
+                <input required type="number" class="form-control" [(ngModel)]="IFormOPP.sucursales"
+                  [ngModelOptions]="{standalone: true}" placeholder="Ingrese Cantidad de Sucursales" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Cantidad de Sub Contrataciones</label>
+                <input required type="number" class="form-control" [(ngModel)]="IFormOPP.subcontrataciones"
+                  [ngModelOptions]="{standalone: true}" placeholder="Ingrese Cantidad de Sub Contrataciones" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Tipología de Empresa OPP</label>
+                <input required  type="text" class="form-control"
+                  [(ngModel)]="labelTipologiaEmpresa"
+                  [ngModelOptions]="{standalone: true}" readonly
+                  placeholder="Seleccione Tipología de Empresa OPP" />
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Tipo de servicio que presta o proveé el OPP</label>
+                <ng-select #selectMultiLimited [items]="SelectTipoServicio" [multiple]="true"
+                (ngModelChange)="Select_TipologiaEmpresa($event)"
+                  [(ngModel)]="IFormOPP.tipo_servicio" [ngModelOptions]="{standalone: true}"
+                  placeholder="Seleccione Tipo de Servicio OPP" bindLabel="nombre_tipo_servicio"
+                  autocomplete="off">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label">Especificación de Servicio</label>
+                <textarea class="form-control" [(ngModel)]="IFormOPP.especificacion_servicio"
+                  [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3" class="form-control"
+                  placeholder="Describe Especificación de Servicio"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Licencia Actividades Economicas Municipales</label>
+                <input required  type="text" class="form-control"
+                  [(ngModel)]="IFormOPP.licencia_actividades_economicas_municipales"
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Nro. Licencia Actividades Economicas Municipalesl" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Código de Actividad Económica del Seniat</label>
+                <input required  type="text" class="form-control"
+                  [(ngModel)]="IFormOPP.actividades_economicas_seniat" [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Código de Actividad Económica del Seniat" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Certificado de RUPDAE</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.certificado_rupdae"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Nro Certificadode RUPDAE" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Patronal IVSS</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.patronal_ivss"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Nro. Patronal IVSS" />
+              </div>
+            </div>
+
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Matricula INCES</label>
+                <input required type="text" [(ngModel)]="IFormOPP.matricula_inces"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Nro. Matricula INCES" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Identificación Laboral Ministerio del Trabajo</label>
+                <input required type="text" class="form-control"
+                  [(ngModel)]="IFormOPP.identificacion_laboral_ministerio_trabajo" [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Nro. Identificación Laboral Ministerio del Trabajo" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Certificado de EOMIC </label>
+                <input required  type="text" [(ngModel)]="IFormOPP.certificado_eomic"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Nro Certificado de EOMIC" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Permiso de Bomberos</label>
+                <input required type="text" [(ngModel)]="IFormOPP.permiso_bomberos"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Nro. Permiso de Bomberos" />
+              </div>
+            </div>
+
+
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Registro del SAPI</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.registro_sapi"
+                  [ngModelOptions]="{standalone: true}" class="form-control"
+                  placeholder="Ingrese Nro. Registro del SAPI" />
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Registro Nacional de Contratista</label>
+                <input required  type="text" class="form-control"
+                  [(ngModel)]="IFormOPP.registro_nacional_contratista" [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Nro. Registro Nacional de Contratista" />
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Flota Utilizada</label>
+                <ng-select #selectMultiLimited [items]="SelectFlotaUtilizada" [multiple]="true"
+                   placeholder="Seleccione Flota Utilizada" [(ngModel)]="IFormOPP.flota_utilizada"
+                  (ngModelChange)="CantidadFlota($event)"
+                  [ngModelOptions]="{standalone: true}" bindLabel="nombre_flota_utilizada" autocomplete="off">
+                </ng-select>
+              </div>
+            </div>
+
+            
+            <div class="col-sm-3 col-md-6" *ngIf="vehiculo_liviano">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red"> Total Vehiculos Livianos </font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.vehiculo_liviano"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Vehiculos Livianos" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camionetas">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camionetas</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camionetas"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camionetas" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camion_350">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camion 350</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_350"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camion 350" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camion_750">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camion 750</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_750"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camion 750" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camion_3_ejes">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camion 3 Ejes</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_3_ejes"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camion 3 Ejes" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camion_4_ejes">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camion 4 Ejes</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_4_ejes"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Camion 4 Ejes" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camion_5_ejes">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camion 5 Ejes</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_5_ejes"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Camion 5 Ejes" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="camion_6_ejes">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Camion 6 Ejes o más</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_6_ejes"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Camion 6 Ejes o más" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="buques">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Buques</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.buques"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Buques" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="aviones">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Aviones</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.aviones"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Aviones" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="avionetas">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Avionetas</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.avionetas"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Avionetas" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="containers">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Container's</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.containers"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Container's" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="motos">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Motos</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.motos"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Motos" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="bicicletas">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Bicicletas</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.bicicletas"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Bicicletas" />
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-6" *ngIf="autobuses">
+              <div class="form-group">
+                <label class="form-label" for="email"><font color="red">Total Autobuses</font></label>
+                <input required  type="number" [(ngModel)]="IConexionFlotaUtilizada.autobuses"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Autobuses" />
+              </div>
+            </div>
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. trabajadores directos que conforman la nomina de la
+                  OPP</label>
+                <input required  type="number" class="form-control" [(ngModel)]="IFormOPP.cantidad_trabajadores"
+                  [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Nro. trabajadores directos que conforman la nomina de la OPP" />
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro de Personal Subcontratados</label>
+                <input required  type="text" [(ngModel)]="IFormOPP.cantidad_subcontratados"
+                  [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Nro de Personal Subcontratados" />
+              </div>
+            </div>
+
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-control-label" for="email">Contraseña Ej: <strong>Arrd12345</strong></label>
+                <input type="password" name="TDMultiRulePassword" class="form-control" placeholder="Ingrese Contraseña de Acceso"
+                  ngModel #TDMultiRulePasswordRef="ngModel" required minlength="6"
+                  [(ngModel)]="IFormOPP.password"
+                  [ngModelOptions]="{standalone: true}"
+                  [class.error]="!TDMultiRulePasswordRef.valid && formUsersRegister.submitted"
+                  pattern="(?=.*d)(?=.*[a-z])(?=.*[A-Z]).{8,}" id="TDMultiRulePassword">
+                <div *ngIf="TDMultiRulePasswordRef.invalid && TDMultiRulePasswordRef.touched"
+                  class="form-text text-muted danger">
+                  <span *ngIf="formUsersRegister.submitted && TDMultiRulePasswordRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="Password.errors.required">Contraseña es requerido!</small>
+                  </span>
+                <small class="form-text text-danger" *ngIf="TDMultiRulePasswordRef.errors.required"> Password is required. </small>
+                <small  class="form-text text-danger" *ngIf="TDMultiRulePasswordRef.errors.pattern"> Debe contener al menos un número y una letra mayúscula y minúscula, y al menos 8 o más caracteres.</small>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="form-control-label" for="email">Confirmar la Contraseña</label>
+                <input type="password" class="form-control" placeholder="Confirm Password" minlength="6"
+                [(ngModel)]="passwordConfirm" [ngModelOptions]="{standalone: true}"
+                [class.error]="!TDMultiRuleConfPasswordRef.valid && formUsersRegister.submitted"
+                  name="TDMultiRuleConfPassword" placeholder="Confirme la Contraseña" class="form-control" required ngModel
+                  #TDMultiRuleConfPasswordRef="ngModel" pattern="{{ TDMultiRulePasswordRef.value }}"
+                  id="TDMultiRuleConfPassword">
+                <div *ngIf=" TDMultiRuleConfPasswordRef.invalid && TDMultiRuleConfPasswordRef.touched"
+                  class="form-text text-muted danger">
+                  <span *ngIf="formUsersRegister.submitted && TDMultiRuleConfPasswordRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="PasswordConfirm.errors.required">Confirmar la Contraseña es requerido!</small>
+                  </span>
+                  <small class="form-text text-danger" *ngIf="TDMultiRuleConfPasswordRef.errors.required"> Confirmar contraseña es requirido. </small>
+                  <small class="form-text text-danger" *ngIf="TDMultiRuleConfPasswordRef.errors.pattern"> Contraseña y Confirmar contraseña no coinciden.</small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="datos-generales" align="center">
+            <h3>
+              <font color="#FFFFFF"><strong>DATOS DEL REPRESENTANTE LEGAL DE LA EMPRESA </strong></font>
+            </h3>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label">Registro Nro.</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.n_registro"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Registro Nro."
+                #RegistroRepresentante="ngModel"
+                [class.error]="!RegistroRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && RegistroRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="RegistroRepresentante.errors.required">Registro es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label">De Fecha</label>
+                <input required  type="date" [(ngModel)]="IFormOPP_RepresentanteLegal.fecha_registro"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Fecha"
+                #FechaRepresentante="ngModel"
+                [class.error]="!FechaRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && FechaRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="FechaRepresentante.errors.required">Fecha es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label">Tomo</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.tomo"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Tomo"
+                #TomoRepresentante="ngModel"
+                [class.error]="!TomoRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && TomoRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="TomoRepresentante.errors.required">Tomo es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label">Nro. de Contrato</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.n_registro_contrato"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Registro Nro."
+                #RegistroRepresentante="ngModel"
+                [class.error]="!RegistroRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && RegistroRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="RegistroRepresentante.errors.required">Registro es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label">Fecha del Contrato</label>
+                <input required  type="date" [(ngModel)]="IFormOPP_RepresentanteLegal.fecha_registro_contrato"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Fecha"
+                #FechaRepresentante="ngModel"
+                [class.error]="!FechaRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && FechaRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="FechaRepresentante.errors.required">Fecha es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-4 col-12">
+              <div class="form-group">
+                <label class="form-label">Tomo del Contrato</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.tomo_contrato"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Tomo"
+                #TomoRepresentante="ngModel"
+                [class.error]="!TomoRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && TomoRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="TomoRepresentante.errors.required">Tomo es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nombres</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.nombres_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Nombres"
+                #NombresRepresentante="ngModel"
+                [class.error]="!NombresRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && NombresRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="NombresRepresentante.errors.required">Nombres es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label">Apellidos</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.apellidos_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Apellidos"
+                #ApellidosRepresentante="ngModel"
+                [class.error]="!ApellidosRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && ApellidosRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="ApellidosRepresentante.errors.required">Apellidos es requerido!</small>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Cédula de Identidad</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.cedula_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cédula de Identidad"
+                #CedulaRepresentante="ngModel"
+                [class.error]="!CedulaRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && CedulaRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="CedulaRepresentante.errors.required">Cedula de Identidad es requerido!</small>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Dirección</label>
+                <textarea class="form-control" [(ngModel)]="IFormOPP_RepresentanteLegal.direccion_representante_legal"
+                [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3" class="form-control"
+                #DireccionRepresentante="ngModel"
+                [class.error]="!DireccionRepresentante.valid && formUsersRegister.submitted"  
+                  placeholder="Dirección Fiscal"></textarea>
+                  <span *ngIf="formUsersRegister.submitted && DireccionRepresentante.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="DireccionRepresentante.errors.required">Direccion es requerido!</small>
+                  </span>
+  
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Correo Electronico</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.email_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Correo Electronico"
+                #EmailRepresentante="ngModel"
+                [class.error]="!EmailRepresentante.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && EmailRepresentante.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="EmailRepresentante.errors.required">Correo Electronico es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Facebook</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.facebook_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Facebook" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Instagram</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.instagram_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Instagram" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Twitter</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.twitter_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Twitter" />
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label">Cargo Junta Directiva</label>
+                <input required  type="text" class="form-control"
+                [(ngModel)]="IFormOPP_RepresentanteLegal.cargo_representante_legal"
+                [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Cargo en la Junta Directiva"
+                  #CargoRepresentante="ngModel"
+                  [class.error]="!CargoRepresentante.valid && formUsersRegister.submitted"  
+                  />
+                  <span *ngIf="formUsersRegister.submitted && CargoRepresentante.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="CargoRepresentante.errors.required">Cargo es requerido!</small>
+                  </span>  
+              </div>
+            </div>
+
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Telefono Movil</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_RepresentanteLegal.telefono_movil_representante_legal"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Nro. Telefono Movil"
+                #NtelefonoRepresentateMovil="ngModel"
+                [class.error]="!NtelefonoRepresentateMovil.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && NtelefonoRepresentateMovil.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="NtelefonoRepresentateMovil.errors.required">Nro Telefono Movil es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Telefono Residencial</label>
+                <input required  type="text" class="form-control"
+                [(ngModel)]="IFormOPP_RepresentanteLegal.telefono_residencial_representante_legal"
+                [ngModelOptions]="{standalone: true}"
+                  placeholder="Ingrese Nro. Telefono Residencial"
+                  #NtelefonoRepresentate="ngModel"
+                  [class.error]="!NtelefonoRepresentate.valid && formUsersRegister.submitted"  
+                  />
+                  <span *ngIf="formUsersRegister.submitted && NtelefonoRepresentate.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="NtelefonoRepresentate.errors.required">Nro Telefono Residencial es requerido!</small>
+                  </span>
+  
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="datos-generales" align="center">
+            <h3>
+              <font color="#FFFFFF"><strong>DATOS DEL DELEGADO</strong></font>
+            </h3>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nombres</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.nombres_delegado"
+                [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Nombres"
+                #NombresEncagado="ngModel"
+                [class.error]="!NombresEncagado.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && NombresEncagado.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="NombresEncagado.errors.required">Nombres es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label">Apellidos</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.apellidos_delegado"
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Apellidos"
+                #ApellidosEncagado="ngModel"
+                [class.error]="!ApellidosEncagado.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && ApellidosEncagado.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="ApellidosEncagado.errors.required">Apellidos es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Cédula de Identidad</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.cedula_delegado"
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Cédula de Identidad"
+                #CedulaEncagado="ngModel"
+                [class.error]="!CedulaEncagado.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && CedulaEncagado.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="CedulaEncagado.errors.required">Cedula de Identidad es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Correo Electronico</label>
+                <input required email type="text" [(ngModel)]="IFormOPP_DelegadoOPP.email_delegado"
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Correo Electronico"
+                #EmailEncargado="ngModel"
+                [class.error]="!EmailEncargado.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && EmailEncargado.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="EmailEncargado.errors.required">Correo Electronico es requerido!</small>
+                </span>
+
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Facebook</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.facebook_delegado"
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Facebook" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Instagram</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.instagram_delegado"
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Instagram" />
+              </div>
+            </div>
+            <div class="col-md-3 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Twitter</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.twitter_delegado"
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Twitter" />
+              </div>
+            </div>
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Cargo que Ocupa</label>
+                <input required  type="text" class="form-control" placeholder="Ingrese Cargo que Ocupa" 
+                [(ngModel)]="IFormOPP_DelegadoOPP.cargo_delegado"[ngModelOptions]="{standalone: true}"
+                #CargoOcupaEncagado="ngModel"
+                [class.error]="!CargoOcupaEncagado.valid && formUsersRegister.submitted"  
+                />
+                <span *ngIf="formUsersRegister.submitted && CargoOcupaEncagado.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="CargoOcupaEncagado.errors.required">Nro Telefono es requerido!</small>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Nro. Telefono</label>
+                <input required  type="text" [(ngModel)]="IFormOPP_DelegadoOPP.telefono_delegado"
+                #NTelefono="ngModel"
+                [class.error]="!NTelefono.valid && formUsersRegister.submitted"  
+                [ngModelOptions]="{standalone: true}"  class="form-control" placeholder="Ingrese Nro. Telefono" />
+                <span *ngIf="formUsersRegister.submitted && NTelefono.invalid" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="NTelefono.errors.required">Nro Telefono es requerido!</small>
+                </span>
+              </div>
+            </div>
+
+
+          </div>
+
+          <div class="col-12" align="center">
+            <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="RegisterOPPSubContrator()"
+              rippleEffect class="btn btn-success mr-1">Registrarse</button>
+            <button routerLink="/" rippleEffect class="btn btn-outline-secondary">Regresar</button>
+          </div>
+        </form>
+
+
+        <!-- <app-asistente-virtual></app-asistente-virtual> -->
+        <app-footer></app-footer>
+
+      </div>
+    </div>
+    <!-- /Login-->
+  </div>
+</div>

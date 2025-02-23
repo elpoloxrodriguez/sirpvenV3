@@ -1,0 +1,1498 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="card-body">
+
+
+    <ul ngbNav #navCenter="ngbNav" class="nav nav-pills nav-pill-primary my-2 justify-content-center">
+      <li ngbNavItem>
+        <a ngbNavLink>Datos Generales {{DataEmpresa.tipo_registro}}</a>
+        <ng-template ngbNavContent>
+          <div class="col-xl-12 col-md-12 col-12">
+            <!-- Header Starts -->
+            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
+              <div>
+                <div class="logo-wrapper">
+                  <h3 class="text-primary invoice-logo"> {{ DataEmpresa.nombre_empresa }} </h3>
+                </div>
+                <p class="card-text mb-25"><strong>RIF:</strong> {{ DataEmpresa.rif }} </p>
+                <p class="card-text mb-25"><strong>Email:</strong> {{ DataEmpresa.correo_electronico }} </p>
+                <p class="card-text mb-0"><strong>Tipo Registro:</strong> {{ DataEmpresa.tipo_registro }} </p>
+                <p class="card-text mb-0"><strong>Dirección:</strong> {{ DataEmpresa.direccion_empresa }} </p>
+                <p class="card-text mb-25"><strong>Estado:</strong> {{ DataEmpresa.estado_empresa }} |
+                  <strong>Ciudad:</strong> {{ DataEmpresa.ciudad_empresa }} |
+                  <strong>Municipio:</strong> {{ DataEmpresa.municipio_empresa }}
+                  | <strong>Parroquia:</strong> {{ DataEmpresa.parroquia_empresa }}
+                </p>
+                <p class="card-text mb-25"><strong>Facebook:</strong> {{ DataEmpresa.empresa_facebook }} |
+                  <strong>Instagram:</strong> {{ DataEmpresa.empresa_instagram }}
+                  | <strong>Twitter:</strong> {{ DataEmpresa.empresa_twitter }}
+                </p>
+                <p class="card-text mb-25"><strong>Tipo Agencia:</strong> {{ DataEmpresa.nombre_tipo_agencia }} </p>
+                <p class="card-text mb-25"><strong>Tipologia Agencia:</strong> {{ DataEmpresa.nombre_tipologia }} </p>
+                <p class="card-text mb-25"><strong>Cantidad Sucursales:</strong> {{ DataEmpresa.sucursales }} </p>
+                <p class="card-text mb-25"><strong>Cantidad Subcontrataciones:</strong> {{ DataEmpresa.subcontrataciones
+                  }} </p>
+                <p class="card-text mb-25"><strong>Especificación:</strong> {{ DataEmpresa.especificacion_servicio}}
+                </p>
+                <p class="card-text mb-25"><strong>Licencia Actividades Economicas Municipales:</strong> {{
+                  DataEmpresa.licencia_actividades_economicas_municipales}} </p>
+                <p class="card-text mb-25"><strong>Licencia Actividades Economicas SENIAT:</strong> {{
+                  DataEmpresa.actividades_economicas_seniat}} </p>
+                <p class="card-text mb-25"><strong>Certificado RUPDAE:</strong> {{ DataEmpresa.certificado_rupdae}} </p>
+                <p class="card-text mb-25"><strong>Licencia Patronal IVSS:</strong> {{ DataEmpresa.patronal_ivss}} </p>
+                <p class="card-text mb-25"><strong>Matricula INCES:</strong> {{ DataEmpresa.matricula_inces}} </p>
+                <p class="card-text mb-25"><strong>Identificación Ministerio Trabajo:</strong> {{
+                  DataEmpresa.identificacion_laboral_ministerio_trabajo}} </p>
+                <p class="card-text mb-25"><strong>Certificado EOMIC:</strong> {{ DataEmpresa.certificado_eomic}} </p>
+                <p class="card-text mb-25"><strong>Permiso Bomberos:</strong> {{ DataEmpresa.permiso_bomberos}} </p>
+                <p class="card-text mb-25"><strong>Registro SAPI:</strong> {{ DataEmpresa.registro_sapi}} </p>
+                <p class="card-text mb-25"><strong>Registro Nacional Contratista:</strong> {{
+                  DataEmpresa.registro_nacional_contratista}} </p>
+                <p class="card-text mb-25"><strong>Cantidad Trabajadores:</strong> {{ DataEmpresa.cantidad_trabajadores
+                  }} </p>
+                <p class="card-text mb-25"><strong>Cantidad Subcontratados:</strong> {{
+                  DataEmpresa.cantidad_subcontratados}} </p>
+              </div>
+
+              <div class="mt-md-0 mt-2">
+                <div class="invoice-date-wrapper">
+                  <button type="button" class="btn btn-icon btn-warning" rippleEffect
+                    (click)="ModalEditarEmpresa(EditarDatosGenerales)">
+                    <span [data-feather]="'edit'"></span>
+                    Actualizar
+                  </button>
+                </div>
+              </div>
+
+            </div>
+            <!-- Header Ends -->
+          </div>
+          <hr class="invoice-spacing" />
+          <!-- <div class="card-body invoice-padding pt-0">
+            <div class="row invoice-spacing">
+              <div class="col-xl-4 p-0 mt-xl-0 mt-2">
+                <h6 class="mb-2" align="center"><strong>Tipo Servicio</strong></h6>
+
+                <table class="table responsive">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Descripción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of DataEmpresa.tipo_servicio; index as i; trackBy: trackByFn">
+                      <th scope="row"> {{ i+1 }}</th>
+                      <td> {{ item.nombre_tipo_servicio }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-xl-4 p-0 mt-xl-0 mt-2">
+                <h6 class="mb-2" align="center"><strong>Flota Utilizada</strong></h6>
+
+                <table class="table responsive">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Descripción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of DataEmpresa.flota_utilizada; index as i; trackBy: trackByFn">
+                      <th scope="row"> {{ i+1 }}</th>
+                      <td> {{ item.nombre_flota_utilizada }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-xl-4 p-0 mt-xl-0 mt-2">
+                <h6 class="mb-2" align="center"><strong>Descripción Flota Utilizada</strong></h6>
+                <table class="table responsive">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of arrayFlotaUtilizada; let i = index">
+                      <th scope="row"> {{ i+1 }}</th>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.valor }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div> -->
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Flota Utilizada</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre Flota"
+                        (keyup)="filterUpdateSubcontratistas($event)"
+                        (search)="filterUpdateSubcontratistas($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <ngx-datatable [rows]="rowsSubcontratistas" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" [width]="20">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Rif" prop="rif" [width]="20">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ rif }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipología Empresa" prop="nombre_tipologia" [width]="20">
+                  <ng-template let-nombre_tipologia="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ nombre_tipologia }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Correo Electronico" prop="correo_electronico" [width]="20">
+                  <ng-template let-correo_electronico="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ correo_electronico }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Status" prop="status_empresa" [width]="20">
+                  <ng-template let-status_empresa="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_empresa === 0" class="badge badge-pill" ngClass="badge-light-warning">
+                      En Espera
+                    </div>
+                    <div *ngIf="status_empresa === 1" class="badge badge-pill" ngClass="badge-light-success">
+                      Aprobado
+                    </div>
+                    <div *ngIf="status_empresa === 2" class="badge badge-pill" ngClass="badge-light-danger">
+                      Rechazado
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+              </ngx-datatable> -->
+
+            </div>
+          </section>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Datos Representante Legal</a>
+        <ng-template ngbNavContent>
+
+          <div class="col-xl-12 col-md-12 col-12">
+            <!-- Header Starts -->
+            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
+              <div>
+                <div class="logo-wrapper">
+                  <h3 class="text-primary invoice-logo"> {{ DataRepresentanteLegal.nombres_representante_legal }} {{
+                    DataRepresentanteLegal.apellidos_representante_legal }} </h3>
+                </div>
+                <p class="card-text mb-25"><strong>Cedula Identidad:</strong> {{
+                  DataRepresentanteLegal.cedula_representante_legal }} </p>
+                <p class="card-text mb-25"><strong>Email:</strong> {{ DataRepresentanteLegal.email_representante_legal
+                  }} </p>
+                <p class="card-text mb-25"><strong>Tomo:</strong> {{ DataRepresentanteLegal.tomo }} </p>
+                <p class="card-text mb-25"><strong>N# Registro:</strong> {{ DataRepresentanteLegal.n_registro}}</p>
+                <p class="card-text mb-25"><strong>Fecha Registro:</strong> {{ DataRepresentanteLegal.fecha_registro}}
+                </p>
+                <p class="card-text mb-0"><strong>Dirección:</strong> {{
+                  DataRepresentanteLegal.direccion_representante_legal
+                  }} </p>
+                <p class="card-text mb-25"><strong>Facebook:</strong> {{
+                  DataRepresentanteLegal.facebook_representante_legal }} | <strong>Instagram:</strong> {{
+                  DataRepresentanteLegal.instagram_representante_legal }}
+                  | <strong>Twitter:</strong> {{ DataRepresentanteLegal.twitter_representante_legal }}
+                </p>
+                <p class="card-text mb-25"><strong>Telefono Residencial:</strong> {{
+                  DataRepresentanteLegal.telefono_residencial_representante_legal }} | <strong>Telefono
+                    Celular:</strong> {{
+                  DataRepresentanteLegal.telefono_movil_representante_legal }} </p>
+                <p class="card-text mb-25"><strong>Cargo:</strong> {{ DataRepresentanteLegal.cargo_representante_legal}}
+                </p>
+              </div>
+
+              <div class="mt-md-0 mt-2">
+                <div class="invoice-date-wrapper">
+                  <button type="button" *ngIf="!btnShowRepresentante"
+                    class="btn btn-icon btn-warning" rippleEffect
+                    (click)="ModalEditarRepresentanteLegal(EditarRepresentanteLegal)">
+                    <span [data-feather]="'edit'"></span>
+                    Actualizar Representante Legal
+                  </button>
+                  <button type="button" *ngIf="btnShowRepresentante"
+                    class="btn btn-icon btn-primary" rippleEffect
+                    (click)="ModalAddRepresentanteLegal(AddRepresentanteLegal)">
+                    <span [data-feather]="'user'"></span>
+                    Agregar Representante Legal
+                  </button>
+                </div>
+              </div>
+
+            </div>
+            <!-- Header Ends -->
+          </div>
+
+
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Datos del Delegado</a>
+        <ng-template ngbNavContent>
+
+          <div class="col-xl-12 col-md-12 col-12">
+            <!-- Header Starts -->
+            <div class="d-flex justify-content-between flex-md-row flex-column invoice-spacing mt-0">
+              <div>
+                <div class="logo-wrapper">
+                  <h3 class="text-primary invoice-logo"> {{ DataDelegado.nombres_delegado }} {{
+                    DataDelegado.apellidos_delegado }} </h3>
+                </div>
+                <p class="card-text mb-25"><strong>Cedula Identidad:</strong> {{ DataDelegado.cedula_delegado }} </p>
+                <p class="card-text mb-25"><strong>Email:</strong> {{ DataDelegado.email_delegado }} </p>
+                <p class="card-text mb-25"><strong>Facebook:</strong> {{ DataDelegado.facebook_delegado }} |
+                  <strong>Instagram:</strong> {{ DataDelegado.instagram_delegado}}
+                  | <strong>Twitter:</strong> {{ DataDelegado.twitter_delegado }}
+                </p>
+                <p class="card-text mb-25"> <strong>Telefono Celular:</strong> {{ DataDelegado.telefono_delegado }} </p>
+                <p class="card-text mb-25"><strong>Cargo:</strong> {{ DataDelegado.cargo_delegado}}</p>
+              </div>
+
+              <div class="mt-md-0 mt-2">
+                <div class="invoice-date-wrapper">
+                  <button type="button" *ngIf="!btnShowDelegado" class="btn btn-icon btn-warning"
+                    rippleEffect (click)="ModalEditarDelegado(EditarDelegado)">
+                    <span [data-feather]="'edit'"></span>
+                    Actualizar Delegado
+                  </button>
+                  <button type="button" *ngIf="btnShowDelegado" class="btn btn-icon btn-primary"
+                    rippleEffect (click)="ModalAddDelegado(AddDelegado)">
+                    <span [data-feather]="'user'"></span>
+                    Agregar Delegado
+                  </button>
+                </div>
+              </div>
+
+            </div>
+            <!-- Header Ends -->
+          </div>
+
+
+        </ng-template>
+      </li>
+      <li ngbNavItem *ngIf="TipoRegistro === 1">
+        <a ngbNavLink>Subcontratistas</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre Empresa"
+                        (keyup)="filterUpdateSubcontratistas($event)"
+                        (search)="filterUpdateSubcontratistas($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-datatable [rows]="rowsSubcontratistas" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" [width]="300">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Rif" prop="rif_empresa" [width]="100">
+                  <ng-template let-rif_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ rif_empresa }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Estado" prop="estado_empresa" [width]="20">
+                  <ng-template let-estado_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ estado_empresa }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Ciudad" prop="ciudad_empresa" [width]="20">
+                  <ng-template let-ciudad_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ ciudad_empresa }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Municipio" prop="municipio_empresa" [width]="20">
+                  <ng-template let-municipio_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ municipio_empresa }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Parroquia" prop="parroquia_empresa" [width]="20">
+                  <ng-template let-parroquia_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      {{ parroquia_empresa }}
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+
+                <ngx-datatable-column name="Tipo" prop="tipo_sub" [width]="100">
+                  <ng-template let-tipo_sub="value" ngx-datatable-cell-template>
+                    <div *ngIf="tipo_sub === 0" class="badge badge-pill" ngClass="badge-light-success">
+                      Principal
+                    </div>
+                    <div *ngIf="tipo_sub === 1" class="badge badge-pill" ngClass="badge-light-primary">
+                      Agencia
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Status" prop="status_agencia" [width]="100">
+                  <ng-template let-status_agencia="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_agencia === 0" class="badge badge-pill" ngClass="badge-light-warning">
+                      En Espera
+                    </div>
+                    <div *ngIf="status_agencia === 1" class="badge badge-pill" ngClass="badge-light-success">
+                      Activa
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink (click)="DocumentosAdjuntosOPPSUB()">Archivo Digital</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+
+            <div class="card">
+              <div class="row">
+                <div class="col-md-3 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+                <div class="col-md-3 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <button type="button" class="btn  btn-success" (click)="ModalSubirArchivo(SubirArchivo)"
+                      rippleEffect>
+                      <span [data-feather]="'file-plus'" [class]="'mr-25'"></span> Subir Documentación</button>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Tipo Documento"
+                        (keyup)="filterUpdateDocumentoAdjuntoEmpresa($event)"
+                        (search)="filterUpdateDocumentoAdjuntoEmpresa($event)" /></label>
+                  </div>
+                </div>
+              </div>
+              <ngx-datatable [rows]="rowsDocumentosAdjuntosEmpresa" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Tipo Documento" prop="nombre_reto" width="auto">
+                  <ng-template let-nombre_reto="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ nombre_reto }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Documento" prop="nomb" width="auto">
+                  <ng-template let-nomb="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ nomb.substring(20,32) }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Fecha Vencimiento" prop="vencimiento" width="auto">
+                  <ng-template let-vencimiento="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ vencimiento }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Acción" [width]="20" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div>
+                      <a [href]="DescargarADP(row.numc,row.nomb)" class="btn btn-sm bg-gradient-success" rippleEffect>
+                        <span [data-feather]="'download-cloud'" [class]="'mr-25'"></span></a>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+              </ngx-datatable>
+            </div>
+          </section>
+        </ng-template>
+      </li>
+
+    </ul>
+    <div [ngbNavOutlet]="navCenter" class="mt-2"></div>
+
+  </div>
+</div>
+
+
+<ng-template #SubirArchivo let-modal>
+  <div *blockUI="'section-block'">
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">Subir Archivo Digital Postal</h5>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <div class="col-xl-12 col-md-12 col-12 printRef">
+        <!-- Header Starts -->
+        <!-- <div *blockUI="'section-block'"> -->
+        <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+          <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+          <div class="form-group">
+            <label for="basicInputFile">Seleccionar Tipo de Documento</label>
+            <div class="custom-file">
+              <!-- <select class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="TipoDocument"
+              (OnChange)="selAccion()">
+              <option value="0">Seleccione Tipo de Documento</option>
+              <option *ngFor="let e of lstTipoDoc" value="{{e.id}}">{{e.name}}</option>
+            </select> -->
+              <ng-select [items]="SelectArchivoDigitalPostal" [(ngModel)]="TipoDocument"
+                [ngModelOptions]="{standalone: true}" (OnChange)="selAccion()" bindLabel="name" bindValue="id"
+                placeholder="Seleccione Tipo de Documento" required autocomplete="off">
+              </ng-select>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="basicInputFile">Seleccionar Archivo</label>
+            <div>
+              <input (change)="fileSelected($event)" class="form-control" name="archivos" type="file" accept=".pdf">
+            </div>
+          </div>
+
+          <!-- <div class="form-group">
+            <label for="basicInputFile">Seleccionar Archivo</label>
+            <div class="custom-file">
+              <input (change)="fileSelected($event)" class="custom-file-input" name="archivos" type="file" accept=".pdf">
+              <label class="custom-file-label" for="customFile">Solo formato PDF</label>
+            </div>
+          </div> -->
+
+
+          <div class="form-group">
+            <label for="basicInputFile">Seleccione Vigencia del Documento</label>
+            <div class="input-group">
+              <input class="form-control" readonly placeholder="Seleccione Vigencia del Documento"
+                name="Basic Date Picker" [(ngModel)]="datetime1" ngbDatepicker #basicDP="ngbDatepicker">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary feather icon-calendar" (click)="basicDP.toggle()" type="button"
+                  rippleEffect></button>
+              </div>
+            </div>
+          </div>
+
+          <div id="errorBlock" class="help-block"></div>
+        </form>
+      </div>
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <button class="btn bg-gradient-success text-white " (click)="subirArchivo()">
+      <span class="fa fa-upload"></span>&nbsp;&nbsp;Enviar Archivos </button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+  <!-- </div> -->
+</ng-template>
+
+<ng-template #EditarDatosGenerales let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Actualizar Datos Generales</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row">
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label class="form-label">Nombre de la Empresa</label>
+            <input required type="text" class="form-control" [(ngModel)]="DataEmpresa.nombre_empresa"
+              [ngModelOptions]="{standalone: true}" placeholder="Nombre de Empresa" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label class="form-label">Numero de RIF</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.rif" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Numero de RIF" />
+          </div>
+        </div>
+        <div class="col-md-12 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Dirección Fiscal</label>
+            <textarea class="form-control" [(ngModel)]="DataEmpresa.direccion_empresa"
+              [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3" class="form-control"
+              placeholder="Dirección Fiscal"></textarea>
+
+          </div>
+        </div>
+
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Estado</label>
+            <ng-select [items]="SelectEstado" bindLabel="estado" placeholder="Seleccione Estado"
+              [(ngModel)]="DataEmpresa.estado_empresa" [ngModelOptions]="{standalone: true}" required autocomplete="off"
+              (ngModelChange)="Select_Ciudad($event.id_estado)">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Ciudad</label>
+            <ng-select [items]="SelectCiudad" [(ngModel)]="DataEmpresa.ciudad_empresa"
+              [ngModelOptions]="{standalone: true}" (ngModelChange)="Select_Municipo($event.id_estado)"
+              bindLabel="ciudad" placeholder="Seleccione Ciudad" required autocomplete="off">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Municipios</label>
+            <ng-select [items]="SelectMunicipio" [(ngModel)]="DataEmpresa.municipio_empresa"
+              [ngModelOptions]="{standalone: true}" (ngModelChange)="Select_Parroquia($event.id_municipio)"
+              bindLabel="municipio" placeholder="Seleccione Municipios" required autocomplete="off">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label">Parroquia</label>
+            <ng-select [items]="SelectParroquia" [(ngModel)]="DataEmpresa.parroquia_empresa"
+              [ngModelOptions]="{standalone: true}" bindLabel="parroquia" placeholder="Seleccione Parroquia" required
+              autocomplete="off">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="col-md-12 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Correo Electronico OPP</label>
+            <input required email type="text" [(ngModel)]="DataEmpresa.correo_electronico"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Correo Electronico OPP" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Facebook</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.empresa_facebook" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Ingrese Correo Principal" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Instagram</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.empresa_instagram"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Correo Electronico Secundario" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Twitter</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.empresa_twitter" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Ingrese Correo Electronico Secundario" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Tipo de Agencia</label>
+            <ng-select [items]="SelectTipoAgencia" bindValue="id_tipo_agencia" [(ngModel)]="DataEmpresa.tipo_agencia"
+              [ngModelOptions]="{standalone: true}" bindLabel="nombre_tipo_agencia"
+              placeholder="Seleccione Tipo de Agencia" required autocomplete="off">
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Cantidad de Sucursales</label>
+            <input required type="number" class="form-control" [(ngModel)]="DataEmpresa.sucursales"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Cantidad de Sucursales" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Cantidad de Sub Contrataciones</label>
+            <input required type="number" class="form-control" [(ngModel)]="DataEmpresa.subcontrataciones"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Cantidad de Sub Contrataciones" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Tipología de Empresa OPP {{labelTipologiaEmpresa}}</label>
+            <input required type="text" class="form-control" [(ngModel)]="DataEmpresa.tipologia_empresa"
+              [ngModelOptions]="{standalone: true}" readonly placeholder="Seleccione Tipología de Empresa OPP" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Tipo de servicio que presta o proveé el OPP</label>
+            <ng-select #selectMultiLimited [items]="SelectTipoServicio" [multiple]="true"
+              (ngModelChange)="Select_TipologiaEmpresa($event)" [(ngModel)]="DataEmpresa.tipo_servicio"
+              [ngModelOptions]="{standalone: true}" [maxSelectedItems]="7" placeholder="Seleccione Tipo de Servicio OPP"
+              bindLabel="nombre_tipo_servicio" autocomplete="off">
+            </ng-select>
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label class="form-label">Especificación de Servicio</label>
+            <textarea class="form-control" [(ngModel)]="DataEmpresa.especificacion_servicio"
+              [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3" class="form-control"
+              placeholder="Describe Especificación de Servicio"></textarea>
+          </div>
+        </div>
+
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Licencia Actividades Economicas Municipales</label>
+            <input required type="text" class="form-control"
+              [(ngModel)]="DataEmpresa.licencia_actividades_economicas_municipales"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Nro. Licencia Actividades Economicas Municipalesl" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Código de Actividad Económica del Seniat</label>
+            <input required type="text" class="form-control" [(ngModel)]="DataEmpresa.actividades_economicas_seniat"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Código de Actividad Económica del Seniat" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Certificado de RUPDAE</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.certificado_rupdae"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Nro Certificadode RUPDAE" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Patronal IVSS</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.patronal_ivss" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Ingrese Nro. Patronal IVSS" />
+          </div>
+        </div>
+
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Matricula INCES</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.matricula_inces" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Ingrese Nro. Matricula INCES" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Identificación Laboral Ministerio del Trabajo</label>
+            <input required type="text" class="form-control"
+              [(ngModel)]="DataEmpresa.identificacion_laboral_ministerio_trabajo" [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Nro. Identificación Laboral Ministerio del Trabajo" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Certificado de EOMIC </label>
+            <input required type="text" [(ngModel)]="DataEmpresa.certificado_eomic"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Nro Certificado de EOMIC" />
+          </div>
+        </div>
+        <div class="col-md-3 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Permiso de Bomberos</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.permiso_bomberos" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Ingrese Nro. Permiso de Bomberos" />
+          </div>
+        </div>
+
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Registro del SAPI</label>
+            <input required type="text" [(ngModel)]="DataEmpresa.registro_sapi" [ngModelOptions]="{standalone: true}"
+              class="form-control" placeholder="Ingrese Nro. Registro del SAPI" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. Registro Nacional de Contratista</label>
+            <input required type="text" class="form-control" [(ngModel)]="DataEmpresa.registro_nacional_contratista"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Nro. Registro Nacional de Contratista" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Flota Utilizada</label>
+            <ng-select #selectMultiLimited [items]="SelectFlotaUtilizada" [multiple]="true"
+              placeholder="Seleccione Flota Utilizada" [(ngModel)]="DataEmpresa.flota_utilizada"
+              (ngModelChange)="CantidadFlota($event)" [ngModelOptions]="{standalone: true}"
+              bindLabel="nombre_flota_utilizada" autocomplete="off">
+            </ng-select>
+          </div>
+        </div>
+
+
+        <div class="col-sm-3 col-md-6" *ngIf="vehiculo_liviano">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red"> Total Vehiculos Livianos </font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.vehiculo_liviano"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Cantidad Vehiculos Livianos" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camionetas">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camionetas</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camionetas"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camionetas" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camion_350">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camion 350</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_350"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camion 350" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camion_750">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camion 750</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_750"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad de Camion 750" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camion_3_ejes">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camion 3 Ejes</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_3_ejes"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Cantidad de Camion 3 Ejes" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camion_4_ejes">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camion 4 Ejes</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_4_ejes"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Camion 4 Ejes" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camion_5_ejes">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camion 5 Ejes</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_5_ejes"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Camion 5 Ejes" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="camion_6_ejes">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Camion 6 Ejes o más</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.camion_6_ejes"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Cantidad Camion 6 Ejes o más" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="buques">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Buques</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.buques"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Buques" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="aviones">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Aviones</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.aviones"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Aviones" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="avionetas">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Avionetas</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.avionetas"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Avionetas" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="containers">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Container's</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.containers"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Container's" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="motos">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Motos</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.motos"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Motos" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="bicicletas">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Bicicletas</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.bicicletas"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Bicicletas" />
+          </div>
+        </div>
+        <div class="col-sm-3 col-md-6" *ngIf="autobuses">
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <font color="red">Total Autobuses</font>
+            </label>
+            <input required type="number" [(ngModel)]="IConexionFlotaUtilizada.autobuses"
+              [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese Cantidad Autobuses" />
+          </div>
+        </div>
+
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro. trabajadores directos que conforman la nomina de la
+              OPP</label>
+            <input required type="number" class="form-control" [(ngModel)]="DataEmpresa.cantidad_trabajadores"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Nro. trabajadores directos que conforman la nomina de la OPP" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Nro de Personal Subcontratados</label>
+            <input required email type="text" [(ngModel)]="DataEmpresa.cantidad_subcontratados"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+              placeholder="Ingrese Nro de Personal Subcontratados" />
+          </div>
+        </div>
+      </div>
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="ActualizarDatosGenerales()" rippleEffect class="btn btn-success mr-1">Actualizar
+      Datos Generales</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #EditarDelegado let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Actualizar Datos del Delegado</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Nombres</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Nombres"
+              [(ngModel)]="DataDelegado.nombres_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Apellidos</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Apellidos"
+              [(ngModel)]="DataDelegado.apellidos_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cedula de Identidad</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cedula de Identidad"
+              [(ngModel)]="DataDelegado.cedula_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Correl Electrónico</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Correo Electrónico"
+              [(ngModel)]="DataDelegado.email_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N~ Telefonico</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Nombres"
+              [(ngModel)]="DataDelegado.telefono_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cargo</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cargo"
+              [(ngModel)]="DataDelegado.cargo_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Facebook</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Facebook"
+              [(ngModel)]="DataDelegado.facebook_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Instagram</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Instagram"
+              [(ngModel)]="DataDelegado.instagram_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Twitter</label>
+            <input type="text" class="form-control" autocomplete="off" [(ngModel)]="DataDelegado.twitter_delegado"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Twitter" />
+          </div>
+        </div>
+
+      </div>
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="UpdateDelegado()" rippleEffect class="btn btn-success mr-1">Actualizar
+      Delegado</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #EditarRepresentanteLegal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Actualizar Datos del Representante Legal</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Nombres</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Nombres"
+              [(ngModel)]="DataRepresentanteLegal.nombres_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Apellidos</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Apellidos"
+              [(ngModel)]="DataRepresentanteLegal.apellidos_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cedula de Identidad</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cedula de Identidad"
+              [(ngModel)]="DataRepresentanteLegal.cedula_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Correl Electrónico</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Correo Electrónico"
+              [(ngModel)]="DataRepresentanteLegal.email_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N~ Telefonico Movil</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Telefono Movil"
+              [(ngModel)]="DataRepresentanteLegal.telefono_movil_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N~ Telefonico Residencial</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Telefono Residencial"
+              [(ngModel)]="DataRepresentanteLegal.telefono_residencial_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cargo</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cargo"
+              [(ngModel)]="DataRepresentanteLegal.cargo_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Facebook</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Facebook"
+              [(ngModel)]="DataRepresentanteLegal.facebook_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Instagram</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Instagram"
+              [(ngModel)]="DataRepresentanteLegal.instagram_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Twitter</label>
+            <input type="text" class="form-control" autocomplete="off"
+              [(ngModel)]="DataRepresentanteLegal.twitter_representante_legal" [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Twitter" />
+          </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N# Registro</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese N# Registro"
+              [(ngModel)]="DataRepresentanteLegal.n_registro" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Fecha Registro</label>
+            <input type="date" class="form-control" [value]="DataRepresentanteLegal.fecha_registro" min="01-01-2019"
+              max="11-11-2022" autocomplete="off" placeholder="Ingrese Fecha de Registro"
+              [(ngModel)]="DataRepresentanteLegal.fecha_registro" [ngModelOptions]="{standalone: true}" />
+            <!-- <input type="date" class="form-control"  [value]="DataRepresentanteLegal.fecha_registro" > -->
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Tomo</label>
+            <input type="text" class="form-control" autocomplete="off" [(ngModel)]="DataRepresentanteLegal.tomo"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Tomo" />
+          </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N# Registro Contrato</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese N# Registro"
+              [(ngModel)]="DataRepresentanteLegal.n_registro_contrato" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Fecha Registro Contrato</label>
+            <input type="date" class="form-control" [value]="DataRepresentanteLegal.fecha_registro_contrato"
+              autocomplete="off" placeholder="Ingrese Fecha de Registro"
+              [(ngModel)]="DataRepresentanteLegal.fecha_registro_contrato" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Tomo Contrato</label>
+            <input type="text" class="form-control" autocomplete="off"
+              [(ngModel)]="DataRepresentanteLegal.tomo_contrato" [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Tomo" />
+          </div>
+        </div>
+
+      </div>
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="UpdateRepresentanteLegal()" rippleEffect class="btn btn-success mr-1">Actualizar
+      Representante Legal</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #AddDelegado let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Agregar Datos del Delegado</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Nombres</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Nombres"
+              [(ngModel)]="DataDelegado.nombres_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Apellidos</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Apellidos"
+              [(ngModel)]="DataDelegado.apellidos_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cedula de Identidad</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cedula de Identidad"
+              [(ngModel)]="DataDelegado.cedula_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Correl Electrónico</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Correo Electrónico"
+              [(ngModel)]="DataDelegado.email_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N~ Telefonico</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Nombres"
+              [(ngModel)]="DataDelegado.telefono_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cargo</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cargo"
+              [(ngModel)]="DataDelegado.cargo_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Facebook</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Facebook"
+              [(ngModel)]="DataDelegado.facebook_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Instagram</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Instagram"
+              [(ngModel)]="DataDelegado.instagram_delegado" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Twitter</label>
+            <input type="text" class="form-control" autocomplete="off" [(ngModel)]="DataDelegado.twitter_delegado"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Twitter" />
+          </div>
+        </div>
+
+      </div>
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="AddDelegadoOPP()" rippleEffect class="btn btn-success mr-1">Agregar
+      Delegado</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #AddRepresentanteLegal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Agregar Datos del Representante Legal</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Nombres</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Nombres"
+              [(ngModel)]="DataRepresentanteLegal.nombres_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Apellidos</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Apellidos"
+              [(ngModel)]="DataRepresentanteLegal.apellidos_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cedula de Identidad</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cedula de Identidad"
+              [(ngModel)]="DataRepresentanteLegal.cedula_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Correl Electrónico</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Correo Electrónico"
+              [(ngModel)]="DataRepresentanteLegal.email_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N~ Telefonico Movil</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Telefono Movil"
+              [(ngModel)]="DataRepresentanteLegal.telefono_movil_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N~ Telefonico Residencial</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Telefono Residencial"
+              [(ngModel)]="DataRepresentanteLegal.telefono_residencial_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Cargo</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Cargo"
+              [(ngModel)]="DataRepresentanteLegal.cargo_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Facebook</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Facebook"
+              [(ngModel)]="DataRepresentanteLegal.facebook_representante_legal" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Instagram</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese Instagram"
+              [(ngModel)]="DataRepresentanteLegal.instagram_representante_legal"
+              [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Twitter</label>
+            <input type="text" class="form-control" autocomplete="off"
+              [(ngModel)]="DataRepresentanteLegal.twitter_representante_legal" [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Twitter" />
+          </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N# Registro</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese N# Registro"
+              [(ngModel)]="DataRepresentanteLegal.n_registro" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Fecha Registro</label>
+            <input type="date" class="form-control" [value]="DataRepresentanteLegal.fecha_registro" min="01-01-2019"
+              max="11-11-2022" autocomplete="off" placeholder="Ingrese Fecha de Registro"
+              [(ngModel)]="DataRepresentanteLegal.fecha_registro" [ngModelOptions]="{standalone: true}" />
+            <!-- <input type="date" class="form-control"  [value]="DataRepresentanteLegal.fecha_registro" > -->
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Tomo</label>
+            <input type="text" class="form-control" autocomplete="off" [(ngModel)]="DataRepresentanteLegal.tomo"
+              [ngModelOptions]="{standalone: true}" placeholder="Ingrese Tomo" />
+          </div>
+        </div>
+
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">N# Registro Contrato</label>
+            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese N# Registro"
+              [(ngModel)]="DataRepresentanteLegal.n_registro_contrato" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Fecha Registro Contrato</label>
+            <input type="date" class="form-control" [value]="DataRepresentanteLegal.fecha_registro_contrato"
+              autocomplete="off" placeholder="Ingrese Fecha de Registro"
+              [(ngModel)]="DataRepresentanteLegal.fecha_registro_contrato" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">Tomo Contrato</label>
+            <input type="text" class="form-control" autocomplete="off"
+              [(ngModel)]="DataRepresentanteLegal.tomo_contrato" [ngModelOptions]="{standalone: true}"
+              placeholder="Ingrese Tomo" />
+          </div>
+        </div>
+
+      </div>
+      <!-- Header Ends -->
+    </div>
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="AddRepresentanteLegalOPP()" rippleEffect class="btn btn-success mr-1">Agregar
+      Representante Legal</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>

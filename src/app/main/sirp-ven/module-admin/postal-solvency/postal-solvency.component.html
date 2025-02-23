@@ -1,0 +1,129 @@
+<div class="card content-wrapper container-xxl p-0" *blockUI="'section-block'">
+    <div class="card-body">
+
+        <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-3 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+                
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" autocomplete="off" placeholder="Nombre OPP"
+                        (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-datatable [rows]="rowsOPP_SUB" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="RIF" prop="rif"  [width]="5">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ rif }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="EOMIC" prop="certificado_eomic" [width]="5">
+                  <ng-template let-certificado_eomic="value" ngx-datatable-cell-template>
+                    <div *ngIf="certificado_eomic != 0 " class="badge badge-pill" ngClass="badge-light-success">
+                      ✅
+                    </div>
+                    <!-- <div *ngIf="certificado_eomic === 0 || certificado_eomic === 'NO POSEE'  || certificado_eomic === ' ' " class="badge badge-pill" ngClass="badge-light-danger"> 
+                      ❌
+                    </div> -->
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="STATUS" prop="status_empresa" [width]="5">
+                  <ng-template let-status_empresa="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_empresa == 1" class="badge badge-pill" ngClass="badge-light-success">
+                      Activa
+                    </div>
+                    <div *ngIf="status_empresa == 0" class="badge badge-pill" ngClass="badge-light-danger">
+                      Inactiva
+                    </div>
+                    <div *ngIf="status_empresa == 2" class="badge badge-pill" ngClass="badge-light-warning">
+                      Revocatoria
+                    </div>
+                    <div *ngIf="status_empresa == 3" class="badge badge-pill" ngClass="badge-light-warning">
+                      Finiquito de Contrato
+                    </div>
+                    <div *ngIf="status_empresa == 4" class="badge badge-pill" ngClass="badge-light-warning">
+                      No Movilización de Piezas
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Concesion" prop="status_curp" [width]="5">
+                  <ng-template let-status_curp="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_curp == 1" class="badge badge-pill" ngClass="badge-light-success">
+                      Aprobada
+                    </div>
+                    <div *ngIf="status_curp == 0" class="badge badge-pill" ngClass="badge-light-danger">
+                      En Espera
+                    </div>
+                    <div *ngIf="status_curp == 2" class="badge badge-pill" ngClass="badge-light-warning">
+                      En Revisión
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a (click)="DetallesOPP(ModalDetailsOPP,row)"
+                          ngbDropdownItem><span [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span>
+                          Detalles</a>
+                        <a (click)="ModalAprobarConcesionPostal(ModalAprobarOPP,row)"  *ngIf="row.status_curp == null" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'edit'" [class]="'mr-50'"></span> Aprobar Concesión</a>
+                            <a (click)="DeleteConcesionPostalPrivada(row)" *ngIf="row.id_curp != null" ngbDropdownItem><span [size]="16"
+                              [data-feather]="'trash'" [class]="'mr-50'"></span> Revocar Concesión</a>
+                              <a (click)="GenerarCertificadoInscripcion(row)" *ngIf="row.id_curp != null" ngbDropdownItem><span [size]="16"
+                                [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Certificado</a>
+                            <a (click)="CambiarStatusOPP(ModalCambiarStatusOPP,row)" ngbDropdownItem><span [size]="16"
+                              [data-feather]="'check-square'" [class]="'mr-50'"></span> Cambiar Status</a>
+                              <a (click)="CambiarContrasena(ModalCambiarContrasena,row)" ngbDropdownItem><span [size]="16"
+                                [data-feather]="'key'" [class]="'mr-50'"></span> Cambiar Contraseña</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+          
+    </div>
+</div>
