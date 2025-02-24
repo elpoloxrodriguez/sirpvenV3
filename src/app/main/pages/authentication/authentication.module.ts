@@ -71,6 +71,7 @@ const routes: Routes = [
   // },
   {
     path: 'reset-password/:id',
+    // path: 'reset-password/:firstId/:secondId',
     component: AuthResetPasswordV2Component,
   },
   {

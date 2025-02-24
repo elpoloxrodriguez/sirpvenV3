@@ -18,29 +18,31 @@ import { Router } from '@angular/router';
 })
 export class AuthForgotPasswordV2Component implements OnInit {
 
-  public xAPI : IAPICore = {
+  public xAPI: IAPICore = {
     funcion: '',
     parametros: '',
-    valores : {},
+    valores: {},
   };
 
-  public  img
+  public img
   public appLogoImage
   public appName
 
+  public fnx;
+
   public SelectedTipoRegistro = [
-    {id: '1', name: 'Operador Postal Privado'},
-    {id: '2', name: 'Subcontratista'}
+    { id: '1', name: 'Operador Postal Privado' },
+    { id: '2', name: 'Subcontratista' }
   ]
   public SelectedTipoEmpresa = []
 
   public SelectedTipoAgencia = []
 
   public SelectedTipologia = []
-  
+
   public tokenPWD
 
-  
+
   // Public
   public emailVar;
   public coreConfig: any;
@@ -73,7 +75,7 @@ export class AuthForgotPasswordV2Component implements OnInit {
     private utilservice: UtilService,
     private apiService: ApiService,
     private _router: Router,
-    ) {
+  ) {
     this._unsubscribeAll = new Subject();
 
     // Configure the layout
@@ -107,23 +109,44 @@ export class AuthForgotPasswordV2Component implements OnInit {
     // stop here if form is invalid
     if (this.forgotPasswordForm.invalid) {
       return;
-    }    
-    this.xAPI.funcion = 'IPOSTEL_R_forgotpassword1'
+    }
+    this.xAPI.funcion = 'IPOSTEL_R_forgotpassword2'
     this.xAPI.parametros = this.forgotPasswordForm.value.email
     this.xAPI.valores = ''
     await this.apiService.EjecutarDev(this.xAPI).subscribe(
       (data) => {
-           if (data.Cuerpo.length > 0) {
-      this.show = true
-      this.btn = true
-    } else {
-        this.utilservice.alertConfirmMini('error','<font color="red">Oops Lo sentimos!</font><br> Correo Electronico no valido, verifiquelo e intente de nuevo')
-    }
+        if (data.Cuerpo.length > 0) {
+          // console.log(data.Cuerpo[0].correo_electronico)
+          this.tokenPWD = this.utilservice.TokenAleatorio(50)
+          sessionStorage.setItem("TokenResetPassEmail", btoa(data.Cuerpo[0].correo_electronico));
+          sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
+          this.EnviarCorreo(data.Cuerpo[0].correo_electronico, btoa(this.tokenPWD),btoa(data.Cuerpo[0].correo_electronico), data.Cuerpo[0].nombre_empresa)
+          this.utilservice.alertConfirmMini('success', ' Felicidades! <br> Se ha enviado un correo electronico con la información para restablecer su contraseña')
+          this._router.navigate(['/'])
+        } else {
+          this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo')
+        }
       },
       (error) => {
         console.error(error)
       }
     )
+    // this.xAPI.funcion = 'IPOSTEL_R_forgotpassword1'
+    // this.xAPI.parametros = this.forgotPasswordForm.value.email
+    // this.xAPI.valores = ''
+    // await this.apiService.EjecutarDev(this.xAPI).subscribe(
+    //   (data) => {
+    //        if (data.Cuerpo.length > 0) {
+    //   this.show = true
+    //   this.btn = true
+    // } else {
+    //     this.utilservice.alertConfirmMini('error','<font color="red">Oops Lo sentimos!</font><br> Correo Electronico no valido, verifiquelo e intente de nuevo')
+    // }
+    //   },
+    //   (error) => {
+    //     console.error(error)
+    //   }
+    // )
   }
 
   // Lifecycle Hooks
@@ -138,8 +161,8 @@ export class AuthForgotPasswordV2Component implements OnInit {
     });
 
 
-    await this.Select_TipoAgencia()
-    await this.Select_TipologiaEmpresa()
+    // await this.Select_TipoAgencia()
+    // await this.Select_TipologiaEmpresa()
 
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
@@ -188,21 +211,44 @@ export class AuthForgotPasswordV2Component implements OnInit {
   }
 
 
-  async ValidarInfo(){
+  async ValidarInfo() {
     this.xAPI.funcion = 'IPOSTEL_R_forgotpassword2'
-    this.xAPI.parametros = this.forgotPasswordForm.value.email+','+this.inputRif+','+this.inputTipoRegistro+','+this.inputTipologia+','+this.inputTipoAgencia
+    // this.xAPI.parametros = this.forgotPasswordForm.value.email+','+this.inputRif+','+this.inputTipoRegistro+','+this.inputTipologia+','+this.inputTipoAgencia
+    this.xAPI.parametros = this.forgotPasswordForm.value.email
     this.xAPI.valores = ''
     await this.apiService.EjecutarDev(this.xAPI).subscribe(
       (data) => {
-           if (data.Cuerpo.length > 0) {
-        this.tokenPWD = this.utilservice.TokenAleatorio(50)
-        sessionStorage.setItem("TokenResetPassEmail", btoa(this.forgotPasswordForm.value.email));
-        sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
-        this.utilservice.alertConfirmMini('success',' Datos Validos <br> por favor ingrese la nueva contraseña')
-        this._router.navigate(['reset-password/',this.tokenPWD])
-    } else {
-        this.utilservice.alertConfirmMini('warning','<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo')
+        if (data.Cuerpo.length > 0) {
+          this.tokenPWD = this.utilservice.TokenAleatorio(50)
+          sessionStorage.setItem("TokenResetPassEmail", btoa(this.forgotPasswordForm.value.email));
+          sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
+          this.utilservice.alertConfirmMini('success', ' Datos Validos <br> por favor ingrese la nueva contraseña')
+          this._router.navigate(['reset-password/', this.tokenPWD +'/'+ btoa(this.forgotPasswordForm.value.email)])
+        } else {
+          this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo')
+        }
+      },
+      (error) => {
+        console.error(error)
+      }
+    )
+  }
+
+  async EnviarCorreo(email: string, hash: string, Hemail:string, user:string) {
+    this.fnx = {
+      funcion: 'Fnx_EnviarMailCurl',
+      MAIL: email,
+      HASH: hash,
+      HEMAIL: Hemail,
+      USER: user
     }
+    await this.apiService.ExecFnx(this.fnx).subscribe(
+      (data) => {
+        if (data.Cuerpo.length > 0) {
+          this.utilservice.alertConfirmMini('success', 'Felicidades! <br> ')
+        } else {
+          this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> verifiquelos e intente de nuevo')
+        }
       },
       (error) => {
         console.error(error)

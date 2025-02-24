@@ -44,6 +44,9 @@ export class AuthResetPasswordV2Component implements OnInit {
   public TokenEmail
   public token
   public uri
+
+  public firstId
+  public secondId
   // Private
   private _unsubscribeAll: Subject<any>;
 
@@ -134,9 +137,22 @@ export class AuthResetPasswordV2Component implements OnInit {
       this.appName = this.coreConfig.app.appName
     });
 
-    this.token = atob(sessionStorage.getItem('TokenResetPass'))
-    this.uri = this.rutaActiva.snapshot.params.id
-    if (this.token === this.uri ) {
+    this.uri = this.rutaActiva.snapshot.params['id'];
+    const partes: string[] = this.uri.split('IPOSTEL');
+
+    const antesDelAsterisco = partes[0];
+    const despuesDelAsterisco = partes.length > 1 ? partes[1] : undefined;
+
+    console.log('URI:', this.uri);
+    console.log('Antes del asterisco:', antesDelAsterisco);
+    console.log('Después del asterisco:', despuesDelAsterisco);
+
+    await sessionStorage.setItem("token", this.uri);
+    await sessionStorage.setItem("TokenResetPass", antesDelAsterisco);
+    await sessionStorage.setItem("TokenResetPassEmail", despuesDelAsterisco );
+    this.token = sessionStorage.getItem('token')
+
+    if (this.token == this.uri ) {
       
     } else {
       this.utilservice.alertConfirmMini('error','<font color="red">Oops Lo sentimos!</font><br> El Token de verificación es invalido, verifiquelo e intente de nuevo')
@@ -157,7 +173,7 @@ export class AuthResetPasswordV2Component implements OnInit {
       (data) => {
         if (data.tipo == 1) {
           this.utilservice.alertConfirmMini('success','Felicidades<br> su contraseña fue actualizada satisfactoriamente!')
-          this._router.navigate(['login'])
+          this._router.navigate(['/'])
           sessionStorage.clear();    
         } else {
           this.utilservice.alertConfirmMini('error','<font color="red">Oops Lo sentimos!</font> <br> Algo salio mal!, Verifique e intente de nuevo')
