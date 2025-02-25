@@ -252,7 +252,7 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
   }
 
   GenerarFactura(data: any, MantenimientoYSeguridad: any) {
-    // console.log(data);
+    console.log(data);
     const fecha = this.utilService.FechaActual()
     const anio = new Date(fecha)
     let aniox = anio.getFullYear()
@@ -296,16 +296,22 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
 
     doc.addImage('assets/images/pdf/cintillo.png', "PNG", 10, 5, 187.5, 15);
     doc.addImage('assets/images/pdf/marca-agua.png', "PNG", 25, 210, 160, 60);
-    doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
-    doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
-    doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
-    doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
+    if (data[0].ListaFacturas[0].status_pc == 2) {
+      doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
+      doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
+      doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
+      doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
+    }
 
 
     doc.rect(14, 20, 142, 20);
     doc.setFontSize(12);
     doc.setFont(undefined, "bold");
-    doc.text("PLANILLA DE AUTOLIQUIDACIÓN DE OBLIGACIONES POSTALES DE LAS OPERADORAS POSTALES PRIVADAS (OPP)", 85, 28, { maxWidth: 140, align: "center" });
+    if (data[0].ListaFacturas[0].status_pc == 2) {
+      doc.text("PLANILLA DE AUTOLIQUIDACIÓN DE OBLIGACIONES POSTALES DE LAS OPERADORAS POSTALES PRIVADAS (OPP)", 85, 28, { maxWidth: 140, align: "center" });
+    } else {
+      doc.text("PLANILLA DE PRELIQUIDACIÓN DE OBLIGACIONES POSTALES DE LAS OPERADORAS POSTALES PRIVADAS (OPP)", 85, 28, { maxWidth: 140, align: "center" });
+    }
 
     doc.rect(156, 20, 40, 5);
     doc.setFontSize(7);

@@ -55,7 +55,7 @@
             </div>
             <div class="col-md-3 col-12">
               <div class="d-flex justify-content-between align-items-center m-1">
-                <button (click)="LimpiarFiltro()" class="btn btn-success">Generar Obligación</button>
+                <button (click)="ModalCrearObligacion(ModalObligaciones)" class="btn btn-success">Generar Obligación</button>
               </div>
             </div>
             <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
@@ -191,14 +191,14 @@
                     <a (click)="ModalPagar(ModalPagarDeclaracion,row)" *ngIf="row.montoReal != '0' && row.status_pc == 4"
                       ngbDropdownItem><span [size]="16" [data-feather]="'credit-card'" [class]="'mr-50'"></span>Reportar
                       Pago</a>
-                    <a (click)="VerDetalleSUB(UsoContrato,row)" *ngIf="!ShowTabla" ngbDropdownItem><span [size]="16"
+                    <!-- <a (click)="VerDetalleSUB(UsoContrato,row)" *ngIf="!ShowTabla" ngbDropdownItem><span [size]="16"
                         [data-feather]="'eye'" [class]="'mr-50'"></span>Ver Detalle</a>
                     <a (click)="VerDetalleOPP(UsoContrato,row)" *ngIf="ShowTabla" ngbDropdownItem><span [size]="16"
                         [data-feather]="'eye'" [class]="'mr-50'"></span>Ver Detalle</a>
                     <a (click)="DescargarFactura(row)" *ngIf="row.status_pc == 2" ngbDropdownItem><span [size]="16"
                         [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Planilla</a>
                         <a (click)="DescargarFactura(row)" *ngIf="row.status_pc == 4" ngbDropdownItem><span [size]="16"
-                          [data-feather]="'download'" [class]="'mr-50'"></span> Preliquidación</a>
+                          [data-feather]="'download'" [class]="'mr-50'"></span> Preliquidación</a> -->
                     <a (click)="ModalPagarModificar(ModalPagarDeclaracion,row)"
                       *ngIf="row.status_pc != 2 && row.status_pc != 4" ngbDropdownItem><span [size]="16"
                         [data-feather]="'edit'" [class]="'mr-50'"></span> Modificar
@@ -311,6 +311,74 @@
       <button type="submit" (click)="PagarRecaudacion()" rippleEffect class="btn btn-success mr-1">Reportar Pago</button>
       <!-- <button type="submit" *ngIf="ShowModificarPago == true" (click)="ModificarConciliarPagoRecaudacion()" rippleEffect
         class="btn btn-success mr-1">ModificarPago</button> -->
+      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+        Cerrar
+      </button>
+    </div>
+  </ng-template>
+
+
+
+  <ng-template #ModalObligaciones let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">{{ title_modal }}</h5>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <div class="col-xl-12 col-md-12 col-12">
+        <!-- Header Starts -->
+        <!-- <form class="form" (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater"> -->
+        <form method="post" enctype="multipart/form-data" id="forma" name="forma" class="invoice-repeater">
+          <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+          <div class="row d-flex align-items-end">
+
+
+            <div class="col-md-12 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Tipo Obligación</label>
+                <ng-select [items]="Tipo_Obligaciones" [(ngModel)]="IpagarRecaudacion.tipo_pago_pc"
+                  [ngModelOptions]="{standalone: true}" bindValue="id_tipo_pagos" bindLabel="name" (change)="onSelectChange($event)"
+                  placeholder="Seleccione Tipo Obligación" required autocomplete="off">
+                </ng-select>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Monto a Pagar</label>
+                <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="MontoSeleccion"
+                  [ngModelOptions]="{standalone: true}" placeholder="Ingrese Monto a Pagar" />
+              </div>
+            </div>
+
+            <div class="col-md-6 col-12">
+              <div class="form-group">
+                <label for=" itempmvp">Fecha</label>
+                <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="IpagarRecaudacion.fecha_pc"
+                  [ngModelOptions]="{standalone: true}" placeholder="Ingrese Fecha" />
+              </div>
+            </div>
+  
+
+  
+            <div class="col-md-12 col-12">
+              <div class="form-group">
+                <label for="basicInputFile">Observación de Pago</label>
+                <div class="custom-file">
+                  <textarea class="form-control" readonly [(ngModel)]="IpagarRecaudacion.observacion_pc"
+                    [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3"
+                    placeholder="Ingrese Observación de Pago"></textarea>
+                </div>
+              </div>
+            </div>
+  
+  
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--/ Invoice -->
+    <div class="modal-footer">
+      <button type="submit" (click)="InsertarObligacion()" rippleEffect class="btn btn-success mr-1">Generar Obligación</button>
       <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
         Cerrar
       </button>

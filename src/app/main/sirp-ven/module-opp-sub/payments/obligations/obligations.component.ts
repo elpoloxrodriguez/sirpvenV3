@@ -11,6 +11,7 @@ import { PdfService } from '@core/services/pdf/pdf.service';
 import { AngularFileUploaderComponent } from 'angular-file-uploader';
 import { DatePipe } from '@angular/common';
 import { GenerarPagoService } from '@core/services/generar-pago.service';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -20,7 +21,7 @@ import { GenerarPagoService } from '@core/services/generar-pago.service';
 })
 export class ObligationsComponent implements OnInit {
 
-@ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent) table: DatatableComponent;
   @ViewChild('tableRowDetails') tableRowDetails: any;
 
   @BlockUI() blockUI: NgBlockUI;
@@ -31,8 +32,8 @@ export class ObligationsComponent implements OnInit {
   public IpagarRecaudacion: IPOSTEL_C_PagosDeclaracionOPP_SUB = {
     id_opp: 0,
     status_pc: 0,
-    tipo_pago_pc: 0,
-    monto_pc: '',
+    tipo_pago_pc: undefined,
+    monto_pc: '0',
     monto_pagar: '',
     dolar_dia: '',
     petro_dia: '',
@@ -41,6 +42,8 @@ export class ObligationsComponent implements OnInit {
     fecha_pc: '',
     mantenimiento: ''
   }
+
+  public
 
   public chkBoxSelected = [];
 
@@ -177,9 +180,13 @@ export class ObligationsComponent implements OnInit {
 
   public cuanto
 
+  public MontoSeleccion
+
   public ShowTabla: boolean = true
 
   public dataObligacionOPP = []
+
+  public Tipo_Obligaciones = []
 
   constructor(
     private apiService: ApiService,
@@ -207,8 +214,9 @@ export class ObligationsComponent implements OnInit {
     this.idOPP = this.token.Usuario[0].id_opp
     this.TipoRegistro = this.token.Usuario[0].tipo_registro
 
-    this.Precio_Dolar_Petro()
-    this.generateYearsList()
+    await this.Precio_Dolar_Petro()
+    await this.generateYearsList()
+    await this.Tipo_Pagos_Obligaciones()
     await this.ListaPagosRecaudacion()
     await this.ListaBancosVzla()
     await this.ListaTiposPagos()
@@ -230,6 +238,30 @@ export class ObligationsComponent implements OnInit {
       }
     )
   }
+
+  async Tipo_Pagos_Obligaciones() {
+    this.xAPI.funcion = "IPOSTEL_R_Tipo_Pagos_Obligaciones";
+    this.xAPI.parametros = '';
+    this.xAPI.valores = '';
+
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.Tipo_Obligaciones = data.Cuerpo
+          .filter(e => e.id_tipo_pagos !== 6 && e.id_tipo_pagos !== 10) // Filtra los elementos donde id_tipo_pagos es diferente de 6 y 10
+          .map(e => {
+            e.name = `(${e.iniciales_tipo_pagos}) - ${e.nombre_tipo_pagos} - (${e.tasa_petro} Petros)`;
+            return e;
+          });
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+
+
+
 
   async ListaBancosVzla() {
     this.xAPI.funcion = "IPOSTEL_R_BancosVzla"
@@ -339,7 +371,7 @@ export class ObligationsComponent implements OnInit {
     this.xAPI.funcion = "IPOSTEL_R_Pagos_ConciliacionOPPSUB"
     this.xAPI.parametros = this.idOPP.toString()
     this.xAPI.valores = ''
-    
+
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.Cuerpo.length > 0) {
@@ -356,15 +388,15 @@ export class ObligationsComponent implements OnInit {
             e.monto_pagar = this.utilService.ConvertirMoneda(e.monto_pagar)
             this.List_Pagos_Recaudacion.push(e)
           });
-          
+
           // Filtrar por tipo_pago_pc
           this.rowsPagosConciliacion = this.List_Pagos_Recaudacion.filter(objeto => objeto.tipo_pago_pc != 1);
-  
+
           let MontoTotalA = this.rowsPagosConciliacion.map(item => item.montoReal).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
           this.MontoTotalAdeudado = this.utilService.ConvertirMoneda(MontoTotalA ? MontoTotalA : 0)
           this.RowsLengthConciliacion = this.rowsPagosConciliacion.length
           this.tempDataPagosConciliacion = this.rowsPagosConciliacion
-  
+
           this.datosOriginales = [...this.rowsPagosConciliacion]; // Hacer una copia de respaldo al inicializar el componente
           this.rowsPagosConciliacion = [...this.datosOriginales]; // Restaurar los datos originales
           this.isLoading = 1;
@@ -377,7 +409,7 @@ export class ObligationsComponent implements OnInit {
       }
     )
   }
-  
+
 
 
   FiltarObligacionAnio(event: any) {
@@ -403,6 +435,40 @@ export class ObligationsComponent implements OnInit {
       this.table.offset = 0;
     }
   }
+
+
+  async ModalCrearObligacion(modal) {
+    // console.log(data)
+    this.title_modal = 'Generar Obligación'
+    this.ShowReportarPago = true
+    this.ShowModificarPago = false
+    this.modalService.open(modal, {
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  onSelectChange(selectedValue: any) {
+    if (selectedValue != 'undefined') {
+      let monto = selectedValue.tasa_petro * this.DolarPetroDia[0].petro
+      let montoBolivares = monto * parseFloat(this.DolarPetroDia[0].dolar)
+      this.IpagarRecaudacion.id_opp = this.idOPP
+      this.IpagarRecaudacion.user_created = this.idOPP
+      this.IpagarRecaudacion.tipo_pago_pc = selectedValue.id_tipo_pagos
+      this.IpagarRecaudacion.observacion_pc = selectedValue.name
+      this.IpagarRecaudacion.fecha_pc = this.utilService.FechaActual()
+      this.MontoSeleccion = this.utilService.ConvertirMoneda(montoBolivares)
+      this.IpagarRecaudacion.dolar_dia = this.DolarPetroDia[0].dolar
+      this.IpagarRecaudacion.petro_dia = this.DolarPetroDia[0].petro
+      this.IpagarRecaudacion.monto_pagar = montoBolivares.toString()
+      this.IpagarRecaudacion.status_pc = 4
+    }
+  }
+
+
 
 
   async ModalPagar(modal, data) {
@@ -704,6 +770,48 @@ export class ObligationsComponent implements OnInit {
     }
   }
 
+  async InsertarObligacion() {
+    Swal.fire({
+      title: 'Generar Obligación de Pago',
+      html: "Estimado <strong><font color=red>Operador Postal Privado</font></strong> <br> tenga en cuenta que al momento de generar la obligación se le generara un compromiso de pago con <strong><font color=red>IPOSTEL</font></strong> <br> ¿Desea continuar?",
+      icon: 'warning',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Deseo Generar la Obligación',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // console.log(this.archivos[0].name)
+        this.sectionBlockUI.start('Registrando Obligación, por favor Espere!!!');
+        // console.log(data)
+        this.updateConciliacion.GenerarObligacionIndividual(this.IpagarRecaudacion)
+          .then((resultado) => {
+            // Manejar el resolve
+            // console.log('Operación exitosa:', resultado);
+            this.List_Pagos_Recaudacion = []
+            this.modalService.dismissAll('Cerrar Modal')
+            // this.LimpiarModal()
+            this.utilService.alertConfirmMini('success', 'Obligación Generada Exitosamente')
+          })
+          .catch((error) => {
+            // Manejar el reject
+            // console.error('Error en la operación:', error);
+            this.utilService.alertConfirmMini('error', 'Lo sentimos algo salio mal!')
+          })
+          .finally(() => {
+            // Este bloque se ejecutará después de que la promesa se resuelva o se rechace
+            // console.log('Procesamiento finalizado');
+            this.ListaPagosRecaudacion()
+            this.sectionBlockUI.stop()
+          })
+      }
+    })
+  }
+
 
   async ListaTiposPagos() {
     this.xAPI.funcion = "IPOSTEL_R_MantenimientoSeguridad"
@@ -737,6 +845,7 @@ export class ObligationsComponent implements OnInit {
               this.sectionBlockUI.stop()
               return e
             });
+            console.log(datos)
             this.pdf.GenerarFactura(datos, this.MantenimientoYSeguridad)
             this.sectionBlockUI.stop()
             this.utilService.alertConfirmMini('success', 'Planilla Generada Exitosamente!')
