@@ -55,7 +55,7 @@
             </div>
             <div class="col-md-3 col-12">
               <div class="d-flex justify-content-between align-items-center m-1">
-                <button (click)="ModalCrearObligacion(ModalObligaciones)" class="btn btn-success">Generar Obligación</button>
+                <button (click)="ModalCrearObligacion(ModalObligaciones)" *ngIf="BtnObligacionDate && BtnObligacionTime" class="btn btn-success">Generar Obligación</button>
               </div>
             </div>
             <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
@@ -192,13 +192,13 @@
                       ngbDropdownItem><span [size]="16" [data-feather]="'credit-card'" [class]="'mr-50'"></span>Reportar
                       Pago</a>
                     <!-- <a (click)="VerDetalleSUB(UsoContrato,row)" *ngIf="!ShowTabla" ngbDropdownItem><span [size]="16"
-                        [data-feather]="'eye'" [class]="'mr-50'"></span>Ver Detalle</a>
-                    <a (click)="VerDetalleOPP(UsoContrato,row)" *ngIf="ShowTabla" ngbDropdownItem><span [size]="16"
-                        [data-feather]="'eye'" [class]="'mr-50'"></span>Ver Detalle</a>
-                    <a (click)="DescargarFactura(row)" *ngIf="row.status_pc == 2" ngbDropdownItem><span [size]="16"
+                        [data-feather]="'eye'" [class]="'mr-50'"></span>Ver Detalle</a> -->
+                    <!-- <a (click)="VerDetalleOPP(UsoContrato,row)" *ngIf="ShowTabla" ngbDropdownItem><span [size]="16"
+                        [data-feather]="'eye'" [class]="'mr-50'"></span>Ver Detalle</a> -->
+                    <a (click)="DescargarFacturaObligacion(row)" *ngIf="row.status_pc == 2" ngbDropdownItem><span [size]="16"
                         [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Planilla</a>
-                        <a (click)="DescargarFactura(row)" *ngIf="row.status_pc == 4" ngbDropdownItem><span [size]="16"
-                          [data-feather]="'download'" [class]="'mr-50'"></span> Preliquidación</a> -->
+                        <a (click)="DeleteObligaciones(row)" *ngIf="row.status_pc == 4" ngbDropdownItem><span [size]="16"
+                          [data-feather]="'trash'" [class]="'mr-50'"></span> Eliminar</a>
                     <a (click)="ModalPagarModificar(ModalPagarDeclaracion,row)"
                       *ngIf="row.status_pc != 2 && row.status_pc != 4" ngbDropdownItem><span [size]="16"
                         [data-feather]="'edit'" [class]="'mr-50'"></span> Modificar

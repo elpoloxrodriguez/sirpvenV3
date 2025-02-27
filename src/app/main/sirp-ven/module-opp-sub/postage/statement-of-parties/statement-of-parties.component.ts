@@ -8,10 +8,11 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import jwt_decode from "jwt-decode";
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
-import { IPOSTEL_C_MovilizacionPiezas, IPOSTEL_C_PagosDeclaracionOPP_SUB, IPOSTEL_U_ActualizarMovilizacionPiezas, IPOSTEL_U_MovilizacionPiezasIdFactura } from '@core/services/empresa/form-opp.service';
+import { IPOSTEL_C_MovilizacionPiezas, IPOSTEL_C_PagosDeclaracionOPP_SUB, IPOSTEL_I_Pagos_Mantenimiento, IPOSTEL_U_ActualizarMovilizacionPiezas, IPOSTEL_U_MovilizacionPiezasIdFactura } from '@core/services/empresa/form-opp.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { AngularFileUploaderComponent } from 'angular-file-uploader';
 import { MobilizationPartsService } from '../mobilization-parts.service';
+import { GenerarPagoService } from '@core/services/generar-pago.service';
 
 
 
@@ -50,6 +51,25 @@ export class StatementOfPartiesComponent implements OnInit {
     user_created: undefined
   }
 
+  public IPagosMantenimiento: IPOSTEL_I_Pagos_Mantenimiento = {
+    status: undefined,
+    tipo_pago: undefined,
+    fecha: '',
+    id_banco: undefined,
+    referencia_bancaria: '',
+    cedula_rif_banco: '',
+    telefono_banco: '',
+    monto_pagar: 0,
+    monto_pagado: 0,
+    dolar_dia: 0,
+    archivo_adjunto: undefined,
+    observacion: '',
+    user_created: undefined,
+    user_updated: undefined,
+    date_updated: undefined,
+    id_opp: 0
+  }
+
   public prueba = {
     id_opp: undefined,
     id_servicio_franqueo: undefined,
@@ -70,7 +90,7 @@ export class StatementOfPartiesComponent implements OnInit {
     id_movilizacion_piezas: 0
   }
 
-  public xfecha: Date = new Date(); 
+  public xfecha: Date = new Date();
 
   public IpagarRecaudacion: IPOSTEL_C_PagosDeclaracionOPP_SUB = {
     id_opp: 0,
@@ -209,7 +229,8 @@ export class StatementOfPartiesComponent implements OnInit {
     private modalService: NgbModal,
     private router: Router,
     private rutaActiva: ActivatedRoute,
-    private movilizacionPiezas: MobilizationPartsService
+    private movilizacionPiezas: MobilizationPartsService,
+    private InsertarMantenimiento : GenerarPagoService
   ) { }
 
   async ngOnInit() {
@@ -512,11 +533,11 @@ export class StatementOfPartiesComponent implements OnInit {
 
   async MantenimientoSIRPVEN() {
     this.xAPI.funcion = "IPOSTEL_R_MantenimientoSIRPVEN";
-    this.xAPI.parametros = '7'
+    this.xAPI.parametros = '10'
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.Cuerpo.map(e => {
-          this.idMantenimiento = e.id_tipo_pago
+          this.idMantenimiento = e.id_tipo_pagos
           this.iniciales = e.iniciales_tipo_pagos
           this.nombre = e.nombre_tipo_pagos
           this.precio = e.tasa_petro
@@ -527,6 +548,26 @@ export class StatementOfPartiesComponent implements OnInit {
         console.log(error)
       }
     )
+  }
+
+  async RegistrarMantenimiento() {
+    this.IPagosMantenimiento.id_opp = this.idOPP
+    this.IPagosMantenimiento.observacion = `(${this.iniciales}) - ${this.nombre}`
+    this.IPagosMantenimiento.status = 4
+    this.IPagosMantenimiento.user_created = this.idOPP
+    this.IPagosMantenimiento.tipo_pago = this.idMantenimiento
+    this.IPagosMantenimiento.fecha = this.utilService.FechaActual()
+    this.IPagosMantenimiento.monto_pagar = this.precio * this.DolarDia
+    this.IPagosMantenimiento.dolar_dia = this.DolarDia
+    await this.InsertarMantenimiento.InsertarFacturaMantenimiento(this.IPagosMantenimiento)
+      .then((resultado) => {
+        // Manejar el resolve
+        this.utilService.alertConfirmMini('success', 'Obligación de Mantenimiento Registrado Exitosamente!')
+      })
+      .catch((error) => {
+        // Manejar el reject
+        this.utilService.alertConfirmMini('error', 'Lo sentimos algo salio mal en la creacion del pago de mantenimiento!')
+      })
   }
 
   RegresarAtras() {
@@ -802,7 +843,7 @@ export class StatementOfPartiesComponent implements OnInit {
       })
   }
 
-  async RegistrarSIDeclaracionPiezas() {
+  async RegistrarSIDeclaracionPiezasXXX() {
     await Swal.fire({
       title: 'Esta seguro de declarar?',
       html: "Estimado <strong><font color=red>Operador Postal Privado</font></strong> <br> tenga en cuenta que una vez realice la declaración de piezas no podra revertir los cambios!",
@@ -853,6 +894,53 @@ export class StatementOfPartiesComponent implements OnInit {
 
       }
     })
+  }
+
+  async RegistrarSIDeclaracionPiezas() {
+    const result = await Swal.fire({
+      title: 'Esta seguro de declarar?',
+      html: "Estimado <strong><font color=red>Operador Postal Privado</font></strong> <br> tenga en cuenta que una vez realice la declaración de piezas no podra revertir los cambios!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Deseo Declarar',
+      cancelButtonText: 'Cancelar'
+    });
+  
+    if (result.isConfirmed) {
+      this.IpagarRecaudacion.id_opp = this.idOPP;
+      this.IpagarRecaudacion.status_pc = 4;
+      this.IpagarRecaudacion.tipo_pago_pc = 1;
+      this.IpagarRecaudacion.declaracion = 1;
+      this.IpagarRecaudacion.monto_pc = '0';
+      this.IpagarRecaudacion.mantenimiento = '';
+      this.IpagarRecaudacion.monto_pagar = this.PrecioMantenimientoXTF.toString();
+      this.IpagarRecaudacion.fecha_pc = this.utilService.FechaActual();
+      this.IpagarRecaudacion.user_created = this.idOPP;
+  
+      this.sectionBlockUI.start('Guardando Declaración, por favor Espere!!!');
+  
+      try {
+        const resultado = await this.movilizacionPiezas.DeclararMovilizacionPiezas(this.IpagarRecaudacion);
+        this.idFactura = resultado;
+  
+        const ok = {
+          id_factura: this.idFactura,
+          id_opp: this.idOPP,
+          mes: this.fechaUri
+        };
+  
+        await this.MezclarPiezasFactura(ok);
+        this.utilService.alertConfirmMini('success', 'Liquidación Generada Satisfactoriamente');
+        this.router.navigate(['payments/payments-list']).then(() => { window.location.reload() });
+        await this.RegistrarMantenimiento();
+      } catch (error) {
+        this.utilService.alertConfirmMini('error', 'Lo sentimos algo salio mal!');
+      } finally {
+        this.sectionBlockUI.stop();
+      }
+    }
   }
 
   async SIDeclararPiezasIPOSTEL(modal) {
@@ -920,8 +1008,8 @@ export class StatementOfPartiesComponent implements OnInit {
     })
   }
 
-  async RegistrarNoDeclaracionPiezas() {
-    Swal.fire({
+  async RegistrarNoDeclaracionPiezasXXX() {
+    const result = await Swal.fire({
       title: 'Esta seguro de declarar?',
       html: "Estimado <strong><font color=red>Operador Postal Privado</font></strong> <br> tenga en cuenta que una vez realice la declaración de piezas no podra revertir los cambios!",
       icon: 'warning',
@@ -941,21 +1029,16 @@ export class StatementOfPartiesComponent implements OnInit {
         this.IpagarRecaudacion.tipo_pago_pc = 1
         this.IpagarRecaudacion.monto_pc = '0'
         this.IpagarRecaudacion.monto_pagar = '0'
-         this.IpagarRecaudacion.declaracion = 1
-        // this.IpagarRecaudacion.dolar_dia = '0'
-        // this.IpagarRecaudacion.petro_dia = '0'
+        this.IpagarRecaudacion.declaracion = 1
         this.IpagarRecaudacion.fecha_pc = this.fechaActual
-        // this.IpagarRecaudacion.mantenimiento = JSON.stringify(this.MantenimientoYSeguridad)
         this.IpagarRecaudacion.archivo_adjunto = this.archivos[0].name
         this.IpagarRecaudacion.user_created = this.idOPP
-        // console.log(this.MantenimientoYSeguridad)
-        // console.log(this.IpagarRecaudacion)
         this.xAPI.funcion = "IPOSTEL_C_PagosDeclaracionOPP_SUB";
         this.xAPI.parametros = ''
         this.xAPI.valores = JSON.stringify(this.IpagarRecaudacion)
         this.sectionBlockUI.start('Guardando Declaración, por favor Espere!!!');
         this.apiService.Ejecutar(this.xAPI).subscribe(
-          (data) => {
+          (data)  => {
             if (data.tipo === 1) {
               try {
                 this.apiService.EnviarArchivos(frm).subscribe(
@@ -963,6 +1046,7 @@ export class StatementOfPartiesComponent implements OnInit {
                     this.modalService.dismissAll('Close')
                     this.sectionBlockUI.stop()
                     this.utilService.alertConfirmMini('success', 'Declaración Registrada Exitosamente!')
+                    this.RegistrarMantenimiento();
                     this.router.navigate(['payments/payments-list']).then(() => { window.location.reload() });
                   },
                   (err) => {
@@ -988,5 +1072,66 @@ export class StatementOfPartiesComponent implements OnInit {
       }
     })
   }
+
+  async RegistrarNoDeclaracionPiezas() {
+  const result = await Swal.fire({
+    title: 'Esta seguro de declarar?',
+    html: "Estimado <strong><font color=red>Operador Postal Privado</font></strong> <br> tenga en cuenta que una vez realice la declaración de piezas no podra revertir los cambios!",
+    icon: 'warning',
+    showCancelButton: true,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    allowEnterKey: false,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Si, Deseo Declarar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (result.isConfirmed) {
+    var frm = new FormData(document.forms.namedItem("forma"));
+    this.IpagarRecaudacion.id_opp = this.idOPP;
+    this.IpagarRecaudacion.status_pc = 4;
+    this.IpagarRecaudacion.tipo_pago_pc = 1;
+    this.IpagarRecaudacion.monto_pc = '0';
+    this.IpagarRecaudacion.monto_pagar = '0';
+    this.IpagarRecaudacion.declaracion = 1;
+    this.IpagarRecaudacion.fecha_pc = this.fechaActual;
+    this.IpagarRecaudacion.archivo_adjunto = this.archivos[0].name;
+    this.IpagarRecaudacion.user_created = this.idOPP;
+    this.xAPI.funcion = "IPOSTEL_C_PagosDeclaracionOPP_SUB";
+    this.xAPI.parametros = '';
+    this.xAPI.valores = JSON.stringify(this.IpagarRecaudacion);
+    this.sectionBlockUI.start('Guardando Declaración, por favor Espere!!!');
+
+    try {
+      const data = await this.apiService.Ejecutar(this.xAPI).toPromise();
+
+      if (data.tipo === 1) {
+        try {
+          const fileData = await this.apiService.EnviarArchivos(frm).toPromise();
+          this.modalService.dismissAll('Close');
+          this.sectionBlockUI.stop();
+          this.utilService.alertConfirmMini('success', 'Declaración Registrada Exitosamente!');
+          this.router.navigate(['payments/payments-list']).then(() => { window.location.reload() });
+          await this.RegistrarMantenimiento();
+        } catch (err) {
+          this.sectionBlockUI.stop();
+          this.utilService.alertConfirmMini('error', 'Algo salio mal al cargar el archivo! <br> Verifique e intente de nuevo');
+        }
+      } else {
+        this.sectionBlockUI.stop();
+        this.utilService.alertConfirmMini('error', 'Algo salio mal! <br> Verifique e intente de nuevo');
+      }
+    } catch (error) {
+      console.log(error);
+      this.sectionBlockUI.stop();
+      this.utilService.alertConfirmMini('error', 'Algo salio mal! <br> Verifique e intente de nuevo');
+    }
+  } else {
+    this.modalService.dismissAll('Close');
+    this.sectionBlockUI.stop();
+  }
+}
 
 }

@@ -258,21 +258,6 @@ export class MaintenanceComponent implements OnInit {
     await this.ListaPagosRecaudacion()
   }
 
-  customChkboxOnSelect({ selected }) {
-    this.chkBoxSelected.splice(0, this.chkBoxSelected.length);
-    this.chkBoxSelected.push(...selected);
-  }
-  onSelect({ selected }) {
-    this.selected.splice(0, this.selected.length);
-    this.selected.push(...selected);
-    for (let i = 0; i < selected.length; i++) {
-      const element = selected[i];
-      console.log("Total: ", element.montoReal)
-    }
-  }
-  onActivate(event) {
-    // console.log('Activate Event', event);
-  }
 
   fileSelected(e) {
     this.archivos.push(e.target.files[0])
@@ -336,39 +321,28 @@ export class MaintenanceComponent implements OnInit {
     this.List_Pagos_Recaudacion = []
     this.rowsPagosConciliacion = []
     this.RowsLengthConciliacion = 0
-    this.xAPI.funcion = "IPOSTEL_R_Pagos_ConciliacionOPPSUB"
+    this.xAPI.funcion = "IPOSTEL_R_PagosMantenimientoAPP"
     this.xAPI.parametros = this.idOPP.toString()
     this.xAPI.valores = ''
-    // console.log(this.xAPI)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.Cuerpo.length > 0) {
           data.Cuerpo.map(e => {
-            let fecha = new Date(e.fecha_pc);
+            let fecha = new Date(e.fecha);
             e.anio = fecha.getFullYear();
-            e.mantenimiento = e.mantenimiento ? e.mantenimiento : null
-            e.mantenimiento = JSON.parse(e.mantenimiento)
-            e.fecha = this.utilService.FechaMomentLL(e.fecha_pc)
-            e.montoReal = e.monto_pagar
-            e.monto_pcx = e.monto_pc
-            this.MontoRealPagar = e.monto_pagar
-            e.monto_pc = this.utilService.ConvertirMoneda(e.monto_pc)
-            e.monto_pagar = this.utilService.ConvertirMoneda(e.monto_pagar)
+            e.fechax = this.utilService.FechaMomentLL(e.fecha)
+            e.montopagar = this.utilService.ConvertirMoneda(e.monto_pagar)
+            e.montopagado = this.utilService.ConvertirMoneda(e.monto_pagado)
             this.List_Pagos_Recaudacion.push(e)
-            // console.log(e)
+
           });
-          // console.log(this.List_Pagos_Recaudacion)
-          let MontoTotalA = this.List_Pagos_Recaudacion.map(item => item.montoReal).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-          this.MontoTotalAdeudado = this.utilService.ConvertirMoneda(MontoTotalA ? MontoTotalA : 0)
           this.rowsPagosConciliacion = this.List_Pagos_Recaudacion
           this.RowsLengthConciliacion = this.rowsPagosConciliacion.length
           this.tempDataPagosConciliacion = this.rowsPagosConciliacion
 
           this.datosOriginales = [...this.rowsPagosConciliacion]; // Hacer una copia de respaldo al inicializar el componente
           this.rowsPagosConciliacion = [...this.datosOriginales]; // Restaurar los datos originales
-          // this.rowsPagosConciliacion = this.rowsPagosConciliacion.filter(objeto => {
-          //   return objeto.anio === this.anioObligaciones && objeto.status_pc === this.tipoPago && objeto.tipo_pago_pc === this.tipopagopc;
-          // });
+
           this.isLoading = 1;
         } else {
           this.isLoading = 2;
@@ -392,7 +366,7 @@ export class MaintenanceComponent implements OnInit {
   FiltarObligacionCategoriaPago(event: any) {
     if (event != undefined) {
       this.rowsPagosConciliacion = [...this.datosOriginales]; // Restaurar los datos originales
-      this.rowsPagosConciliacion = this.rowsPagosConciliacion.filter(objeto => objeto.status_pc === event.id); // Aplicar el filtro
+      this.rowsPagosConciliacion = this.rowsPagosConciliacion.filter(objeto => objeto.status === event.id); // Aplicar el filtro
       this.table.offset = 0;
     }
   }
@@ -564,79 +538,6 @@ export class MaintenanceComponent implements OnInit {
 
   }
 
-  async VerDetalleSUB(modal: any, row: any) {
-    this.titleModal = row.nombre_empresa
-
-    let nuevo = {
-      bolivares: 0,
-      bolivaresx: "VEF 0,00",
-      id_tipo_pagos: 0,
-      iniciales_tipo_pagos: row.iniciales_tipo_pagos,
-      nombre_tipo_pagos: row.nombre_tipo_pagos,
-      tasa_petro: (parseFloat(row.montoReal) / parseFloat(row.dolar_dia)).toFixed(2),
-      tipo_pago: row.tipo_pago_pc
-    }
-
-    await this.ConsultarOPP(row.user_created)
-    this.mostarDatosDetallesSUB(row, nuevo)
-
-
-    this.modalService.open(modal, {
-      centered: true,
-      size: 'xl',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
-
-  async VerDetalleOPP(modal: any, row: any) {
-
-    // console.log(row)
-    this.titleModal = row.nombre_empresa
-
-    this.cuanto = row.petro_dia / row.dolar_dia
-
-    await this.ConsultarOPP(row.user_created)
-
-    if (row.declaracion == 0) {
-      let nuevo = {
-        monto_real: 0,
-        bolivares: 0,
-        bolivaresx: "VEF 0,00",
-        id_tipo_pagos: 0,
-        iniciales_tipo_pagos: row.iniciales_tipo_pagos,
-        nombre_tipo_pagos: row.nombre_tipo_pagos,
-        tasa_petro: 0,
-        tipo_pago: row.tipo_pago_pc
-      }
-      this.mostarDatosDetallesOPP(row, nuevo)
-    } else {
-      let nuevo = {
-        monto_real: row.petro_dia,
-        bolivares: this.utilService.ConvertirMoneda$(this.cuanto),
-        bolivaresx: row.petro_dia,
-        bolivaresxx: this.utilService.ConvertirMoneda(row.petro_dia),
-        id_tipo_pagos: 0,
-        iniciales_tipo_pagos: row.iniciales_tipo_pagos,
-        nombre_tipo_pagos: row.nombre_tipo_pagos,
-        tasa_petro: (parseFloat(row.petro_dia) / parseFloat(row.dolar_dia)).toFixed(2),
-        tasa_petr: this.utilService.ConvertirMoneda$((parseFloat(row.petro_dia) / parseFloat(row.dolar_dia)).toFixed(2)),
-        tipo_pago: row.tipo_pago_pc
-      }
-      this.mostarDatosDetallesOPP(row, nuevo)
-    }
-
-
-
-    this.modalService.open(modal, {
-      centered: true,
-      size: 'xl',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
 
   async ModificarConciliarPagoRecaudacion() {
     this.xAPI.funcion = "IPOSTEL_U_PagosDeclaracionOPP_SUB"

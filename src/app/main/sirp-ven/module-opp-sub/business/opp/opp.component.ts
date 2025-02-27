@@ -677,9 +677,9 @@ export class OppComponent implements OnInit {
           this.DataEmpresa.registro_nacional_contratista = e.registro_nacional_contratista
           this.DataEmpresa.cantidad_trabajadores = e.cantidad_trabajadores
           this.DataEmpresa.cantidad_subcontratados = e.cantidad_subcontratados
-          this.DataEmpresa.tipo_servicio = JSON.parse(e.tipo_servicio)
-          this.DataEmpresa.flota_utilizada = JSON.parse(e.flota_utilizada)
-          this.xFlotaUtilizada = JSON.parse(e.flota_utilizada)
+          this.DataEmpresa.tipo_servicio = JSON.parse(e.tipo_servicio ? e.tipo_servicio : [])
+          this.DataEmpresa.flota_utilizada = JSON.parse(e.flota_utilizada ? e.flota_utilizada : [] )
+          this.xFlotaUtilizada = JSON.parse(e.flota_utilizada ? e.flota_utilizada : [])
         });
       },
       (error) => {

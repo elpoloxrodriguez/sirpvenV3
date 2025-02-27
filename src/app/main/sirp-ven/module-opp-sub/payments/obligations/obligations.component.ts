@@ -83,6 +83,10 @@ export class ObligationsComponent implements OnInit {
 
   public isLoading: number = 0;
 
+  public fechaX = new Date();
+  public hora = this.fechaX.getHours();
+  public dia = this.fechaX.getDate();
+
   public idOPP
   public RowsLengthConciliacion
   public selectedOption = 10;
@@ -188,6 +192,11 @@ export class ObligationsComponent implements OnInit {
 
   public Tipo_Obligaciones = []
 
+  public BtnObligacionDate: boolean = false
+  public BtnObligacionTime: boolean = false
+  public ShowBtn: boolean = false
+
+
   constructor(
     private apiService: ApiService,
     private utilService: UtilService,
@@ -214,6 +223,7 @@ export class ObligationsComponent implements OnInit {
     this.idOPP = this.token.Usuario[0].id_opp
     this.TipoRegistro = this.token.Usuario[0].tipo_registro
 
+    await this.BloqueoSystem() 
     await this.Precio_Dolar_Petro()
     await this.generateYearsList()
     await this.Tipo_Pagos_Obligaciones()
@@ -828,6 +838,93 @@ export class ObligationsComponent implements OnInit {
       }
     )
   }
+
+  async BloqueoSystem() {
+    this.xAPI.funcion = "IPOSTEL_R_Settings_Initials"
+    this.xAPI.parametros = ''
+    await this.apiService.EjecutarDev(this.xAPI).subscribe(
+      (data) => {
+        data.Cuerpo.map(e => {
+          console.log(e)
+          console.log(this.dia,this.hora)
+          // Cambia la lógica para verificar si son menores
+          if (this.dia <= e.lock_button_obligation_date) {
+            this.BtnObligacionDate = true;
+          }
+          if (this.hora <= e.lock_button_time_obligation) { 
+            this.BtnObligacionTime = true;
+          }
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+  
+  async DescargarFacturaObligacion(liquidacion: any) {
+    this.sectionBlockUI.start('Generando Planilla, por favor Espere!!!');
+
+        this.xAPI.funcion = "IPOSTEL_R_GenerarPlanillaAutoliquidacion"
+        this.xAPI.parametros = `${liquidacion.id_opp}` + ',' + `${liquidacion.id_pc}`
+        this.xAPI.valores = ''
+        await this.apiService.Ejecutar(this.xAPI).subscribe(
+          (data) => {
+            let datos = data.Cuerpo.map(e => {
+              e.ListaFranqueo = JSON.parse(e.listafranqueo)
+              e.ListaFacturas = JSON.parse(e.listafacturas)
+              this.sectionBlockUI.stop()
+              return e
+            });
+            this.pdf.DescargarFacturaObligacion(datos)
+            this.sectionBlockUI.stop()
+            this.utilService.alertConfirmMini('success', 'Planilla Generada Exitosamente!')
+          },
+          (error) => {
+            this.sectionBlockUI.stop()
+            console.log(error)
+          }
+        )
+  }
+
+    async DeleteObligaciones(data: any) {
+      await Swal.fire({
+        title: 'Esta Seguro?',
+        text: "De Eliminar Este Registro!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, Eliminarlo!',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+                  // console.log(this.archivos[0].name)
+        this.sectionBlockUI.start('Eliminando Obligación, por favor Espere!!!');
+        // console.log(data)
+        this.updateConciliacion.EliminarCreacionRecaudacion(data.id_pc)
+          .then((resultado) => {
+            // Manejar el resolve
+            // console.log('Operación exitosa:', resultado);
+            this.List_Pagos_Recaudacion = []
+            this.modalService.dismissAll('Cerrar Modal')
+            // this.LimpiarModal()
+            this.utilService.alertConfirmMini('success', 'Obligación Eliminada Exitosamente')
+          })
+          .catch((error) => {
+            // Manejar el reject
+            // console.error('Error en la operación:', error);
+            this.utilService.alertConfirmMini('error', 'Lo sentimos algo salio mal!')
+          })
+          .finally(() => {
+            // Este bloque se ejecutará después de que la promesa se resuelva o se rechace
+            // console.log('Procesamiento finalizado');
+            this.ListaPagosRecaudacion()
+            this.sectionBlockUI.stop()
+          })
+        }
+      })
+    }
 
   async DescargarFactura(liquidacion: any) {
     // console.log(liquidacion)

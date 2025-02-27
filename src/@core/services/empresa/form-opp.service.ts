@@ -363,6 +363,8 @@ export interface IPOSTEL_U_OPP_ID { // Actualizar datos generales de OPP
 
 
 
+
+
 export interface IPOSTEL_C_PagosDeclaracionOPP_SUB { // INSERTAR PAGO EN RECAUDACION
 	id_opp: number
 	status_pc: number
@@ -430,6 +432,26 @@ export interface IPOSTEL_U_Pagos_Mantenimiento { // ACTUALIZA PAGO EN MANTENIMIE
 	user_updated: any
 	date_updated: any
 	id: number
+}
+
+export interface IPOSTEL_I_Pagos_Mantenimiento { // ACTUALIZA PAGO EN MANTENIMIENTO
+	status: any
+	tipo_pago: any
+	fecha: string
+	id_banco: any
+	referencia_bancaria: string
+	cedula_rif_banco: string
+	telefono_banco: string
+	monto_pagar: any
+	monto_pagado: any
+	dolar_dia: any
+	archivo_adjunto: any
+	observacion: string
+	user_created: any
+	user_updated: any
+	date_updated: any
+	id?: number
+	id_opp: number
 }
 
 
