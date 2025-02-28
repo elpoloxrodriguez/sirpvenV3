@@ -793,17 +793,18 @@ export class PriceTableComponent implements OnInit {
     this.sectionBlockUI.start('Guardando Registros por Lote, por favor Espere!!!');
     this.fnx = {
       funcion: 'Fnx_SubirTarifasLote',
-      // pass: 'Arrd18022023$',
+      pass: 'Arrd18022023$',
+      host: '127.0.0.1',
+      db: 'sirpven-ipostel',
+      port: '5432',
+      user: 'postgres',
+
+      // pass: 'Arrd17818665/',
       // host: '127.0.0.1',
-      // db: 'sirpven-ipostel',
+      // db: 'sirpven',
       // port: '5432',
       // user: 'postgres',
 
-      pass: 'Arrd17818665/',
-      host: '127.0.0.1',
-      db: 'sirpven',
-      port: '5432',
-      user: 'postgres',
       schema: 'public',
       table: 'peso_envio_franqueo',
       columns: 'id_servicio_franqueo,id_opp,mes,transaction_id,id_peso_envio,descripcion,pmvp',
