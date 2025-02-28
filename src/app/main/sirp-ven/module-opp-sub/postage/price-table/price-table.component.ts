@@ -789,21 +789,22 @@ export class PriceTableComponent implements OnInit {
       })
   }
 
-  async SubirLote(transaction_id: any, ruta: any, archivo: any) {
+  async XSubirLote(transaction_id: any, ruta: any, archivo: any) {
     this.sectionBlockUI.start('Guardando Registros por Lote, por favor Espere!!!');
     this.fnx = {
       funcion: 'Fnx_SubirTarifasLote',
-      pass: 'Arrd18022023$',
-      host: '127.0.0.1',
-      db: 'sirpven-ipostel',
-      port: '5432',
-      user: 'postgres',
 
-      // pass: 'Arrd17818665/',
-      // host: '127.0.0.1',
-      // db: 'sirpven',
-      // port: '5432',
+      // pass: 'Arrd18022023$',
+      // host: '190.202.50.20',
+      // db: 'sirpven-ipostel',
       // user: 'postgres',
+      // port: '5432',
+
+      pass: 'Arrd17818665',
+      host: '127.0.0.1',
+      db: 'sirpven',
+      user: 'elpoloxrodriguez',
+      port: '5432',
 
       schema: 'public',
       table: 'peso_envio_franqueo',
@@ -837,6 +838,58 @@ export class PriceTableComponent implements OnInit {
       }
     )
   }
+
+  async SubirLote(transaction_id: any, ruta: any, archivo: any) {
+    this.sectionBlockUI.start('Guardando Registros por Lote, por favor Espere!!!');
+  
+    const config = {
+      funcion: 'Fnx_SubirTarifasLote',
+      // pass: 'Arrd17818665',
+      // host: '127.0.0.1',
+      // db: 'sirpven',
+      // user: 'elpoloxrodriguez',
+
+      pass: 'Arrd18022023$',
+      host: '190.202.50.20',
+      db: 'sirpven-ipostel',
+      user: 'postgres',
+
+      port: '5432',
+      schema: 'public',
+      table: 'peso_envio_franqueo',
+      columns: 'id_servicio_franqueo,id_opp,mes,transaction_id,id_peso_envio,descripcion,pmvp',
+      delimiter: ';',
+      ruta: `tmp/file/out/${ruta}`,
+      original: archivo,
+      nuevo: 'archivo_nuevo.csv',
+      transaction_id: transaction_id,
+      id_opp: this.idOPP.toString(),
+      fecha: this.fechax.toString(),
+    };
+  
+    try {
+      const data = await this.apiService.ExecFnx(config).toPromise();
+  
+      if (data.tipo === 1) {
+        this.modalService.dismissAll('Close');
+        setTimeout(() => {
+          this.sectionBlockUI.stop();
+          this.utilService.alertConfirmMini('success', 'Lote Exitoso!');
+          this.ListaTarifas();
+        }, 10000);
+      } else {
+        this.handleError('warning', 'Oops lo sentimos, algo salio mal!');
+      }
+    } catch (error) {
+      this.handleError('error', 'Oops lo sentimos, algo salio mal!');
+    }
+  }
+  
+  private handleError(type: string, message: string) {
+    this.sectionBlockUI.stop();
+    this.utilService.alertConfirmMini(type, message);
+  }
+
 
   async EditTarifa(modal, data) {
     this.Xnombre_peso_envio = data.id_peso_envio
@@ -1035,6 +1088,7 @@ export class PriceTableComponent implements OnInit {
     this.xAPI.valores = JSON.stringify(this.PesoEnvioFranqueo)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         if (data.tipo === 1) {
           this.LocalTarifas = []
           this.rowsTarifas = []

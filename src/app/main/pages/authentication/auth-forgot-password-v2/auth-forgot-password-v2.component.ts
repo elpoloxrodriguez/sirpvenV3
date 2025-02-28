@@ -236,7 +236,7 @@ export class AuthForgotPasswordV2Component implements OnInit {
     };
   
     try {
-      const data = await this.apiService.ExecFnx(this.fnx).toPromise();
+      const data = await this.apiService.ExecFnxDevel(this.fnx).toPromise();
   
       // Validar que data no sea undefined y que tenga la propiedad Cuerpo
       if (data && data.Cuerpo && data.Cuerpo.length > 0) {
