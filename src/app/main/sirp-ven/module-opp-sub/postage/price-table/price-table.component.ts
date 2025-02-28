@@ -868,7 +868,7 @@ export class PriceTableComponent implements OnInit {
     };
   
     try {
-      const data = await this.apiService.ExecFnx(config).toPromise();
+      const data = await this.apiService.ExecFnxDevel(config).toPromise();
   
       if (data.tipo === 1) {
         this.modalService.dismissAll('Close');
