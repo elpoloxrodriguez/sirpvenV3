@@ -87,7 +87,7 @@ export class ApiService {
 
   //Ejecutar Api generales
   ExecFnx(fnx: any): Observable<any> {
-    var url = this.URL + "fnx";
+    var url = "/devel/api/fnx";
     return this.http.post<any>(url, fnx, this.httpOptions);
   }
 
