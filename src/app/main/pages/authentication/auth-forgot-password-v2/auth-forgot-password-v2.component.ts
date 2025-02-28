@@ -106,47 +106,39 @@ export class AuthForgotPasswordV2Component implements OnInit {
    */
   async onSubmit() {
     this.submitted = true;
-    // stop here if form is invalid
     if (this.forgotPasswordForm.invalid) {
       return;
     }
-    this.xAPI.funcion = 'IPOSTEL_R_forgotpassword2'
-    this.xAPI.parametros = this.forgotPasswordForm.value.email
-    this.xAPI.valores = ''
-    await this.apiService.EjecutarDev(this.xAPI).subscribe(
-      (data) => {
-        if (data.Cuerpo.length > 0) {
-          // console.log(data.Cuerpo[0].correo_electronico)
-          this.tokenPWD = this.utilservice.TokenAleatorio(50)
-          sessionStorage.setItem("TokenResetPassEmail", btoa(data.Cuerpo[0].correo_electronico));
-          sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
-          this.EnviarCorreo(data.Cuerpo[0].correo_electronico, btoa(this.tokenPWD),btoa(data.Cuerpo[0].correo_electronico), data.Cuerpo[0].nombre_empresa)
-          this.utilservice.alertConfirmMini('success', ' Felicidades! <br> Se ha enviado un correo electronico con la información para restablecer su contraseña')
-          this._router.navigate(['/'])
-        } else {
-          this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo')
-        }
-      },
-      (error) => {
-        console.error(error)
+    this.xAPI.funcion = 'IPOSTEL_R_forgotpassword2';
+    this.xAPI.parametros = this.forgotPasswordForm.value.email;
+    this.xAPI.valores = '';
+  
+    try {
+      const data = await this.apiService.EjecutarDev(this.xAPI).toPromise();
+  
+      // Validar que data no sea undefined y que tenga la propiedad Cuerpo
+      if (data && data.Cuerpo && data.Cuerpo.length > 0) {
+        this.tokenPWD = this.utilservice.TokenAleatorio(50);
+        sessionStorage.setItem("TokenResetPassEmail", btoa(data.Cuerpo[0].correo_electronico));
+        sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
+  
+        // Usar await para esperar a que se complete el envío del correo
+        await this.EnviarCorreo(
+          data.Cuerpo[0].correo_electronico,
+          btoa(this.tokenPWD),
+          btoa(data.Cuerpo[0].correo_electronico),
+          data.Cuerpo[0].nombre_empresa
+        );
+  
+        this.utilservice.alertConfirmMini('success', 'Felicidades! <br> Se ha enviado un correo electrónico con la información para restablecer su contraseña');
+        this._router.navigate(['/']);
+      } else {
+        this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo');
       }
-    )
-    // this.xAPI.funcion = 'IPOSTEL_R_forgotpassword1'
-    // this.xAPI.parametros = this.forgotPasswordForm.value.email
-    // this.xAPI.valores = ''
-    // await this.apiService.EjecutarDev(this.xAPI).subscribe(
-    //   (data) => {
-    //        if (data.Cuerpo.length > 0) {
-    //   this.show = true
-    //   this.btn = true
-    // } else {
-    //     this.utilservice.alertConfirmMini('error','<font color="red">Oops Lo sentimos!</font><br> Correo Electronico no valido, verifiquelo e intente de nuevo')
-    // }
-    //   },
-    //   (error) => {
-    //     console.error(error)
-    //   }
-    // )
+    } catch (error) {
+      console.error('Error en onSubmit:', error);
+      this.utilservice.alertConfirmMini('error', '<font color="red">Error!</font><br> No se pudo completar la solicitud.');
+    }
   }
 
   // Lifecycle Hooks
@@ -234,26 +226,29 @@ export class AuthForgotPasswordV2Component implements OnInit {
     )
   }
 
-  async EnviarCorreo(email: string, hash: string, Hemail:string, user:string) {
+  async EnviarCorreo(email: string, hash: string, Hemail: string, user: string): Promise<void> {
     this.fnx = {
       funcion: 'Fnx_EnviarMailCurl',
       MAIL: email,
       HASH: hash,
       HEMAIL: Hemail,
       USER: user
-    }
-    await this.apiService.ExecFnx(this.fnx).subscribe(
-      (data) => {
-        if (data.Cuerpo.length > 0) {
-          this.utilservice.alertConfirmMini('success', 'Felicidades! <br> ')
-        } else {
-          this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> verifiquelos e intente de nuevo')
-        }
-      },
-      (error) => {
-        console.error(error)
+    };
+  
+    try {
+      const data = await this.apiService.ExecFnx(this.fnx).toPromise();
+  
+      // Validar que data no sea undefined y que tenga la propiedad Cuerpo
+      if (data && data.Cuerpo && data.Cuerpo.length > 0) {
+        this.utilservice.alertConfirmMini('success', 'Felicidades! <br> ');
+      } else {
+        this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> No se pudo enviar el correo.');
       }
-    )
+    } catch (error) {
+      console.error('Error al enviar el correo:', error);
+      this.utilservice.alertConfirmMini('error', '<font color="red">Error!</font><br> No se pudo enviar el correo.');
+      throw error; // Propagar el error
+    }
   }
 
 
