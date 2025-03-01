@@ -795,15 +795,15 @@ export class PriceTableComponent implements OnInit {
   
     const config = {
       funcion: 'Fnx_SubirTarifasLote',
-      // pass: 'Arrd17818665',
-      // host: '127.0.0.1',
-      // db: 'sirpven',
-      // user: 'elpoloxrodriguez',
-
-      pass: 'Mia28052024$',
+      pass: 'Arrd17818665',
       host: '127.0.0.1',
-      db: 'sirpven-ipostel',
-      user: 'postgres',
+      db: 'sirpven',
+      user: 'elpoloxrodriguez',
+
+      // pass: 'Mia28052024$',
+      // host: '10.16.12.45',
+      // db: 'sirpven-ipostel',
+      // user: 'postgres',
 
       port: '5432',
       schema: 'public',
@@ -1013,6 +1013,20 @@ export class PriceTableComponent implements OnInit {
       }
     })
 
+  }
+
+  descargarCSV() {
+    // Ruta relativa al archivo CSV en la carpeta src/assets
+    const rutaArchivo = '/assets/archivo.csv';
+
+    // Crear un enlace temporal
+    const link = document.createElement('a');
+    link.href = rutaArchivo;
+    link.download = 'archivo.csv'; // Nombre del archivo al descargar
+    link.click(); // Simular clic en el enlace
+
+    // Liberar el objeto URL (no es necesario si no usas Blob)
+    URL.revokeObjectURL(link.href);
   }
 
   async RegistrarTarifaLote() {

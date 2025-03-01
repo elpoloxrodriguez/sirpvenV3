@@ -20,22 +20,29 @@
                       Registros</label>
                   </div>
                 </div>
+
+
                 <div class="col-md-3 col-12">
                   <div class="d-flex justify-content-between align-items-center m-1">
                     <button type="button" class="btn btn-success" (click)="ModalRegistrarTarifaEnvio(ModalTarifaEnvio)"
                       rippleEffect>
                       Registrar Tarifas</button>
-
-
                   </div>
                 </div>
-                <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
-                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
-                    <button type="button" class="btn btn-danger" (click)="SubirXLS(ModalSubirXLS)"
-                      rippleEffect>
-                      Subir Tarifas x Lote</button>
+
+                <div class="col-md-3 col-12">
+                  <div class="d-flex align-items-center m-1">
+                    <button type="button" (click)="descargarCSV()" class="btn btn-icon btn-warning me-1" rippleEffect>
+                      <span [data-feather]="'download-cloud'"></span>
+                    </button>
+                    &nbsp;
+                    <button type="button" (click)="SubirXLS(ModalSubirXLS)" class="btn btn-icon btn-primary" rippleEffect>
+                      <span [data-feather]="'upload-cloud'"></span>
+                    </button>
                   </div>
                 </div>
+                
+
                 <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
                   <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
                     <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
