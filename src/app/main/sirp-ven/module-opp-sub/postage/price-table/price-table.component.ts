@@ -789,55 +789,6 @@ export class PriceTableComponent implements OnInit {
       })
   }
 
-  async XSubirLote(transaction_id: any, ruta: any, archivo: any) {
-    this.sectionBlockUI.start('Guardando Registros por Lote, por favor Espere!!!');
-    this.fnx = {
-      funcion: 'Fnx_SubirTarifasLote',
-
-      // pass: 'Arrd18022023$',
-      // host: '190.202.50.20',
-      // db: 'sirpven-ipostel',
-      // user: 'postgres',
-      // port: '5432',
-
-      pass: 'Arrd17818665',
-      host: '127.0.0.1',
-      db: 'sirpven',
-      user: 'elpoloxrodriguez',
-      port: '5432',
-
-      schema: 'public',
-      table: 'peso_envio_franqueo',
-      columns: 'id_servicio_franqueo,id_opp,mes,transaction_id,id_peso_envio,descripcion,pmvp',
-      delimiter: ';',
-      ruta: `tmp/file/out/${ruta}`,
-      original: archivo,
-      nuevo: 'archivo_nuevo.csv',
-      transaction_id: transaction_id,
-      id_opp: this.idOPP.toString(),
-      fecha: this.fechax.toString(),
-    };
-    await this.apiService.ExecFnx(this.fnx).subscribe(
-      (data) => {
-        if (data.tipo == 1) {
-          this.modalService.dismissAll('Close')
-          setTimeout(() => {
-            this.sectionBlockUI.stop()
-            this.router.navigate(['postage/price-table']).then(() => { window.location.reload() });
-            this.utilService.alertConfirmMini('success', 'Lote Exitoso!')
-          }, 10000);
-
-        } else {
-          this.sectionBlockUI.stop()
-          this.utilService.alertConfirmMini('warning', 'Oops lo sentimos, algo salio mal!')
-        }
-      },
-      (error) => {
-        this.sectionBlockUI.stop()
-        this.utilService.alertConfirmMini('error', 'Oops lo sentimos, algo salio mal!')
-      }
-    )
-  }
 
   async SubirLote(transaction_id: any, ruta: any, archivo: any) {
     this.sectionBlockUI.start('Guardando Registros por Lote, por favor Espere!!!');

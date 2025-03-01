@@ -49,6 +49,8 @@ export class AuthLoginV2Component implements OnInit {
 
   token: string | undefined;
 
+  public btnShowsubcontractors: boolean = true
+
   public fecha = new Date();
   public hora = this.fecha.getHours();
   public dia = this.fecha.getDay();
@@ -174,25 +176,13 @@ export class AuthLoginV2Component implements OnInit {
    * On init
    */
   async ngOnInit() {
-    // alert(this.production)
-    // console.log(VERSION.full);
     let Ruta = this.rutaActiva.snapshot.params.id
     if (Ruta != undefined) {
       this.Qr = Ruta
       this.Certificado(Ruta)
     }
 
-    // console.log(this.rutaActiva.snapshot.params.id)
-
     await this.BloqueoSystem()
-
-    // let urlQR = this._router.url
-    // if (urlQR  == undefined) {
-    //   this.Qr = ''
-    // } else {
-    //   this.Qr = urlQR.substring(7, urlQR.length  +1)
-    //   this.Qr = ''
-    // }
 
     if (sessionStorage.getItem("token") != undefined) {
       this._router.navigate(['/home'])
@@ -349,7 +339,12 @@ export class AuthLoginV2Component implements OnInit {
     await this.apiService.EjecutarDev(this.xAPI).subscribe(
       (data) => {
         data.Cuerpo.map(e => {
-          if (e.status_hora == '1') {
+          if (e.subcontractors == 1) {
+            this.btnShowsubcontractors = true
+          } else {
+            this.btnShowsubcontractors = false
+          }
+          if (e.status_hora == 1) {
             if (this.hora >= e.hora_desde || this.hora < e.hora_hasta) {
               this.utilservice.alertMessageAutoCloseTimer(5000, '<font color="red">Estimado Usuario</font>', '<strong><h4>El sistema estará operativo de Lunes a Viernes de 7:00AM hasta las 8:00PM.</h4></strong>')
               this.btnShow = false
@@ -358,7 +353,7 @@ export class AuthLoginV2Component implements OnInit {
               localStorage.clear();
             }
           }
-          if (e.status_dia == '1') {
+          if (e.status_dia == 1) {
             if (this.dia == e.dia_desde || this.dia == e.dia_hasta) {
               this.utilservice.alertMessageAutoCloseTimer(5000, '<font color="red">Estimado Usuario</font>', '<strong><h4>El sistema estará operativo de Lunes a Viernes de 7:00AM hasta las 8:00PM.</h4></strong>')
               this.btnShow = false
@@ -367,7 +362,7 @@ export class AuthLoginV2Component implements OnInit {
               localStorage.clear();
             }
           }
-          if (e.app_status == '1') {
+          if (e.app_status == 1) {
             if (this.dia > e.app_dia) {
               this.utilservice.alertMessageAutoCloseTimer(10000, '<h5><font color="red"><strong>Estimados Operadores Postales Privados</strong></font></h5>', '<strong><h5>En este momento nos encontramos realizando <strong>Mantenimiento y Mejoras</strong> al sistema <strong>SIRPVEN-IPOSTEL</strong> lamentamos los inconvenientes ocasionados, por favor intente de nuevo mas tarde! <br><br><strong><font color="red">Sistema Integrado de Regulación Postal Privado Venezolano 🇻🇪</font></strong></h5></strong>')
               this.btnShow = false

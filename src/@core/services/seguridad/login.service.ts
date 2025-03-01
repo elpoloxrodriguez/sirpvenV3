@@ -91,7 +91,6 @@ export class LoginService {
   }
 
   getLoginExternas(parametro: any): Observable<IToken> {
-    console.log(parametro)
     if (environment.production === true) {
       var url = this.URL + 'wusuario/access'
     } else {

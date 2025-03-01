@@ -398,6 +398,7 @@ export class ObligationsComponent implements OnInit {
             e.monto_pagar = this.utilService.ConvertirMoneda(e.monto_pagar)
             this.List_Pagos_Recaudacion.push(e)
           });
+          // console.log(this.List_Pagos_Recaudacion)
 
           // Filtrar por tipo_pago_pc
           this.rowsPagosConciliacion = this.List_Pagos_Recaudacion.filter(objeto => objeto.tipo_pago_pc != 1);

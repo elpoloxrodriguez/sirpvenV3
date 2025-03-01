@@ -8,6 +8,9 @@ import { CoreConfigService } from '@core/services/config.service';
 import { UtilService } from '@core/services/util/util.service';
 import { ApiService, IAPICore } from '@core/services/apicore/api.service';
 import { Router } from '@angular/router';
+import { LoginService } from '@core/services/seguridad/login.service';
+import jwt_decode from "jwt-decode";
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -23,6 +26,17 @@ export class AuthForgotPasswordV2Component implements OnInit {
     parametros: '',
     valores: {},
   };
+
+  public foto = 'assets/images/background/background.jpeg'
+
+  public Qr
+  public TipoVerificacion = [
+    { id: 1, name: 'Certificado' },
+    // { id: 2, name: 'Filatelia' }
+  ]
+  public TipoSeleccion
+  public tipo
+
 
   public img
   public appLogoImage
@@ -42,6 +56,7 @@ export class AuthForgotPasswordV2Component implements OnInit {
 
   public tokenPWD
 
+  public itk
 
   // Public
   public emailVar;
@@ -75,6 +90,7 @@ export class AuthForgotPasswordV2Component implements OnInit {
     private utilservice: UtilService,
     private apiService: ApiService,
     private _router: Router,
+    private loginService: LoginService,
   ) {
     this._unsubscribeAll = new Subject();
 
@@ -105,39 +121,38 @@ export class AuthForgotPasswordV2Component implements OnInit {
    * On Submit
    */
   async onSubmit() {
+    
     this.submitted = true;
     if (this.forgotPasswordForm.invalid) {
       return;
     }
-    this.xAPI.funcion = 'IPOSTEL_R_forgotpassword2';
+    this.xAPI.funcion = 'IPOSTEL_R_Login_Forgot_Password';
     this.xAPI.parametros = this.forgotPasswordForm.value.email;
     this.xAPI.valores = '';
-  
+
+    sessionStorage.removeItem("token-forgot-password");
+
     try {
-      const data = await this.apiService.EjecutarDev(this.xAPI).toPromise();
-  
-      // Validar que data no sea undefined y que tenga la propiedad Cuerpo
-      if (data && data.Cuerpo && data.Cuerpo.length > 0) {
-        this.tokenPWD = this.utilservice.TokenAleatorio(50);
-        sessionStorage.setItem("TokenResetPassEmail", btoa(data.Cuerpo[0].correo_electronico));
-        sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
-  
-        // Usar await para esperar a que se complete el envío del correo
-        await this.EnviarCorreo(
-          data.Cuerpo[0].correo_electronico,
-          btoa(this.tokenPWD),
-          btoa(data.Cuerpo[0].correo_electronico),
-          data.Cuerpo[0].nombre_empresa
-        );
-  
-        this.utilservice.alertConfirmMini('success', 'Felicidades! <br> Se ha enviado un correo electrónico con la información para restablecer su contraseña');
-        this._router.navigate(['/']);
-      } else {
-        this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo');
-      }
+      const data = await this.loginService.getLoginExternas(this.xAPI).toPromise();
+
+      this.itk = data;
+      sessionStorage.setItem("token-forgot-password", this.itk.token);
+
+      const stoken: any = jwt_decode(data.token);
+
+      // Usar await para esperar a que se complete el envío del correo
+      await this.EnviarCorreo(
+        stoken.Usuario[0].correo_electronico,
+        this.itk.token,
+        stoken.Usuario[0].nombre_empresa
+      );
+
+      this.utilservice.alertConfirmMini('success', 'Felicidades! <br> Se ha enviado un correo electrónico con la información para restablecer su contraseña');
+      this._router.navigate(['/']);
+
     } catch (error) {
       console.error('Error en onSubmit:', error);
-      this.utilservice.alertConfirmMini('error', '<font color="red">Error!</font><br> No se pudo completar la solicitud.');
+      this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo');
     }
   }
 
@@ -152,10 +167,6 @@ export class AuthForgotPasswordV2Component implements OnInit {
       email: ['', [Validators.required, Validators.email]]
     });
 
-
-    // await this.Select_TipoAgencia()
-    // await this.Select_TipologiaEmpresa()
-
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
@@ -166,78 +177,17 @@ export class AuthForgotPasswordV2Component implements OnInit {
     });
   }
 
-  async Select_TipoAgencia() {
-    this.xAPI.funcion = 'IPOSTEL_tipo_agencia'
-    this.xAPI.parametros = ''
-    this.xAPI.valores = ''
-    await this.apiService.EjecutarDev(this.xAPI).subscribe(
-      (data) => {
-        this.SelectedTipoAgencia = data.Cuerpo.map(e => {
-          e.id = e.id_tipo_agencia
-          e.name = e.nombre_tipo_agencia
-          return e
-        })
-      },
-      (error) => {
-        console.error(error)
-      }
-    )
-  }
 
-  async Select_TipologiaEmpresa() {
-    this.xAPI.funcion = 'IPOSTEL_tipologia_empresa'
-    this.xAPI.parametros = ''
-    this.xAPI.valores = ''
-    await this.apiService.EjecutarDev(this.xAPI).subscribe(
-      (data) => {
-        this.SelectedTipologia = data.Cuerpo.map(e => {
-          e.id = e.id_tipologia
-          e.name = e.nombre_tipologia
-          return e
-        })
-      },
-      (error) => {
-        console.error(error)
-      }
-    )
-  }
-
-
-  async ValidarInfo() {
-    this.xAPI.funcion = 'IPOSTEL_R_forgotpassword2'
-    // this.xAPI.parametros = this.forgotPasswordForm.value.email+','+this.inputRif+','+this.inputTipoRegistro+','+this.inputTipologia+','+this.inputTipoAgencia
-    this.xAPI.parametros = this.forgotPasswordForm.value.email
-    this.xAPI.valores = ''
-    await this.apiService.EjecutarDev(this.xAPI).subscribe(
-      (data) => {
-        if (data.Cuerpo.length > 0) {
-          this.tokenPWD = this.utilservice.TokenAleatorio(50)
-          sessionStorage.setItem("TokenResetPassEmail", btoa(this.forgotPasswordForm.value.email));
-          sessionStorage.setItem("TokenResetPass", btoa(this.tokenPWD));
-          this.utilservice.alertConfirmMini('success', ' Datos Validos <br> por favor ingrese la nueva contraseña')
-          this._router.navigate(['reset-password/', this.tokenPWD +'/'+ btoa(this.forgotPasswordForm.value.email)])
-        } else {
-          this.utilservice.alertConfirmMini('warning', '<font color="red">Oops Lo sentimos!</font><br> Alguno de los campos son incorrectos, verifiquelos e intente de nuevo')
-        }
-      },
-      (error) => {
-        console.error(error)
-      }
-    )
-  }
-
-  async EnviarCorreo(email: string, hash: string, Hemail: string, user: string): Promise<void> {
+  async EnviarCorreo(email: string, hash: string, user: string): Promise<void> {
     this.fnx = {
       funcion: 'Fnx_EnviarMailCurl',
       MAIL: email,
       HASH: hash,
-      HEMAIL: Hemail,
       USER: user
     };
-  
+
     try {
       const data = await this.apiService.ExecFnxDevel(this.fnx).toPromise();
-  
       // Validar que data no sea undefined y que tenga la propiedad Cuerpo
       if (data && data.Cuerpo && data.Cuerpo.length > 0) {
         this.utilservice.alertConfirmMini('success', 'Felicidades! <br> ');
@@ -250,6 +200,132 @@ export class AuthForgotPasswordV2Component implements OnInit {
       throw error; // Propagar el error
     }
   }
+
+    ValidarSeleccion(event, Qr) {
+      if (Qr !== undefined) {
+        switch (event) {
+          case 1:
+            this.Certificado(Qr)
+            break;
+          case 2:
+            this.Philately(Qr)
+            break;
+  
+          default:
+            break;
+        }
+      } else {
+        Swal.fire({
+          title: 'Oops Lo Sentimos!',
+          text: 'El Campo Codigo QR es obligatorio',
+          icon: 'warning',
+        })
+      }
+    }
+  
+    async Certificado(id: string) {
+      // console.log(id)
+      this.xAPI.funcion = "IPOSTEL_R_Certificados";
+      this.xAPI.parametros = `${id}`
+      this.xAPI.valores = ''
+      await this.apiService.EjecutarDev(this.xAPI).subscribe(
+        (data) => {
+          // console.log(data)
+          if (data.Cuerpo.length != 0) {
+            this.Qr = ''
+            this.TipoSeleccion = undefined
+            // console.log(data.Cuerpo[0])
+            var cert = data.Cuerpo[0]
+            switch (cert.type) {
+              case 1:
+                this.tipo = 'Certificado Unico de Inscripción'
+                break;
+              case 2:
+                this.tipo = 'Autorización Postal'
+                break;
+              default:
+                break;
+            }
+            Swal.fire({
+              html: `
+                        <div class="card card-congratulations">
+                          <div class="card-body text-center">
+                            <div class="avatar avatar-xl bg-primary shadow">
+                            </div>
+                            <div class="text-center">
+                              <h1 class="mb-1 text-white">${cert.nombre_empresa}</h1>
+                              <p class="card-text m-auto w-50">
+                              RIF: ${cert.rif}
+                              </p>
+                              <p class="card-text m-auto w-100">
+                              DIRECCIÓN: ${cert.direccion_empresa}
+                              </p>
+                              <p class="card-text m-auto w-75">
+                              ${cert.correo_electronico}
+                              </p>
+                            </div>
+                            <br>
+                            <p align="left">
+                            ${this.tipo}
+                            </p>
+                            <p align="right">
+                            ${cert.token}
+                            </p>
+                          </div>
+                        </div>
+                  `,
+              footer: `
+                  <div class="auth-footer-btn d-flex justify-content-center">
+                    <p class="text-center mt-2">
+                  <small align="center"><strong>INSTITUTO POSTAL TELEGRÁFICO DE VENEZUELA</strong> <br>  RIF G-20000043-0
+                  <br>
+                  Dirección : Avenida José Ángel Lamas, San Martín, Caracas, edificio Centro Postal Caracas, Distrito Capital
+                  <br>
+                  E-mail: <a href="mailto:tsuarez@ipostel.gob.ve">tsuarez@ipostel.gob.ve</a>
+                  <br>
+                  Telf: <a href="Tel:02124053340">0212-405.33.40</a> / 0412-711.08.00 / fax: 0212-405.33.66
+                  </small>
+                  </p>
+                </div>
+                  `,
+              icon: 'success',
+              width: '900px',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              allowEnterKey: false,
+              showConfirmButton: false,
+              showCloseButton: true,
+            })
+          } else {
+            // this.Qr = ''
+            Swal.fire({
+              title: 'Certificado NO Valido!',
+              text: 'Lo sentimos, este certificado no es generado por nuestro sistema.',
+              icon: 'error',
+            })
+          }
+        },
+        (error) => {
+          //   console.log(error)
+          this.utilservice.alertMessageAutoCloseTimer(5000, '<font color="red">Estimado Usuario</font>', '<strong><h4>En este momento estamos presentando fallas de conexión, intente de nuevo</h4></strong>')
+        }
+      )
+    }
+  
+    async Philately(id: string) {
+      Swal.fire({
+        title: 'Franqueo Postal Previo',
+        text: 'El Codigo del QR es de prueba',
+        icon: 'warning',
+        imageWidth: 400,
+        imageHeight: 200,
+        imageAlt: 'Custom image',
+      })
+      this.Qr = ''
+      this.TipoSeleccion = undefined
+  
+    }
+  
 
 
   /**
