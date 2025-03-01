@@ -800,8 +800,8 @@ export class PriceTableComponent implements OnInit {
       // db: 'sirpven',
       // user: 'elpoloxrodriguez',
 
-      pass: 'Arrd18022023$',
-      host: '190.202.50.20',
+      pass: 'Mia28052024$',
+      host: '127.0.0.1',
       db: 'sirpven-ipostel',
       user: 'postgres',
 
