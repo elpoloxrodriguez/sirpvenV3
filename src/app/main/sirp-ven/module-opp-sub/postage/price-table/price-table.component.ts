@@ -795,15 +795,16 @@ export class PriceTableComponent implements OnInit {
   
     const config = {
       funcion: 'Fnx_SubirTarifasLote',
-      pass: 'Arrd17818665',
-      host: '127.0.0.1',
-      db: 'sirpven',
-      user: 'elpoloxrodriguez',
 
-      // pass: 'Mia28052024$',
-      // host: '10.16.12.45',
-      // db: 'sirpven-ipostel',
-      // user: 'postgres',
+      // pass: 'Arrd17818665',
+      // host: '127.0.0.1',
+      // db: 'sirpven',
+      // user: 'elpoloxrodriguez',
+
+      pass: 'Mia28052024$',
+      host: '10.16.12.45',
+      db: 'sirpven-ipostel',
+      user: 'postgres',
 
       port: '5432',
       schema: 'public',
