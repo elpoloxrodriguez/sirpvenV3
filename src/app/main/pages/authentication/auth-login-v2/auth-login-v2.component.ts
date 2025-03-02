@@ -348,7 +348,7 @@ export class AuthLoginV2Component implements OnInit {
             if (this.hora >= e.hora_desde || this.hora < e.hora_hasta) {
               this.utilservice.alertMessageAutoCloseTimer(5000, '<font color="red">Estimado Usuario</font>', '<strong><h4>El sistema estará operativo de Lunes a Viernes de 7:00AM hasta las 8:00PM.</h4></strong>')
               this.btnShow = false
-              this._router.navigate(['login']);
+              // this._router.navigate(['login']);
               sessionStorage.clear();
               localStorage.clear();
             }
@@ -357,7 +357,7 @@ export class AuthLoginV2Component implements OnInit {
             if (this.dia == e.dia_desde || this.dia == e.dia_hasta) {
               this.utilservice.alertMessageAutoCloseTimer(5000, '<font color="red">Estimado Usuario</font>', '<strong><h4>El sistema estará operativo de Lunes a Viernes de 7:00AM hasta las 8:00PM.</h4></strong>')
               this.btnShow = false
-              this._router.navigate(['login']);
+              // this._router.navigate(['login']);
               sessionStorage.clear();
               localStorage.clear();
             }
@@ -366,7 +366,7 @@ export class AuthLoginV2Component implements OnInit {
             if (this.dia > e.app_dia) {
               this.utilservice.alertMessageAutoCloseTimer(10000, '<h5><font color="red"><strong>Estimados Operadores Postales Privados</strong></font></h5>', '<strong><h5>En este momento nos encontramos realizando <strong>Mantenimiento y Mejoras</strong> al sistema <strong>SIRPVEN-IPOSTEL</strong> lamentamos los inconvenientes ocasionados, por favor intente de nuevo mas tarde! <br><br><strong><font color="red">Sistema Integrado de Regulación Postal Privado Venezolano 🇻🇪</font></strong></h5></strong>')
               this.btnShow = false
-              this._router.navigate(['login']);
+              // this._router.navigate(['login']);
               sessionStorage.clear();
               localStorage.clear();
             }

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService, IAPICore } from '@core/services/apicore/api.service';
-import { IPOSTEL_C_PagosDeclaracionOPP_SUB, IPOSTEL_DATA_EMPRESA_ID, IPOSTEL_U_PagosDeclaracionOPP_SUB, IPOSTEL_U_Status_Opp_Sub } from '@core/services/empresa/form-opp.service';
+import { IPOSTEL_C_PagosDeclaracionOPP_SUB, IPOSTEL_DATA_EMPRESA_ID, IPOSTEL_I_Pagos_Mantenimiento, IPOSTEL_U_PagosDeclaracionOPP_SUB, IPOSTEL_U_Status_Opp_Sub } from '@core/services/empresa/form-opp.service';
 import { UtilService } from '@core/services/util/util.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import jwt_decode from "jwt-decode";
@@ -28,18 +28,21 @@ export class MaintenanceComponent implements OnInit {
   @ViewChild('fileUpload1')
   private fileUpload1: AngularFileUploaderComponent
 
-  public IpagarRecaudacion: IPOSTEL_C_PagosDeclaracionOPP_SUB = {
-    id_opp: 0,
-    status_pc: 0,
-    tipo_pago_pc: 0,
-    monto_pc: '',
-    monto_pagar: '',
-    dolar_dia: '',
-    petro_dia: '',
+  public UReportarPago: IPOSTEL_I_Pagos_Mantenimiento = {
+    status: 4,
+    tipo_pago: 10,
+    fecha: '',
+    id_banco: undefined,
+    referencia_bancaria: '',
+    monto_pagar: undefined,
+    monto_pagado: undefined,
+    dolar_dia: undefined,
     archivo_adjunto: undefined,
-    user_created: 0,
-    fecha_pc: '',
-    mantenimiento: ''
+    observacion: '',
+    user_created: undefined,
+    user_updated: undefined,
+    date_updated: undefined,
+    id_opp: 0
   }
 
   public chkBoxSelected = [];
@@ -57,22 +60,6 @@ export class MaintenanceComponent implements OnInit {
   public numControl: string = ''
 
   public listaTiposPagos = []
-
-  public ActualizarPago: IPOSTEL_U_PagosDeclaracionOPP_SUB = {
-    status_pc: 0,
-    fecha_pc: '',
-    id_banco_pc: undefined,
-    referencia_bancaria: '',
-    monto_pc: '',
-    monto_pagar: '',
-    dolar_dia: '',
-    petro_dia: '',
-    archivo_adjunto: '',
-    observacion_pc: '',
-    user_created: 0,
-    user_updated: 0,
-    id_pc: 0
-  }
 
   public fechaActual
   public kitchenSinkRows: any;
@@ -155,17 +142,6 @@ export class MaintenanceComponent implements OnInit {
     { id: 1, name: 'PAGOS NO CONCILIADOS' }
   ]
 
-  public SelectTipoPagos = [
-    { id: 1, name: 'Franqueo Postal Obligatorio' },
-    { id: 2, name: 'Derecho Semestral 1' },
-    { id: 3, name: 'Derecho Semestral 2' },
-    { id: 4, name: 'Anualidad' },
-    { id: 5, name: 'Uso Contrato Subcontratista' },
-    { id: 6, name: 'Reparos' },
-    { id: 9, name: 'Renovación' }
-  ]
-
-
   public resultadoFactura
 
   public anioObligaciones = undefined
@@ -192,8 +168,6 @@ export class MaintenanceComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    // this.sectionBlockUI.start('Registrando Pago, por favor Espere!!!');
-    // setTimeout(() => this.sectionBlockUI.stop(), 3000)
     this.token = jwt_decode(sessionStorage.getItem('token'));
 
     this.tipoToken = this.token.Usuario[0].tipo_registro
@@ -207,7 +181,7 @@ export class MaintenanceComponent implements OnInit {
     this.idOPP = this.token.Usuario[0].id_opp
     this.TipoRegistro = this.token.Usuario[0].tipo_registro
 
-    this.Precio_Dolar_Petro()
+    await this.Precio_Dolar_Petro()
     this.generateYearsList()
     await this.ListaPagosRecaudacion()
     await this.ListaBancosVzla()
@@ -266,26 +240,15 @@ export class MaintenanceComponent implements OnInit {
   subirArchivo(e) {
     this.sectionBlockUI.start('Subiendo Archivo, por favor Espere!!!');
     this.token = jwt_decode(sessionStorage.getItem('token'));
-    // this.DocAdjunto.nombre = this.archivos[0].name
-    // this.DocAdjunto.usuario = this.token.Usuario[0].id_opp
-    // this.DocAdjunto.empresa = this.token.Usuario[0].id_opp
-    // this.DocAdjunto.numc = this.numControl
-    // this.DocAdjunto.tipo = parseInt(this.TipoDocument)
-    // this.DocAdjunto.vencimiento = this.datetime1.year+'-'+this.datetime1.month+'-'+this.datetime1.day 
     var frm = new FormData(document.forms.namedItem("forma"))
-    // console.log(frm)
     try {
       this.apiService.EnviarArchivos(frm).subscribe(
         (data) => {
-          // this.rowsDocumentosAdjuntosEmpresa.push(this.EmpresaDocumentosAdjuntos)
           this.xAPI.funcion = 'IPOSTEL_I_ArchivoDigital'
           this.xAPI.parametros = ''
-          // this.xAPI.valores = JSON.stringify(this.DocAdjunto)
           this.apiService.Ejecutar(this.xAPI).subscribe(
             (xdata) => {
               if (xdata.tipo == 1) {
-                // this.EmpresaDocumentosAdjuntos = []
-                // this.DocumentosAdjuntosOPPSUB()    
                 this.utilService.alertConfirmMini('success', 'Tu archivo ha sido cargado con exito')
                 this.modalService.dismissAll('Cerrar Modal')
                 this.sectionBlockUI.stop();
@@ -371,36 +334,41 @@ export class MaintenanceComponent implements OnInit {
     }
   }
 
-  FiltarObligacionStatusTipoPago(event: any) {
-    if (event != undefined) {
-      this.rowsPagosConciliacion = [...this.datosOriginales]; // Restaurar los datos originales
-      this.rowsPagosConciliacion = this.rowsPagosConciliacion.filter(objeto => objeto.tipo_pago_pc === event.id); // Aplicar el filtro
-      this.table.offset = 0;
-    }
+
+  getCurrentTime(): string {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const milliseconds = String(now.getMilliseconds()).padStart(6, '0'); // Asegurar 6 dígitos
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
   }
 
-
   async ModalPagar(modal, data) {
-    // console.log(data)
     this.token = jwt_decode(sessionStorage.getItem('token'));
     this.numControl = this.token.Usuario[0].rif
     this.hashcontrol = btoa("D" + this.numControl) //Cifrar documentos
 
-    this.title_modal = 'Reportar Declaración de Pago'
+    this.title_modal = 'Reportar Pago'
     this.ShowReportarPago = true
     this.ShowModificarPago = false
-    // console.log(data)
-    this.ActualizarPago.status_pc = 0
-    this.ActualizarPago.observacion_pc = data.observacion_pc
-    this.ActualizarPago.monto_pagar = data.montoReal
-    this.monto_pagarX = data.monto_pagar
-    this.monto_pagar_muestra = data.monto_pagar
-    this.ActualizarPago.monto_pc = data.montoReal
-    this.ActualizarPago.dolar_dia = data.dolar_dia
-    this.ActualizarPago.petro_dia = data.petro_dia
-    this.ActualizarPago.user_created = data.user_created
-    this.ActualizarPago.user_updated = this.idOPP
-    this.ActualizarPago.id_pc = data.id_pc
+    this.monto_pagarX = data.montopagar
+    this.UReportarPago.status = 0
+    this.UReportarPago.observacion = data.observacion
+    this.UReportarPago.monto_pagar = data.monto_pagar
+    this.UReportarPago.monto_pagado = data.monto_pagado
+    this.UReportarPago.fecha = data.fecha
+    this.UReportarPago.dolar_dia = data.dolar_dia
+    this.UReportarPago.user_created = data.user_created
+    this.UReportarPago.user_updated = this.idOPP
+    this.UReportarPago.id_opp = this.idOPP
+    this.UReportarPago.date_updated = this.getCurrentTime()
+    this.UReportarPago.id = data.id
     this.modalService.open(modal, {
       centered: true,
       size: 'lg',
@@ -411,24 +379,25 @@ export class MaintenanceComponent implements OnInit {
   }
 
   async ModalPagarModificar(modal, data) {
-    // console.log(data)
-    this.title_modal = 'Modificar Declaración de Pago'
+    console.log(data)
+    this.title_modal = 'Modificar de Pago'
     this.ShowReportarPago = false
     this.ShowModificarPago = true
-    this.ActualizarPago.status_pc = 0
-    this.ActualizarPago.monto_pagar = data.montoReal
     this.monto_pagarX = data.monto_pagar
-    this.ActualizarPago.monto_pc = data.montoReal
-    this.ActualizarPago.fecha_pc = data.fecha_pc
-    this.ActualizarPago.id_banco_pc = data.id_banco_pc
-    this.ActualizarPago.referencia_bancaria = data.referencia_bancaria
-    this.ActualizarPago.observacion_pc = data.observacion_pc
-    this.ActualizarPago.dolar_dia = data.dolar_dia
-    this.ActualizarPago.petro_dia = data.petro_dia
-    this.ActualizarPago.archivo_adjunto = data.archivo_adjunto ? data.archivo_adjunto : this.archivos[0].name
-    this.ActualizarPago.user_created = data.user_created
-    this.ActualizarPago.user_updated = this.idOPP
-    this.ActualizarPago.id_pc = data.id_pc
+    this.UReportarPago.status = 0
+    this.UReportarPago.observacion = data.observacion
+    this.UReportarPago.monto_pagar = data.monto_pagar
+    this.UReportarPago.monto_pagado = data.monto_pagado
+    this.UReportarPago.referencia_bancaria = data.referencia_bancaria
+    this.UReportarPago.id_banco = data.id_banco
+    this.UReportarPago.fecha = data.fecha
+    this.UReportarPago.dolar_dia = data.dolar_dia
+    this.UReportarPago.user_created = data.user_created
+    this.UReportarPago.user_updated = this.idOPP
+    this.UReportarPago.id_opp = this.idOPP
+    this.UReportarPago.date_updated = this.getCurrentTime()
+    this.UReportarPago.id = data.id
+    this.UReportarPago.archivo_adjunto = data.archivo_adjunto ? data.archivo_adjunto : this.archivos[0].name
     this.modalService.open(modal, {
       centered: true,
       size: 'lg',
@@ -456,125 +425,21 @@ export class MaintenanceComponent implements OnInit {
     this.modalService.dismissAll('Accept click')
   }
 
-  mostarDatosDetallesSUB(row: any, nuevo: any) {
-
-    this.rowMantenimiento = row.mantenimiento
-    this.fechaActualPago = row.fecha
-    const dolar = row.dolar_dia
-
-    this.rowMantenimiento.push(nuevo)
-
-
-    this.rowMantenimiento.map(e => {
-      e.dolitar = this.utilService.ConvertirMoneda$(parseFloat(e.tasa_petro).toFixed(2))
-      e.bolivares = (parseFloat(e.tasa_petro) * parseFloat(dolar)).toFixed(2)
-      e.bolivaresx = this.utilService.ConvertirMoneda(e.bolivares)
-      this.ListaMantenimientoYSeguridad.push(e)
-    });
-    let MontoTotalA = this.ListaMantenimientoYSeguridad.map(item => item.bolivares).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    this.montoPagar = this.utilService.ConvertirMoneda(MontoTotalA) // Bolivares
-
-    let MontoTotalB = this.ListaMantenimientoYSeguridad.map(item => item.tasa_petro).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    this.totalPetros = this.utilService.ConvertirMoneda$(MontoTotalB) // Dolares
-
-    this.resultadoFactura = this.montoPagar
-  }
-
-  mostarDatosDetallesOPP(row: any, nuevo: any) {
-
-    // console.log(nuevo)
-    this.rowMantenimiento = row.mantenimiento
-    this.fechaActualPago = row.fecha
-    const dolar = row.dolar_dia
-
-    // this.rowMantenimiento.push(nuevo)
-    this.dataObligacionOPP.push(nuevo)
-
-    let MontoTotalAx = this.dataObligacionOPP.map(item => item.monto_real).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    this.XmontoPagarX = this.utilService.ConvertirMoneda(MontoTotalAx) // Bolivares
-
-    let MontoTotalBx = this.dataObligacionOPP.map(item => item.tasa_petro).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    this.XtotalPetrosX = this.utilService.ConvertirMoneda$(MontoTotalBx) // Dolares
-
-    this.rowMantenimiento.map(e => {
-      e.dolitar = this.utilService.ConvertirMoneda$(parseFloat(e.tasa_petro).toFixed(2))
-      e.bolivares = (parseFloat(e.tasa_petro) * parseFloat(dolar)).toFixed(2)
-      e.bolivaresx = this.utilService.ConvertirMoneda(e.bolivares)
-      this.ListaMantenimientoYSeguridad.push(e)
-    });
-    let MontoTotalA = this.ListaMantenimientoYSeguridad.map(item => item.bolivares).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    this.montoPagar = this.utilService.ConvertirMoneda(MontoTotalA) // Bolivares
-
-    let MontoTotalB = this.ListaMantenimientoYSeguridad.map(item => item.tasa_petro).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    this.totalPetros = this.utilService.ConvertirMoneda$(MontoTotalB) // Dolares
-
-    // Eliminar el texto "VEF" y espacios, y reemplazar la coma por un punto
-    this.XmontoPagarX = this.XmontoPagarX.replace(/(VEF)|(\s)/g, "").replace(",", ".");
-    this.montoPagar = this.montoPagar.replace(/(VEF)|(\s)/g, "").replace(",", ".");
-    // Convertir los montos a números
-    let numeroMonto1 = parseFloat(this.XmontoPagarX);
-    let numeroMonto2 = parseFloat(this.montoPagar);
-    // Sumar los montos
-    let result = numeroMonto1 + numeroMonto2;
-    this.resultadoFactura = this.utilService.ConvertirMoneda(result)
-  }
-
-  async ConsultarOPP(id_opp: any) {
-    this.xAPI.funcion = "IPOSTEL_R_OPP_ID"
-    this.xAPI.parametros = `${id_opp}`
-    this.xAPI.valores = ''
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        data.Cuerpo.map(e => {
-          // console.log(e)
-          this.nombreEmpresaOPP = e.nombre_empresa
-          this.rifEmpresaOPP = e.rif
-        });
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-
-  }
-
-
-  async ModificarConciliarPagoRecaudacion() {
-    this.xAPI.funcion = "IPOSTEL_U_PagosDeclaracionOPP_SUB"
-    this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(this.ActualizarPago)
-    this.sectionBlockUI.start('Comprobando Pago, por favor Espere!!!');
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        this.rowsPagosConciliacion.push(this.List_Pagos_Recaudacion)
-        if (data.tipo === 1) {
-          this.List_Pagos_Recaudacion = []
-          this.ListaPagosRecaudacion()
-          this.modalService.dismissAll('Close')
-          this.sectionBlockUI.stop()
-          this.utilService.alertConfirmMini('success', 'Pago Modificado Exitosamente!')
-        } else {
-          this.sectionBlockUI.stop();
-          this.utilService.alertConfirmMini('error', 'Algo salio mal! <br> Verifique e intente de nuevo')
-        }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
 
   async PagarRecaudacion() {
-    // console.log(this.archivos[0].name)
-    this.sectionBlockUI.start('Reportando Pago, por favor Espere!!!');
-    this.ActualizarPago.archivo_adjunto = this.archivos[0].name ? this.archivos[0].name : null
+    this.UReportarPago.archivo_adjunto = this.archivos[0].name ? this.archivos[0].name : undefined
     var frm = new FormData(document.forms.namedItem("forma"))
+    if (this.UReportarPago.archivo_adjunto == undefined) {
+      this.utilService.alertConfirmMini('warning', 'Lo sentimos, debe subir el archivo de la transacción')
+      this.sectionBlockUI.stop()
+    } 
+    this.sectionBlockUI.start('Reportando Pago, por favor Espere!!!');
     try {
       await this.apiService.EnviarArchivos(frm).subscribe(
         (data) => {
           // console.log(data)
-          if (this.ActualizarPago.monto_pagar === this.ActualizarPago.monto_pc) {
-            this.updateConciliacion.UpdateCreacionRecaudacionIndividual(this.ActualizarPago)
+          if (this.UReportarPago.monto_pagar === this.UReportarPago.monto_pagado) {
+            this.updateConciliacion.PagarFacturaMantenimiento(this.UReportarPago)
               .then((resultado) => {
                 // Manejar el resolve
                 // console.log('Operación exitosa:', resultado);
@@ -624,22 +489,17 @@ export class MaintenanceComponent implements OnInit {
   }
 
   async DescargarFactura(liquidacion: any) {
-    // console.log(liquidacion)
     this.sectionBlockUI.start('Generando Planilla de Autoliquidación, por favor Espere!!!');
-    switch (liquidacion.tipo_pago_pc) {
-      case 1:
-        this.xAPI.funcion = "IPOSTEL_R_GenerarPlanillaAutoliquidacion"
-        this.xAPI.parametros = `${liquidacion.id_opp}` + ',' + `${liquidacion.id_pc}`
+    this.xAPI.funcion = "IPOSTEL_R_GenerarPlanillaMantenimiento"
+        this.xAPI.parametros = `${liquidacion.id_opp}`
         this.xAPI.valores = ''
         await this.apiService.Ejecutar(this.xAPI).subscribe(
           (data) => {
             let datos = data.Cuerpo.map(e => {
-              e.ListaFranqueo = JSON.parse(e.listafranqueo)
-              e.ListaFacturas = JSON.parse(e.listafacturas)
               this.sectionBlockUI.stop()
               return e
             });
-            this.pdf.GenerarFactura(datos, this.MantenimientoYSeguridad)
+            this.pdf.GenerarFacturaMantenimiento(datos,liquidacion)
             this.sectionBlockUI.stop()
             this.utilService.alertConfirmMini('success', 'Planilla Generada Exitosamente!')
           },
@@ -648,34 +508,6 @@ export class MaintenanceComponent implements OnInit {
             console.log(error)
           }
         )
-        break;
-      case 5:
-        this.xAPI.funcion = "IPOSTEL_R_GenerarPlanillaAutoliquidacion_UsuContratoSubcontratar"
-        this.xAPI.parametros = `${liquidacion.id_opp},${liquidacion.id_pc}`
-        this.xAPI.valores = ''
-        await this.apiService.Ejecutar(this.xAPI).subscribe(
-          (data) => {
-            let datos = data.Cuerpo.map(e => {
-              e.ListaFacturas = JSON.parse(e.listafacturas)
-              e.MantenimientoSIRPVEN = JSON.parse(e.ListaFacturas[0].mantenimiento)
-              this.MantenimientoYSeguridad = e.MantenimientoSIRPVEN
-              this.sectionBlockUI.stop()
-              // console.log(e)
-              return e
-            });
-            this.pdf.GenerarPlanillaLiquidacion5(datos, this.MantenimientoYSeguridad)
-            this.sectionBlockUI.stop()
-            this.utilService.alertConfirmMini('success', 'Planilla Generada Exitosamente!')
-          },
-          (error) => {
-            this.sectionBlockUI.stop()
-            console.log(error)
-          }
-        )
-        break;
-      default:
-        break;
-    }
   }
 
   filterUpdatePagos(event) {

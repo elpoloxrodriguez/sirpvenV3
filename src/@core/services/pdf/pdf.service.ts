@@ -48,6 +48,9 @@ export class PdfService {
   public mes = this.fechas.getMonth() + 1;
   public anio = this.fechas.getFullYear();
 
+  public itemFacturas = []
+
+
   public valor0
   public valor1
   constructor(
@@ -656,6 +659,251 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
     // doc.output("dataurlnewwindow", { filename: `Factura ${fecha}`+".pdf" });
   }
 
+
+  GenerarFacturaMantenimiento(data: any, facturaMantenimiento: any) {
+    const fecha = this.utilService.FechaActual()
+    const anio = new Date(fecha)
+    let aniox = anio.getFullYear()
+    const doc = new jsPDF();
+
+    this.Nacional = data[0].ListaFranqueo ? data[0].ListaFranqueo : 0
+    this.InternacionalLlegada = data[0].ListaFranqueo ? data[0].ListaFranqueo : 0
+    this.InternacionalSalida = data[0].ListaFranqueo ? data[0].ListaFranqueo : 0
+    this.TotalFactura = data[0].ListaFranqueo ? data[0].ListaFranqueo : 0
+
+    const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    doc.setProperties({
+      title: "FACTURA SIRP-IPOSTEL",
+      subject: "https://sirp.ipostel.gob.ve",
+      author: "SIRP-IPOSTEL",
+      keywords: "generated, javascript, web 2.0, ajax",
+      creator: "CAP. ANDRÉS RICARDO RODRÍGUEZ DURÁN",
+    });
+
+    doc.addImage('assets/images/pdf/cintillo.png', "PNG", 10, 5, 187.5, 15);
+    doc.addImage('assets/images/pdf/marca-agua.png', "PNG", 25, 210, 160, 60);
+      doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
+      doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
+      doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
+      doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
+
+
+
+    doc.rect(14, 20, 142, 20);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+    doc.text("PLANILLA DE AUTOLIQUIDACIÓN DE OBLIGACIONES POSTALES DE LAS OPERADORAS POSTALES PRIVADAS (OPP)", 85, 28, { maxWidth: 140, align: "center" });
+
+
+    doc.rect(156, 20, 40, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    doc.text("FECHA", 176, 23.5, { align: "center" });
+    doc.rect(156, 25, 40, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "");
+    doc.text(this.utilService.FechaMomentL(fecha), 176, 28.5, { align: "center" });
+
+
+    doc.rect(156, 30, 40, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    doc.text("N° CONTROL", 176, 33.5, { align: "center" });
+    doc.rect(156, 35, 40, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    // doc.text(`${aniox + '-' + data[0].ListaFacturas[0].id_factura}`, 176, 38.5, { align: "center" });
+
+
+    doc.rect(14, 40, 25, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    doc.text("OPERADOR POSTAL", 26.5, 43.3, { align: "center" });
+    doc.rect(39, 40, 95, 5);
+    doc.setFontSize(5);
+    doc.setFont(undefined, "");
+    doc.text(data[0].nombre_empresa.toUpperCase(), 40, 43, { align: "justify" });
+
+
+    doc.rect(134, 40, 22, 5);
+    doc.setFont(undefined, "bold");
+    doc.text("CODIGO POSTAL N°", 145, 43.3, { align: "center" });
+    doc.setFont(undefined, "bold");
+    doc.text(data[0].concesion_postal_curp, 175, 43.3, { align: "center" });
+
+
+    doc.rect(14, 45, 20, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    doc.text("RIF", 24.5, 48.3, { align: "center" });
+    doc.rect(34, 45, 30, 5);
+    doc.setFontSize(5);
+    doc.setFont(undefined, "");
+    doc.text(data[0].rif.toUpperCase(), 40, 48.3, { align: "center" });
+
+
+
+    // doc.rect(74, 45, 30, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    doc.text("TELEFONO", 73, 48.3, { align: "center" });
+    doc.rect(85, 45, 49, 5);
+    doc.setFontSize(5);
+    doc.setFont(undefined, "");
+    doc.text(data[0].telefono_movil_representante_legal + ' - ' + data[0].telefono_residencial_representante_legal, 87, 48.3, { align: "justify" });
+
+    // doc.rect(134, 45, 26, 5);
+    doc.setFont(undefined, "bold");
+    doc.text("CONTRATO N°", 145, 48.3, { align: "center" });
+    doc.setFont(undefined, "bold");
+    doc.text(data[0].n_contrato_curp, 175, 48.3, { align: "center" });
+
+
+    doc.rect(156, 40, 40, 5);
+    doc.rect(156, 45, 40, 5);
+    doc.rect(14, 50, 26, 5);
+    doc.setFontSize(7);
+    doc.setFont(undefined, "bold");
+    doc.text("DIRECCIÓN", 27, 53.3, { align: "center" });
+    doc.rect(40, 50, 156, 5);
+    doc.setFontSize(5);
+    doc.setFont(undefined, "");
+    doc.text(data[0].direccion_empresa.toUpperCase(), 60, 53.3, { maxWidth: 160, align: "justify" }
+    );
+
+
+    autoTable(doc, {})
+    doc.setFontSize(9);
+    doc.setFont(undefined, "");
+    autoTable(doc, {
+      styles: { fillColor: [128, 24, 24], halign: 'center' },
+      columnStyles: { 0: { halign: 'center', fillColor: [153, 153, 153] } }, // Cells in first column centered and green
+      margin: { top: 0 },
+      head: [['CONCEPTOS DE PAGO']],
+      startY: 60,
+    })
+
+
+
+    this.itemFacturas.push(facturaMantenimiento)
+    // // let itemMontoFacturas =  data[0].ListaFacturas
+    this.itemFacturas.map(e => {
+      this.MontoTotalP = e.montopagado
+      this.tempDataRowsFacturas = [
+        e.nombre_tipo_pagos,
+        e.monto_pagar = this.utilService.ConvertirMoneda(e.monto_pagar),
+        e.referencia_bancaria,
+        e.fecha,
+      ];
+    });
+
+    this.rowsFacturas.push(this.tempDataRowsFacturas);
+
+
+    autoTable(doc, {
+      styles: { fillColor: [153, 153, 153], halign: 'center', overflow: "linebreak", fontSize: 9, valign: "middle", },
+      columnStyles: { 0: { halign: 'justify', } }, // Cells in first column centered and green
+      head: [['CONCEPTO',  'MONTO', 'DEPÓSITO', 'FECHA']],
+      body: this.rowsFacturas,
+      startY: 67,
+    })
+
+    autoTable(doc, {
+      styles: { fillColor: [153, 153, 153], halign: 'center', overflow: "linebreak", fontSize: 8, valign: "middle", },
+      columnStyles: { 0: { halign: 'center', fillColor: [147, 196, 125] } }, // Cells in first column centered and green
+      body: [['TOTAL A CANCELAR', this.MontoTotalP ? this.MontoTotalP : 0, 'MONTO PETRO', 0]],
+      theme: "grid",
+      startY: 81.5,
+    })
+
+
+    doc.rect(14, 210, 182, 30);
+    doc.setFontSize(9);
+    doc.setFont(undefined, "bold");
+    doc.text("OBSERVACIONES:", 15, 213, { align: "left" });
+    doc.text(facturaMantenimiento.observacion, 15, 217, { maxWidth: 178, align: "justify" });
+
+
+    doc.rect(14, 240, 60.6, 5);
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text("PRESIDENTA (E) IPOSTEL", 43, 243.4, { align: "center" });
+
+    doc.rect(74.6, 240, 80.6, 5);
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text("DIRECTOR DE GESTIÓN DEL SECTOR POSTAL", 115, 243.4, { align: "center" });
+
+
+    doc.rect(155.2, 240, 40.6, 5);
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text("CONCESIONARIO", 176, 243.4, { align: "center" });
+    // doc.text(data[0].nombre_empresa.toUpperCase(), 176,248.4, { align: "center" })
+
+    doc.rect(14, 245, 60.6, 10);
+    doc.rect(74.6, 245, 80.6, 10);
+    doc.rect(155.2, 245, 40.6, 10);
+
+    doc.rect(14, 255, 60.6, 5);
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text("SELLO DE LA GERENCIA", 43, 258, { align: "center" });
+
+    doc.rect(74.6, 255, 80.6, 5);
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text("SELLO DE LA DIRECCIÓN", 115, 258, { align: "center" });
+
+
+    doc.rect(155.2, 255, 40.6, 5);
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text("SELLO DE LA EMPRESA", 176, 258, { align: "center" });
+
+    doc.rect(14, 260, 60.6, 10);
+    doc.rect(74.6, 260, 80.6, 10);
+    doc.rect(155.2, 260, 40.6, 10);
+
+
+    // FOOTER INICIO
+    doc.setFont(undefined, "");
+    doc.setFontSize(6);
+    doc.text(
+      "NOTA: LOS PAGOS DEBEN SER CALCULADOS A LA TASA SEGÚN EL BCV DEL DIA EN QUE SE REALICE LA LIQUIDACIÓN POSTAL EN LA GERENCIA DE REGULACIÓN POSTAL",
+      105,
+      272,
+      { maxWidth: 210, align: "center" }
+    );
+
+    doc.setFontSize(6);
+    doc.text(
+      "Providencia Administrativa N° CJ/002/2020 de fecha 30 de Junio de 2020, publicado respectivamente en la Gaceta Oficial N° 41.912 de fecha 01 de Julio de 2020",
+      105,
+      281,
+      { maxWidth: 210, align: "center" }
+    );
+
+    doc.setLineWidth(0.3);
+    doc.line(14, 282, 197, 283);
+
+
+    doc.setFontSize(6);
+    doc.setFont(undefined, "bold");
+    doc.text(
+      "Dirección de Gestión Postal: Centro Postal Caracas, 2do Piso, A la Oeste. Av. José Angel Lamas, Caracas - Venezuela. Zona Postal 1020",
+      105,
+      285,
+      { maxWidth: 210, align: "center" }
+    );
+
+    // FOOTER FINAL
+
+    doc.save(`Factura ${fecha}` + ".pdf");
+    // doc.autoPrint();
+    // doc.output("dataurlnewwindow", { filename: `Factura ${fecha}`+".pdf" });
+  }
 
   
   DescargarFacturaObligacion(data: any) {

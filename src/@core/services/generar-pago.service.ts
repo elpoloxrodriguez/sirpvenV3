@@ -93,11 +93,11 @@ export class GenerarPagoService {
         }
 
 
-        async PagarFacturaMantenimiento(pagarRecaudacion: any): Promise<string> {
+        async PagarFacturaMantenimiento(PagoMantenimiento: any): Promise<string> {
             return new Promise((resolve, reject) => {
                 this.xAPI.funcion = "IPOSTEL_U_Pagos_Mantenimiento";
                 this.xAPI.parametros = ''
-                this.xAPI.valores = JSON.stringify(pagarRecaudacion)
+                this.xAPI.valores = JSON.stringify(PagoMantenimiento)
                 this.apiService.Ejecutar(this.xAPI).subscribe(
                     (data) => {
                         if (data.tipo == 1) {
@@ -115,11 +115,11 @@ export class GenerarPagoService {
         }
 
 
-        async InsertarFacturaMantenimiento(pagarRecaudacion: any): Promise<string> {
+        async InsertarFacturaMantenimiento(PagoMantenimiento: any): Promise<string> {
             return new Promise((resolve, reject) => {
                 this.xAPI.funcion = "IPOSTEL_I_Pagos_Mantenimiento";
                 this.xAPI.parametros = ''
-                this.xAPI.valores = JSON.stringify(pagarRecaudacion)
+                this.xAPI.valores = JSON.stringify(PagoMantenimiento)
                 this.apiService.Ejecutar(this.xAPI).subscribe(
                     (data) => {
                         if (data.tipo == 1) {

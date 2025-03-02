@@ -57,8 +57,6 @@ export class StatementOfPartiesComponent implements OnInit {
     fecha: '',
     id_banco: undefined,
     referencia_bancaria: '',
-    cedula_rif_banco: '',
-    telefono_banco: '',
     monto_pagar: 0,
     monto_pagado: 0,
     dolar_dia: 0,

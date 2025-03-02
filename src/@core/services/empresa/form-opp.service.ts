@@ -440,16 +440,14 @@ export interface IPOSTEL_I_Pagos_Mantenimiento { // ACTUALIZA PAGO EN MANTENIMIE
 	fecha: string
 	id_banco: any
 	referencia_bancaria: string
-	cedula_rif_banco: string
-	telefono_banco: string
 	monto_pagar: any
 	monto_pagado: any
 	dolar_dia: any
 	archivo_adjunto: any
 	observacion: string
 	user_created: any
-	user_updated: any
-	date_updated: any
+	user_updated?: any
+	date_updated?: any
 	id?: number
 	id_opp: number
 }

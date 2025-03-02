@@ -290,7 +290,7 @@ export class PriceTableComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.RegistroTarifas.listaActualizadaTarifas.subscribe(() => {
+    await this.RegistroTarifas.listaActualizadaTarifas.subscribe(() => {
       // Vuelve a cargar la lista de registros desde sessionStorage
       this.cargarRegistrosTarifa();
     });
@@ -314,28 +314,6 @@ export class PriceTableComponent implements OnInit {
     await this.ModalListaServicioFranqueo(1)
   }
 
-  // addItem() {
-  //   this.items.push({
-  //     id_opp: null,
-  //     id_peso_envio: null,
-  //     descripcion: null,
-  //     pmvp: null,
-  //     iva: null,
-  //     tasa_postal: null,
-  //     total_pagar: null,
-  //     mes: null,
-  //     id_servicio_franqueo: null,
-  //     user_created: null,
-  //   });
-  // }
-  // deleteItem(id) {
-  //   for (let i = 0; i < this.items.length; i++) {
-  //     if (this.items.indexOf(this.items[i]) === id) {
-  //       this.items.splice(i, 1);
-  //       break;
-  //     }
-  //   }
-  // }
 
   async TasaPostal(tipologia, id_opp) {
     this.xAPI.funcion = "IPOSTEL_R_TasaPostal"
@@ -801,12 +779,12 @@ export class PriceTableComponent implements OnInit {
       // db: 'sirpven',
       // user: 'elpoloxrodriguez',
 
-      pass: 'Mia28052024$',
-      host: '10.16.12.45',
-      db: 'sirpven-ipostel',
-      user: 'postgres',
+      pass: this.DatosConexionBD.clave,
+      host: this.DatosConexionBD.host,
+      db: this.DatosConexionBD.basedatos,
+      user: this.DatosConexionBD.usuario,
+      port: this.DatosConexionBD.puerto,
 
-      port: '5432',
       schema: 'public',
       table: 'peso_envio_franqueo',
       columns: 'id_servicio_franqueo,id_opp,mes,transaction_id,id_peso_envio,descripcion,pmvp',
