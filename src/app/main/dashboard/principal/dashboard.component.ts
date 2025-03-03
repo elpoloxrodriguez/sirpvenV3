@@ -39,6 +39,9 @@ export class DashboardComponent implements OnInit {
     id_pd: 0
   }
 
+  public rowsCuentasBancarias
+  public rowsBancos = []
+
   public CrearCert: ICrearCertificados = {
     usuario: 0,
     token: '',
@@ -148,6 +151,7 @@ export class DashboardComponent implements OnInit {
    * On init
    */
   async ngOnInit() {
+    await this.CuentasBancarias();
     // this.WebScrapring()
     this.token = jwt_decode(sessionStorage.getItem('token'));
     await this.Precio_Dolar_Petro()
@@ -206,6 +210,27 @@ export class DashboardComponent implements OnInit {
       this.statusEmpresaOPP = false
     }
 
+  }
+
+  async CuentasBancarias() {
+    this.xAPI.funcion = "IPOSTEL_R_CuentaBancaria";
+    this.xAPI.parametros = '1'
+    this.xAPI.valores = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data.Cuerpo.length >= 0) {
+          this.rowsCuentasBancarias = data.Cuerpo.map(e => {
+            return e
+          });
+          this.rowsBancos = this.rowsCuentasBancarias;
+        } else {
+          this.rowsBancos = []
+        }
+      },
+      (err) => {
+        console.log(err)
+      }
+    )
   }
 
   Meses() {
