@@ -183,7 +183,11 @@ export class AuthForgotPasswordV2Component implements OnInit {
       funcion: 'Fnx_EnviarMailCurl',
       MAIL: email,
       HASH: hash,
-      USER: user
+      USER: user,
+      TITULO: "IPOSTEL - SIRPVEN - Recuperar Contraseña 🔐",
+      IMG: "https://sirp.ipostel.gob.ve/app/assets/images/banner/cintillo.png",
+      URL: "https://sirp.ipostel.gob.ve/app/#/reset-password",
+
     };
 
     try {
