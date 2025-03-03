@@ -178,15 +178,17 @@ export class AuthForgotPasswordV2Component implements OnInit {
   }
 
 
-  async EnviarCorreo(email: string, hash: string, user: string): Promise<void> {
+  async EnviarCorreo(email: string, hash: string, usuario: string): Promise<void> {
     this.fnx = {
       funcion: 'Fnx_EnviarMailCurl',
       MAIL: email,
       HASH: hash,
-      EMPRESA: user,
+      EMPRESA: usuario,
       TITULO: "IPOSTEL - SIRPVEN - Recuperar Contraseña 🔐",
       IMG: "https://sirp.ipostel.gob.ve/app/assets/images/banner/cintillo.png",
       URL: "https://sirp.ipostel.gob.ve/app/#/reset-password",
+      INSTITUTO: "INSTITUTO POSTAL TELEGRÁFICO DE VENEZUELA",
+      SLOGAN: "SIRPVEN - IPOSTEL"
 
     };
 
