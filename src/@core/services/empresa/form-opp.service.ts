@@ -452,6 +452,15 @@ export interface IPOSTEL_I_Pagos_Mantenimiento { // ACTUALIZA PAGO EN MANTENIMIE
 	id_opp: number
 }
 
+export interface IPOSTEL_I_Pagos_Mantenimiento_Conciliar { // CONCILIAR PAGO MANTENIMIENTO
+	status: any
+	observacion: string
+	user_updated?: any
+	date_updated?: any
+	id?: number
+	id_opp: number
+}
+
 
 export interface IPOSTEL_I_OtorgamientoConcesion { // INSERTAR REGISTRO PARA OTORGAMIENTO POSTAL
 	id_opp: any

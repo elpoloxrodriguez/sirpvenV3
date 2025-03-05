@@ -996,7 +996,7 @@ export class PriceTableComponent implements OnInit {
 
   descargarCSV() {
     // Ruta relativa al archivo CSV en la carpeta src/assets
-    const rutaArchivo = '/assets/archivo.csv';
+    const rutaArchivo = 'https://sirp.ipostel.gob.ve/app/assets/archivo.csv';
 
     // Crear un enlace temporal
     const link = document.createElement('a');
@@ -1005,6 +1005,7 @@ export class PriceTableComponent implements OnInit {
     link.click(); // Simular clic en el enlace
 
     // Liberar el objeto URL (no es necesario si no usas Blob)
+    // console.log(link)
     URL.revokeObjectURL(link.href);
   }
 

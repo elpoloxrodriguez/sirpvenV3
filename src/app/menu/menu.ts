@@ -12,25 +12,6 @@ export const menu: CoreMenu[] = [
     type: 'item',
     url: 'home',
   },
-    // PAGOS DEL SISTEMA 
-    {
-      id: 'philately-admin',
-      nombre: 'Pagos Soporte',
-      title: 'Pagos Soporte',
-      role: [3,6],
-      type: 'collapsible',
-      icono: 'dollar-sign',
-      children: [
-        {
-          id: 'report-payment',
-          nombre: 'Lista Pagos',
-          type: 'item',
-          icono: 'circle',
-          url: 'license/report-payment'
-        },
-      ]
-    },
-
 
   // AUDITORIA
   {
@@ -232,13 +213,37 @@ export const menu: CoreMenu[] = [
     url: 'admin-reports/admin-reports',
   },
   //  RECAUDACION
+  // {
+  //   id: 'takings',
+  //   nombre: 'Recaudacion',
+  //   icono: 'credit-card',
+  //   type: 'item',
+  //   role: [3, 6],
+  //   url: 'takings/list-payments',
+  // },
   {
     id: 'takings',
     nombre: 'Recaudacion',
+    title: 'Recaudacion',
+    role: [3,6],
+    type: 'collapsible',
     icono: 'credit-card',
-    type: 'item',
-    role: [3, 6],
-    url: 'takings/list-payments',
+    children: [
+      {
+        id: 'takings-list-payments',
+        nombre: 'FPO Obligaciones',
+        type: 'item',
+        icono: 'circle',
+        url: 'takings/list-payments'
+      },
+      {
+        id: 'takingds-report-payment',
+        nombre: 'Mantenimiento',
+        type: 'item',
+        icono: 'circle',
+        url: 'license/report-payment'
+      },
+    ]
   },
   //  ARCHIVO DIGITAL POSTAL
   {

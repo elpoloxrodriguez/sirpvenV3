@@ -114,6 +114,27 @@ export class GenerarPagoService {
             });
         }
 
+        async ConciliarFacturaMantenimiento(PagoMantenimiento: any): Promise<string> {
+            return new Promise((resolve, reject) => {
+                this.xAPI.funcion = "IPOSTEL_U_Pagos_Mantenimiento_Conciliar";
+                this.xAPI.parametros = ''
+                this.xAPI.valores = JSON.stringify(PagoMantenimiento)
+                this.apiService.Ejecutar(this.xAPI).subscribe(
+                    (data) => {
+                        if (data.tipo == 1) {
+                            resolve(data)
+                        } else {
+                            reject(data)
+                        }
+                    },
+                    (error) => {
+                        console.log(error)
+                        reject(error)
+                    }
+                )
+            });
+        }
+
 
         async InsertarFacturaMantenimiento(PagoMantenimiento: any): Promise<string> {
             return new Promise((resolve, reject) => {

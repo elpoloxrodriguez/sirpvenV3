@@ -10,7 +10,7 @@
           <div class="users-list-filter">
             <form>
               <div class="row">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                   <fieldset class="form-group">
                     <ng-select [items]="yearsList" [(ngModel)]="anioObligaciones" [ngModelOptions]="{standalone: true}"
                       (change)="FiltarObligacionAnio($event)" bindValue="year" bindLabel="year"
@@ -18,19 +18,12 @@
                     </ng-select>
                   </fieldset>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                   <fieldset class="form-group">
                     <ng-select [items]="SelectCategoriaPagos" [(ngModel)]="tipoCategoriaPago"
                       [ngModelOptions]="{standalone: true}" (change)="FiltarObligacionCategoriaPago($event)"
                       bindValue="id" bindLabel="name" placeholder="Seleccione Categoria de Pago" autocomplete="off">
                     </ng-select>
-                  </fieldset>
-                </div>
-                <div class="col-12 col-md-4">
-                  <fieldset class="form-group">
-                    <ng-select [items]="SelectTipoPagos" [(ngModel)]="tipoPago" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindValue="id" placeholder="Seleccionar Tipo de Pago"
-                      (change)="FiltarObligacionStatusTipoPago($event)"></ng-select>
                   </fieldset>
                 </div>
               </div>
@@ -102,23 +95,6 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <!-- <ngx-datatable-column name="Tipo Pago" prop="tipo_pago" [width]="100">
-            <ng-template let-tipo_pago="value" ngx-datatable-cell-template>
-              <div *ngIf="tipo_pago === 1" class="badge badge-pill" ngClass="badge-light-info">
-                Transferencia Bancaria
-              </div>
-              <div *ngIf="tipo_pago === 2" class="badge badge-pill" ngClass="badge-light-success">
-                Pago Movil
-              </div>
-              <div *ngIf="tipo_pago === 3" class="badge badge-pill" ngClass="badge-light-primary">
-                Deposito Bancario
-              </div>
-              <div *ngIf="tipo_pago === 0" class="badge badge-pill" ngClass="badge-light-danger">
-                No Definido
-              </div>
-            </ng-template>
-          </ngx-datatable-column> -->
-
 
           <ngx-datatable-column name="Monto Deuda" prop="monto_pagar" [width]="100">
             <ng-template let-monto_pagar="value" ngx-datatable-cell-template>
@@ -164,13 +140,11 @@
                   <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                 </button>
                 <div ngbDropdownMenu>
-                  <a (click)="VerDetalleOPP(UsoContrato,row)" ngbDropdownItem><span [size]="16" [data-feather]="'eye'"
-                      [class]="'mr-50'"></span>Ver Detalle</a>
-
+    
                       <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
                         [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
 
-                      <a (click)="ConciliarPagoOPP(ModalConciliarPago,row)" ngbDropdownItem><span [size]="16"
+                      <a (click)="ConciliarPagoOPP(ModalUReportarPago,row)" ngbDropdownItem><span [size]="16"
                         [data-feather]="'edit'" [class]="'mr-50'"></span> Conciliar Pago</a>
 
                 </div>
@@ -187,7 +161,7 @@
 </div>
 
 
-<ng-template #ModalConciliarPago let-modal>
+<ng-template #ModalUReportarPago let-modal>
   <div class="modal-header">
     <h5 class="modal-title" id="myModalLabel160">Declaración de Pago <font color="red"><strong>{{ title_modal
           }}</strong></font>
@@ -226,14 +200,14 @@
               <label for=" itempmvp">
                 <font color="red"><strong>Monto Deuda</strong></font>
               </label>
-              <input type="text" class="form-control" autocomplete="off" readonly [value]="ConciliarPago.monto_pc"
+              <input type="text" class="form-control" autocomplete="off" readonly [value]="UReportarPago.monto_pagar"
                 placeholder="Monto a Pagar" />
             </div>
           </div>
           <div class="col-md-6 col-12">
             <div class="form-group">
               <label for=" itempmvp">Monto Pagado</label>
-              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="ConciliarPago.monto_pagar"
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="UReportarPago.monto_pagado"
                 [ngModelOptions]="{standalone: true}" placeholder="Ingrese Monto a Pagar" />
             </div>
           </div>
@@ -241,7 +215,7 @@
           <div class="col-md-6 col-12">
             <div class="form-group">
               <label for=" itempmvp">Fecha de Pago</label>
-              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="FechaPago"
+              <input type="text" class="form-control" readonly autocomplete="off" [(ngModel)]="UReportarPago.fecha"
                 [ngModelOptions]="{standalone: true}" placeholder="Mes" />
             </div>
           </div>
@@ -249,7 +223,7 @@
           <div class="col-md-6 col-12">
             <div class="form-group">
               <label for=" itempmvp">Banco Emisor</label>
-              <input type="text" class="form-control"  autocomplete="off" [(ngModel)]="ConciliarPago.id_banco_pc"
+              <input type="text" class="form-control"  autocomplete="off" [(ngModel)]="UReportarPago.id_banco"
               [ngModelOptions]="{standalone: true}" readonly  placeholder="Banco Emisor" />
             </div>
           </div>
@@ -258,7 +232,7 @@
             <div class="form-group">
               <label for=" itempmvp">N# de Referencia</label>
               <input type="text" class="form-control" readonly autocomplete="off"
-                [(ngModel)]="ConciliarPago.referencia_bancaria" [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="UReportarPago.referencia_bancaria" [ngModelOptions]="{standalone: true}"
                 placeholder="Ingrese Numero de Referencia Bancaria" />
             </div>
           </div>
@@ -266,7 +240,7 @@
           <div class="col-md-6 col-12">
             <div class="form-group">
               <label for=" itempmvp">Cambio de Estatus</label>
-              <ng-select [items]="SelectStatusConciliacion" [(ngModel)]="ConciliarPago.status_pc" 
+              <ng-select [items]="SelectStatusConciliacion" [(ngModel)]="UReportarPago.status" 
                 [ngModelOptions]="{standalone: true}" bindValue="id" bindLabel="name" placeholder="Seleccione Status"
                 required autocomplete="off">
               </ng-select>
@@ -277,7 +251,7 @@
             <div class="form-group">
               <label for="basicInputFile">Observación de Pago</label>
               <div class="custom-file">
-                <textarea class="form-control" [(ngModel)]="ConciliarPago.observacion_pc"
+                <textarea class="form-control" [(ngModel)]="UReportarPago.observacion"
                   [ngModelOptions]="{standalone: true}" id="basicTextarea" rows="3"
                   placeholder="Ingrese Observación de Pago"></textarea>
               </div>
@@ -295,107 +269,9 @@
   <div class="modal-footer">
     <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
       <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
-    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="ConciliarPagoRecaudacion()" rippleEffect
+    <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="PagarRecaudacion()" rippleEffect
       class="btn btn-success mr-1">Reportar Pago</button>
     <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
-      Cerrar
-    </button>
-  </div>
-</ng-template>
-
-
-<ng-template #UsoContrato let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Detalle de Recibo de Pago <strong>{{titleModal}}</strong></h5>
-  </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <!-- <form method="post" enctype="multipart/form-data"  id="forma" name="forma"> -->
-      <!-- <form class="form" method="post" enctype="multipart/form-data" id="forma" name="forma"
-          (ngSubmit)="(formUsersRegister.form.valid)" #formUsersRegister="ngForm" class="invoice-repeater"> -->
-      <div class="row d-flex align-items-end">
-
-        <div class="col-md-10 col-12">
-          <div class="form-group">
-            <label for=" itempmvp">Operador Postal Privado</label>
-            <input type="text" class="form-control" autocomplete="off" readonly [value]="nombreEmpresaOPP" />
-          </div>
-        </div>
-
-        <div class="col-md-2 col-12">
-          <div class="form-group">
-            <label for=" itempmvp">RIF</label>
-            <input type="text" class="form-control" readonly [value]="rifEmpresaOPP" autocomplete="off" />
-          </div>
-        </div>
-
-        <table #No class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">Dolares</th>
-              <!-- <th scope="col">Bolivares Referencial</th> -->
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of ListaTipoObligacion; index as i">
-              <th scope="row">{{ i + 1 }}</th>
-              <td> {{ item.iniciales_tipo_pagos }} </td>
-              <td>{{ item.nombre_tipo_pagos }}</td>
-              <td>{{ item.dolitar }}</td>
-              <!-- <td>{{item.bolivaresx}}</td> -->
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th></th>
-              <th></th>
-              <th>
-                <font color="red">TOTAL</font>
-              </th>
-              <th>
-                <font color="red">{{ totalDolitar }}</font>
-              </th>
-              <!-- <th>
-                  <font color="red">{{ totalBolivares }}</font>
-                </th> -->
-            </tr>
-          </tfoot>
-        </table>
-
-        <hr>
-
-
-        <div class="col-md-6 col-12">
-          <div class="form-group">
-            <label for=" itempmvp">Monto</label>
-            <input type="text" name="montoNO" class="form-control" autocomplete="off" readonly [value]="totalBolivares" [(ngModel)]="totalBolivares"
-              placeholder="Monto a Pagar" />
-          </div>
-        </div>
-
-        <div class="col-md-6 col-12">
-          <div class="form-group">
-            <label for=" itempmvp">Fecha</label>
-            <input type="text" name="fechaNO" class="form-control" readonly [value]="fechaActualPago" autocomplete="off"
-              [(ngModel)]="fechaActualPago" [ngModelOptions]="{standalone: true}" placeholder="Fecha" />
-          </div>
-        </div>
-
-
-      </div>
-      <!-- </form> -->
-    </div>
-    <!-- Header Starts -->
-    <!-- </div> -->
-    <!-- Header Ends -->
-  </div>
-  <!--/ Invoice -->
-  <div class="modal-footer">
-    <button type="button" class="btn btn-danger" (click)="cerrarModal()" rippleEffect>
       Cerrar
     </button>
   </div>
