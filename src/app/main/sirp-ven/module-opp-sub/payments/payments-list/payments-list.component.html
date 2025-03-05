@@ -85,42 +85,6 @@
           [selectionType]="SelectionType.checkbox" [limit]="basicSelectedOption" (activate)="onActivate($event)"
           (select)="onSelect($event)" [scrollbarH]="true">
 
-          <!-- <ngx-datatable-column *ngIf="RowsLengthConciliacion >= 2" [width]="50" [sortable]="false"
-            [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-            <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected"
-              let-selectFn="selectFn">
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
-                  (change)="selectFn(!allRowsSelected)" id="headerChkbxRef" />
-                <label class="custom-control-label" for="headerChkbxRef"></label>
-              </div>
-            </ng-template> -->
-
-          <!-- <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
-              let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" [checked]="isSelected"
-                  (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
-                <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
-              </div>
-            </ng-template>
-          </ngx-datatable-column> -->
-
-          <!-- <ngx-datatable-column name="Empresa" prop="nombre_empresa" [width]="200">
-                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
-                    <div>
-                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
-                    </div>
-                  </ng-template>
-                </ngx-datatable-column> -->
-
-          <!-- <ngx-datatable-column name="RIF" prop="rif" [width]="100">
-            <ng-template let-rif="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ rif }}</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column> -->
 
           <ngx-datatable-column name="Fecha" prop="fecha" [width]="50">
             <ng-template let-fecha="value" ngx-datatable-cell-template>

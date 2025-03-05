@@ -255,11 +255,17 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
   }
 
   GenerarFactura(data: any, MantenimientoYSeguridad: any) {
-    console.log(data);
+    // console.log(data);
     const fecha = this.utilService.FechaActual()
     const anio = new Date(fecha)
     let aniox = anio.getFullYear()
     const doc = new jsPDF();
+
+    let periodo =  ''
+
+    if (data[0].ListaFranqueo.length > 0) {
+      periodo = data[0].ListaFranqueo[0].mes ? data[0].ListaFranqueo[0].mes : ''
+    }
 
 
     this.Nacional = data[0].ListaFranqueo ? data[0].ListaFranqueo : 0
@@ -278,11 +284,30 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
     let Nacional5_30 = 0
     let MontoNacional5_30 = 0
 
-    let MontoTotalPiezasLlegada = 0
-    let MontoTotalBsLlegada = 0
 
-    let MontoTotalPiezasSalida = 0
-    let MontoTotalBsSalida = 0
+    let MontoTotalPiezasInternacionalLlegada = 0
+    let MontoTotalBsInternacionalLlegada = 0
+    let InternacionalLlegada0_2 = 0
+    let MontoInternacionalLlegada0_2 = 0
+    let InternacionalLlegada2_4 = 0
+    let MontoInternacionalLlegada2_4 = 0
+    let InternacionalLlegada4_5 = 0
+    let MontoInternacionalLlegada4_5 = 0
+    let InternacionalLlegada5_30 = 0
+    let MontoInternacionalLlegada5_30 = 0
+
+    let MontoTotalPiezasInternacionalSalida = 0
+    let MontoTotalBsInternacionalSalida = 0
+    let InternacionalSalida0_2 = 0
+    let MontoInternacionalSalida0_2 = 0
+    let InternacionalSalida2_4 = 0
+    let MontoInternacionalSalida2_4 = 0
+    let InternacionalSalida4_5 = 0
+    let MontoInternacionalSalida4_5 = 0
+    let InternacionalSalida5_30 = 0
+    let MontoInternacionalSalida5_30 = 0
+
+
 
 
     let MontoTotalPiezas = 0
@@ -413,7 +438,7 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
       this.MontoTotalP = e.monto_pagar
       this.tempDataRowsFacturas = [
         e.nombre_tipo_pagos,
-        e.fecha_pc,
+        periodo,
         e.monto_pagar = this.utilService.ConvertirMoneda(e.monto_pagar),
         e.referencia_bancaria,
         e.fecha_pc,
@@ -467,15 +492,34 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
         }
       });
     }
+    
+      this.Nacionalx.forEach(element => {
+        if (element.id_peso_envio >= 1 && element.id_peso_envio <= 5) {
+          Nacional0_2 += parseFloat(element.cantidad_piezas);
+          MontoNacional0_2 += parseFloat(element.monto_caudado);
+        }
+      });
 
-    this.Nacionalx.map(element => {
-      if (element.id_peso_envio == 1 || element.id_peso_envio == 2 || element.id_peso_envio == 3 || element.id_peso_envio == 4 || element.id_peso_envio == 5) {
-        Nacional0_2 = this.Nacionalx.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-      }
-      if (element.id_peso_envio == 6 || element.id_peso_envio == 7 || element.id_peso_envio == 8 || element.id_peso_envio == 9) {
-        Nacional2_4 = this.Nacionalx.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-      }
-    });
+      this.Nacionalx.forEach(element => {
+        if (element.id_peso_envio >= 6 && element.id_peso_envio <= 9) {
+          Nacional2_4 += parseFloat(element.cantidad_piezas);
+          MontoNacional2_4 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.Nacionalx.forEach(element => {
+        if (element.id_peso_envio >= 10 && element.id_peso_envio <= 11) {
+          Nacional4_5 += parseFloat(element.cantidad_piezas);
+          MontoNacional4_5 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.Nacionalx.forEach(element => {
+        if (element.id_peso_envio >= 12 && element.id_peso_envio <= 61) {
+          Nacional5_30 += parseFloat(element.cantidad_piezas);
+          MontoNacional5_30 += parseFloat(element.monto_caudado);
+        }
+      });
 
     MontoTotalPiezasNacional = this.Nacionalx.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
     MontoTotalBsNacional = this.Nacionalx.map(item => item.monto_caudado).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
@@ -484,14 +528,18 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
       styles: { fillColor: [128, 24, 24], halign: 'center', overflow: "linebreak", fontSize: 7, valign: "middle", },
       head: [['TOTAL PIEZAS', 'TOTAL BS', '0 - 2 KG', 'BS', '2 - 4 KG', 'BS', '4 - 5 KG', 'BS', '5 - 30 KG', 'BS']],
       body: [
-        [MontoTotalPiezasNacional ? MontoTotalPiezasNacional : 0, this.utilService.ConvertirMoneda(MontoTotalBsNacional ? MontoTotalBsNacional : 0), Nacional0_2 ? Nacional0_2 : 0, this.utilService.ConvertirMoneda(MontoNacional0_2 ? MontoNacional0_2 : 0), Nacional2_4 ? Nacional2_4 : 0, this.utilService.ConvertirMoneda(MontoNacional2_4 ? MontoNacional2_4 : 0), Nacional4_5 ? Nacional4_5 : 0, this.utilService.ConvertirMoneda(MontoNacional4_5 ? MontoNacional4_5 : 0), Nacional5_30 ? Nacional5_30 : 0, this.utilService.ConvertirMoneda(MontoNacional5_30 ? MontoNacional5_30 : 0)],
-
-
-
-
+        [
+          MontoTotalPiezasNacional ? MontoTotalPiezasNacional : 0, this.utilService.ConvertirMoneda(MontoTotalBsNacional ? MontoTotalBsNacional : 0),
+          Nacional0_2 ? Nacional0_2 : 0, this.utilService.ConvertirMoneda(MontoNacional0_2 ? MontoNacional0_2 : 0),
+          Nacional2_4 ? Nacional2_4 : 0, this.utilService.ConvertirMoneda(MontoNacional2_4 ? MontoNacional2_4 : 0), 
+          Nacional4_5 ? Nacional4_5 : 0, this.utilService.ConvertirMoneda(MontoNacional4_5 ? MontoNacional4_5 : 0), 
+          Nacional5_30 ? Nacional5_30 : 0, this.utilService.ConvertirMoneda(MontoNacional5_30 ? MontoNacional5_30 : 0)],
       ],
       startY: 123,
     })
+
+
+
     autoTable(doc, {
       styles: { fillColor: [128, 24, 24], halign: 'center' },
       columnStyles: { 0: { halign: 'center', fillColor: [147, 196, 125] } }, // Cells in first column centered and green
@@ -500,6 +548,7 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
       startY: 138,
     })
 
+
     if (this.InternacionalLlegada.length > 0) {
       this.InternacionalLlegada.map(element => {
         if (element.id_servicio_franqueo == 3 || element.id_servicio_franqueo == 5) {
@@ -507,18 +556,55 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
         }
       });
     }
+    
+      this.InternacionalLlegadax.forEach(element => {
+        if (element.id_peso_envio >= 1 && element.id_peso_envio <= 5) {
+          InternacionalLlegada0_2 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalLlegada0_2 += parseFloat(element.monto_caudado);
+        }
+      });
 
-    MontoTotalPiezasLlegada = this.InternacionalLlegadax.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    MontoTotalBsLlegada = this.InternacionalLlegadax.map(item => item.monto_caudado).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
+      this.InternacionalLlegadax.forEach(element => {
+        if (element.id_peso_envio >= 6 && element.id_peso_envio <= 9) {
+          InternacionalLlegada2_4 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalLlegada2_4 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.InternacionalLlegadax.forEach(element => {
+        if (element.id_peso_envio >= 10 && element.id_peso_envio <= 11) {
+          InternacionalLlegada4_5 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalLlegada4_5 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.InternacionalLlegadax.forEach(element => {
+        if (element.id_peso_envio >= 12 && element.id_peso_envio <= 61) {
+          InternacionalLlegada5_30 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalLlegada5_30 += parseFloat(element.monto_caudado);
+        }
+      });
+
+
+    MontoTotalPiezasInternacionalLlegada = this.InternacionalLlegadax.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
+    MontoTotalBsInternacionalLlegada = this.InternacionalLlegadax.map(item => item.monto_caudado).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
 
     autoTable(doc, {
       styles: { fillColor: [128, 24, 24], halign: 'center', overflow: "linebreak", fontSize: 7, valign: "middle", },
       head: [['TOTAL PIEZAS', 'TOTAL BS', '0 - 2 KG', 'BS', '2 - 4 KG', 'BS', '4 - 5 KG', 'BS', '5 - 30 KG', 'BS']],
       body: [
-        [MontoTotalPiezasLlegada ? MontoTotalPiezasLlegada : 0, this.utilService.ConvertirMoneda(MontoTotalBsLlegada ? MontoTotalBsLlegada : 0), '0', '0.00', '0', '0.00', '0', '0.00', '0', '0.00'],
+        [
+          MontoTotalPiezasInternacionalLlegada ? MontoTotalPiezasInternacionalLlegada : 0, this.utilService.ConvertirMoneda(MontoTotalBsInternacionalLlegada ? MontoTotalBsInternacionalLlegada : 0),
+          InternacionalLlegada0_2 ? InternacionalLlegada0_2 : 0, this.utilService.ConvertirMoneda(MontoInternacionalLlegada0_2 ? MontoInternacionalLlegada0_2 : 0),
+          InternacionalLlegada2_4 ? InternacionalLlegada2_4 : 0, this.utilService.ConvertirMoneda(MontoInternacionalLlegada2_4 ? MontoInternacionalLlegada2_4 : 0), 
+          InternacionalLlegada4_5 ? InternacionalLlegada4_5 : 0, this.utilService.ConvertirMoneda(MontoInternacionalLlegada4_5 ? MontoInternacionalLlegada4_5 : 0), 
+          InternacionalLlegada5_30 ? InternacionalLlegada5_30 : 0, this.utilService.ConvertirMoneda(MontoInternacionalLlegada5_30 ? MontoInternacionalLlegada5_30 : 0)],
       ],
       startY: 145,
     })
+  
+
+
     autoTable(doc, {
       styles: { fillColor: [128, 24, 24], halign: 'center' },
       columnStyles: { 0: { halign: 'center', fillColor: [147, 196, 125] } }, // Cells in first column centered and green
@@ -534,17 +620,55 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
         }
       });
     }
-    MontoTotalPiezasSalida = this.InternacionalSalidax.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
-    MontoTotalBsSalida = this.InternacionalSalidax.map(item => item.monto_caudado).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
+    
+      this.InternacionalSalidax.forEach(element => {
+        if (element.id_peso_envio >= 1 && element.id_peso_envio <= 5) {
+          InternacionalSalida0_2 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalSalida0_2 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.InternacionalSalidax.forEach(element => {
+        if (element.id_peso_envio >= 6 && element.id_peso_envio <= 9) {
+          InternacionalSalida2_4 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalSalida2_4 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.InternacionalSalidax.forEach(element => {
+        if (element.id_peso_envio >= 10 && element.id_peso_envio <= 11) {
+          InternacionalSalida4_5 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalSalida4_5 += parseFloat(element.monto_caudado);
+        }
+      });
+
+      this.InternacionalSalidax.forEach(element => {
+        if (element.id_peso_envio >= 12 && element.id_peso_envio <= 61) {
+          InternacionalSalida5_30 += parseFloat(element.cantidad_piezas);
+          MontoInternacionalSalida5_30 += parseFloat(element.monto_caudado);
+        }
+      });
+
+
+    MontoTotalPiezasInternacionalSalida = this.InternacionalSalidax.map(item => item.cantidad_piezas).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
+    MontoTotalBsInternacionalSalida = this.InternacionalSalidax.map(item => item.monto_caudado).reduce((prev, curr) => parseFloat(prev) + parseFloat(curr), 0);
 
     autoTable(doc, {
       styles: { fillColor: [128, 24, 24], halign: 'center', overflow: "linebreak", fontSize: 7, valign: "middle", },
       head: [['TOTAL PIEZAS', 'TOTAL BS', '0 - 2 KG', 'BS', '2 - 4 KG', 'BS', '4 - 5 KG', 'BS', '5 - 30 KG', 'BS']],
       body: [
-        [MontoTotalPiezasSalida ? MontoTotalPiezasSalida : 0, this.utilService.ConvertirMoneda(MontoTotalBsSalida ? MontoTotalBsSalida : 0), '0', '0.00', '0', '0.00', '0', '0.00', '0', '0.00'],
+        [
+          MontoTotalPiezasInternacionalSalida ? MontoTotalPiezasInternacionalSalida : 0, this.utilService.ConvertirMoneda(MontoTotalBsInternacionalSalida ? MontoTotalBsInternacionalSalida : 0),
+          InternacionalSalida0_2 ? InternacionalSalida0_2 : 0, this.utilService.ConvertirMoneda(MontoInternacionalSalida0_2 ? MontoInternacionalSalida0_2 : 0),
+          InternacionalSalida2_4 ? InternacionalSalida2_4 : 0, this.utilService.ConvertirMoneda(MontoInternacionalSalida2_4 ? MontoInternacionalSalida2_4 : 0), 
+          InternacionalSalida4_5 ? InternacionalSalida4_5 : 0, this.utilService.ConvertirMoneda(MontoInternacionalSalida4_5 ? MontoInternacionalSalida4_5 : 0), 
+          InternacionalSalida5_30 ? InternacionalSalida5_30 : 0, this.utilService.ConvertirMoneda(MontoInternacionalSalida5_30 ? MontoInternacionalSalida5_30 : 0)],
       ],
+
       startY: 167,
     })
+
+    
     autoTable(doc, {
       styles: { fillColor: [128, 24, 24], halign: 'center' },
       columnStyles: { 0: { halign: 'center', fillColor: [255, 255, 0] } }, // Cells in first column centered and green
@@ -683,10 +807,10 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
 
     doc.addImage('assets/images/pdf/cintillo.png', "PNG", 10, 5, 187.5, 15);
     doc.addImage('assets/images/pdf/marca-agua.png', "PNG", 25, 210, 160, 60);
-      doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
-      doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
-      doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
-      doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
+    doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
+    doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
+    doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
+    doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
 
 
 
@@ -804,7 +928,7 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
     autoTable(doc, {
       styles: { fillColor: [153, 153, 153], halign: 'center', overflow: "linebreak", fontSize: 9, valign: "middle", },
       columnStyles: { 0: { halign: 'justify', } }, // Cells in first column centered and green
-      head: [['CONCEPTO',  'MONTO', 'DEPÓSITO', 'FECHA']],
+      head: [['CONCEPTO', 'MONTO', 'DEPÓSITO', 'FECHA']],
       body: this.rowsFacturas,
       startY: 67,
     })
@@ -905,7 +1029,7 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
     // doc.output("dataurlnewwindow", { filename: `Factura ${fecha}`+".pdf" });
   }
 
-  
+
   DescargarFacturaObligacion(data: any) {
     console.log(data);
     const fecha = this.utilService.FechaActual()
@@ -951,10 +1075,10 @@ IPOSTEL bajo el N° ${data.n_archivo_curp} Tomo ${data.tomo_archivo_curp} de Fec
 
     doc.addImage('assets/images/pdf/cintillo.png', "PNG", 10, 5, 187.5, 15);
     doc.addImage('assets/images/pdf/marca-agua.png', "PNG", 25, 210, 160, 60);
-      doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
-      doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
-      doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
-      doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
+    doc.addImage('assets/images/pdf/firma.png', "PNG", 20, 230, 40, 40); // FIRMA PRESIDENTA OLGA
+    doc.addImage('assets/images/pdf/factura/firma.png', "PNG", 60, 190, 120, 120);  // FIRMA JONATHAN JAIMES
+    doc.addImage('assets/images/pdf/factura/sello.png', "PNG", 70, 225, 90, 90);
+    doc.addImage('assets/images/pdf/sello.png', "PNG", 35, 245, 40, 50);
 
 
 
