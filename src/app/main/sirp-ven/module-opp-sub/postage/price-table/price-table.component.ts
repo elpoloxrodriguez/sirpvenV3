@@ -774,17 +774,25 @@ export class PriceTableComponent implements OnInit {
     const config = {
       funcion: 'Fnx_SubirTarifasLote',
 
+      // pass: this.DatosConexionBD.clave,
+      // host: this.DatosConexionBD.host,
+      // db: this.DatosConexionBD.basedatos,
+      // user: this.DatosConexionBD.usuario,
+      // port: this.DatosConexionBD.puerto,
+
+
       // pass: 'Arrd17818665',
       // host: '127.0.0.1',
       // db: 'sirpven',
       // user: 'elpoloxrodriguez',
 
-      pass: this.DatosConexionBD.clave,
-      host: this.DatosConexionBD.host,
-      db: this.DatosConexionBD.basedatos,
-      user: this.DatosConexionBD.usuario,
-      port: this.DatosConexionBD.puerto,
 
+      pass: 'Mia28052024$',
+      host: '10.16.12.45',
+      db: 'sirpven-ipostel',
+      user: 'postgres',
+
+      port: '5432',
       schema: 'public',
       table: 'peso_envio_franqueo',
       columns: 'id_servicio_franqueo,id_opp,mes,transaction_id,id_peso_envio,descripcion,pmvp',
