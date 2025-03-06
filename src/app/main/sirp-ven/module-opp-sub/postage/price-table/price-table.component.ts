@@ -1003,18 +1003,47 @@ export class PriceTableComponent implements OnInit {
   }
 
   descargarCSV() {
-    // Ruta relativa al archivo CSV en la carpeta src/assets
-    const rutaArchivo = 'https://sirp.ipostel.gob.ve/app/assets/archivo.csv';
-
-    // Crear un enlace temporal
-    const link = document.createElement('a');
-    link.href = rutaArchivo;
-    link.download = 'archivo.csv'; // Nombre del archivo al descargar
-    link.click(); // Simular clic en el enlace
-
-    // Liberar el objeto URL (no es necesario si no usas Blob)
-    // console.log(link)
-    URL.revokeObjectURL(link.href);
+    // Mostrar el mensaje de carga
+    this.sectionBlockUI.start('Descargando Archivos, por favor Espere!!!');
+  
+    // Rutas relativas a los archivos en la carpeta src/assets
+    const rutaArchivoCSV = '/assets/archivo.csv';
+    const rutaArchivoXLSX = '/assets/archivo.xlsx';
+  
+    // Función para descargar un archivo
+    const descargarArchivo = (url: string, nombreArchivo: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = nombreArchivo; // Nombre del archivo al descargar
+        document.body.appendChild(link); // Agregar el enlace al DOM
+        link.click(); // Simular clic en el enlace
+        document.body.removeChild(link); // Eliminar el enlace del DOM
+        URL.revokeObjectURL(link.href); // Liberar el objeto URL
+        resolve(); // Resolver la promesa cuando la descarga se complete
+      });
+    };
+  
+    // Descargar ambos archivos secuencialmente
+    Promise.all([
+      descargarArchivo(rutaArchivoCSV, 'archivo.csv'),
+      descargarArchivo(rutaArchivoXLSX, 'archivo.xlsx')
+    ])
+      .then(() => {
+        // Ocultar el mensaje de carga
+        this.sectionBlockUI.stop();
+  
+        // Mostrar la notificación de éxito
+        this.utilService.alertConfirmMini('success', 'Felicidades! <br> Archivos descargados');
+      })
+      .catch((error) => {
+        // Ocultar el mensaje de carga en caso de error
+        this.sectionBlockUI.stop();
+  
+        // Mostrar la notificación de error
+        this.utilService.alertConfirmMini('error', 'Ocurrió un error al descargar los archivos');
+        console.error('Error al descargar los archivos:', error);
+      });
   }
 
   async RegistrarTarifaLote() {
