@@ -789,7 +789,7 @@ export class PriceTableComponent implements OnInit {
 
       pass: 'Mia28052024$',
       host: '10.16.12.45',
-      db: 'sirpven-ipostel',
+      db: 'sirpven-2025',
       user: 'postgres',
 
       port: '5432',
