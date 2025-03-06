@@ -1007,8 +1007,8 @@ export class PriceTableComponent implements OnInit {
     this.sectionBlockUI.start('Descargando Archivos, por favor Espere!!!');
   
     // Rutas relativas a los archivos en la carpeta src/assets
-    const rutaArchivoCSV = '/assets/archivo.csv';
-    const rutaArchivoXLSX = '/assets/archivo.xlsx';
+    const rutaArchivoCSV = 'https://sirp.ipostel.gob.ve/app/assets/archivo.csv';
+    const rutaArchivoXLSX = 'https://sirp.ipostel.gob.ve/app/assets/archivo.xlsx';
   
     // Función para descargar un archivo
     const descargarArchivo = (url: string, nombreArchivo: string): Promise<void> => {
