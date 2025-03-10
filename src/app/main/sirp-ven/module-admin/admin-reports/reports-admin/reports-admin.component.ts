@@ -4,6 +4,7 @@ import { ExcelService } from '@core/services/excel/excel.service'
 import { UtilService } from '@core/services/util/util.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -25,18 +26,21 @@ export class ReportsAdminComponent implements OnInit {
 
   public Opp = []
 
+
+
   public ListReportEmpresasAprobadas = []
   public itemReports
   public statusEmpresa
   public ListReport = [
-    { id: 1, name: 'Cantidad de Operadores Postales Privados (Registrados).' },
-    { id: 2, name: 'Generar por mes la actividad y movimientos de los OPP.' },
-    { id: 3, name: 'Mostrar la cantidad de empresas sub-contratadas y su actividad.' },
-    { id: 4, name: 'Reporte de operadores por piezas.' },
-    { id: 5, name: 'Reporte el día cuatro (04) hábil bancario de los OPP que no hayan realizado el Pago.' },
-    { id: 6, name: 'Reporte el día cuatro (04) hábil bancario de los OPP que hayan realizado su Pago' },
-    { id: 7, name: 'Historico Administrativo por OPP' },
-    { id: 8, name: 'Pagos de Subcontratistas' },
+    { id: 0, name: 'Franqueo Postal Obligatorio' },
+    // { id: 1, name: 'Cantidad de Operadores Postales Privados (Registrados).' },
+    // { id: 2, name: 'Generar por mes la actividad y movimientos de los OPP.' },
+    // { id: 3, name: 'Mostrar la cantidad de empresas sub-contratadas y su actividad.' },
+    // { id: 4, name: 'Reporte de operadores por piezas.' },
+    // { id: 5, name: 'Reporte el día cuatro (04) hábil bancario de los OPP que no hayan realizado el Pago.' },
+    // { id: 6, name: 'Reporte el día cuatro (04) hábil bancario de los OPP que hayan realizado su Pago' },
+    // { id: 7, name: 'Historico Administrativo por OPP' },
+    // { id: 8, name: 'Pagos de Subcontratistas' },
   ]
 
   public inputShow = false
@@ -74,6 +78,24 @@ export class ReportsAdminComponent implements OnInit {
 
   async ReportEmpresasAprobadas(id: any) {
     switch (this.itemReports) {
+      case 0:
+        this.sectionBlockUI.start('Generando Reporte, por favor Espere!!!');
+        this.xAPI.funcion = "IPOSTEL_R_OPP_Reporte00";
+        this.xAPI.parametros = '2025-02'
+        this.xAPI.valores = ''
+        await this.apiService.Ejecutar(this.xAPI).subscribe(
+          (data) => {
+            this.itemReports = undefined
+            this.exportAsXLSX(data.Cuerpo, 'FPO - Franqueo Postal Obligatorio')
+            this.utilservice.alertConfirmMini('success', 'Archivo Descagado Exitosamente!')
+            this.sectionBlockUI.stop();
+          },
+          (error) => {
+            console.log(error)
+            this.sectionBlockUI.stop();
+          }
+        )
+        break;
       case 1:
         this.sectionBlockUI.start('Generando Reporte, por favor Espere!!!');
         this.statusEmpresa = '1'
