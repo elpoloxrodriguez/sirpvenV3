@@ -1026,7 +1026,7 @@ export class PriceTableComponent implements OnInit {
   
     // Descargar ambos archivos secuencialmente
     Promise.all([
-      descargarArchivo(rutaArchivoCSV, 'archivo.csv'),
+      // descargarArchivo(rutaArchivoCSV, 'archivo.csv'),
       descargarArchivo(rutaArchivoXLSX, 'archivo.xlsx')
     ])
       .then(() => {
