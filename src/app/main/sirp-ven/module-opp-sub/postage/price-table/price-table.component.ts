@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
 import * as XLSX from 'xlsx'; // Importa la librería xlsx
 import { MobilizationPartsService } from '../mobilization-parts.service';
 import { AngularFileUploaderComponent } from 'angular-file-uploader';
+import { exec } from 'child_process';
 
 
 
@@ -792,6 +793,11 @@ export class PriceTableComponent implements OnInit {
       // db: 'sirpven-2025',
       // user: 'postgres',
 
+
+      // pass: 'Arrd17818665',
+      // host: '127.0.0.1',
+      // db: 'sirpven',
+      // user: 'elpoloxrodriguez',
       // port: '5432',
       schema: 'public',
       table: 'peso_envio_franqueo',
