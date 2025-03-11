@@ -781,24 +781,6 @@ export class PriceTableComponent implements OnInit {
       user: this.DatosConexionBD.usuario,
       port: this.DatosConexionBD.puerto,
 
-
-      // pass: 'Arrd17818665',
-      // host: '127.0.0.1',
-      // db: 'sirpven',
-      // user: 'elpoloxrodriguez',
-
-
-      // pass: 'Mia28052024$',
-      // host: 'sirp.ipostel.gob.ve',
-      // db: 'sirpven-2025',
-      // user: 'postgres',
-
-
-      // pass: 'Arrd17818665',
-      // host: '127.0.0.1',
-      // db: 'sirpven',
-      // user: 'elpoloxrodriguez',
-      // port: '5432',
       schema: 'public',
       table: 'peso_envio_franqueo',
       columns: 'id_servicio_franqueo,id_opp,mes,transaction_id,id_peso_envio,descripcion,pmvp',

@@ -32,7 +32,8 @@ export class ReportsAdminComponent implements OnInit {
   public itemReports
   public statusEmpresa
   public ListReport = [
-    { id: 0, name: 'Franqueo Postal Obligatorio' },
+    { id: 0, name: 'Franqueo Postal Obligatorio por Mes' },
+    { id: 1, name: 'Pago de Soporte Tecnico por Mes' },
     // { id: 1, name: 'Cantidad de Operadores Postales Privados (Registrados).' },
     // { id: 2, name: 'Generar por mes la actividad y movimientos de los OPP.' },
     // { id: 3, name: 'Mostrar la cantidad de empresas sub-contratadas y su actividad.' },
@@ -97,6 +98,25 @@ export class ReportsAdminComponent implements OnInit {
         )
         break;
       case 1:
+        this.sectionBlockUI.start('Generando Reporte, por favor Espere!!!');
+        this.xAPI.funcion = "IPOSTEL_R_OPP_Reporte001";
+        this.xAPI.parametros = '2025-02'
+        this.xAPI.valores = ''
+        await this.apiService.Ejecutar(this.xAPI).subscribe(
+          (data) => {
+            this.itemReports = undefined
+            // console.log(data.Cuerpo)
+            this.exportAsXLSX(data.Cuerpo, 'Pago de Soporte y Mantenimiento')
+            this.utilservice.alertConfirmMini('success', 'Archivo Descagado Exitosamente!')
+            this.sectionBlockUI.stop();
+          },
+          (error) => {
+            console.log(error)
+            this.sectionBlockUI.stop();
+          }
+        )
+        break;
+      case 9:
         this.sectionBlockUI.start('Generando Reporte, por favor Espere!!!');
         this.statusEmpresa = '1'
         this.xAPI.funcion = "IPOSTEL_R_OPP_Reporte01";
