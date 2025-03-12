@@ -100,7 +100,7 @@ export class ReportsAdminComponent implements OnInit {
       case 1:
         this.sectionBlockUI.start('Generando Reporte, por favor Espere!!!');
         this.xAPI.funcion = "IPOSTEL_R_OPP_Reporte001";
-        this.xAPI.parametros = '2025-02'
+        this.xAPI.parametros = '2025-03'
         this.xAPI.valores = ''
         await this.apiService.Ejecutar(this.xAPI).subscribe(
           (data) => {

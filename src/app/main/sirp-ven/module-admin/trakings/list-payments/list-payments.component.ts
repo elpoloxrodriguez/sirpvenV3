@@ -149,6 +149,12 @@ export class ListPaymentsComponent implements OnInit {
         // this.n_opp = 2
         await this.ListaPagosRecaudacion(2)
         break;
+      case 'ngb-nav-4':
+        this.List_Pagos_Recaudacion = []
+        this.rowsPagosConciliacion = []
+        // this.n_opp = 2
+        await this.ListaPagosRecaudacion(4)
+        break;
       default:
         break;
     }
@@ -268,7 +274,6 @@ export class ListPaymentsComponent implements OnInit {
     }
   }
 
-
   dwUrl(ncontrol: string, archivo: string): string {
     // console.log(ncontrol,archivo);
     return this.apiService.Dws(btoa("D" + ncontrol) + '/' + archivo)
@@ -299,7 +304,6 @@ export class ListPaymentsComponent implements OnInit {
     )
 
   }
-
 
   ConciliarPago(modal, data) {
     // console.log(data)
@@ -334,8 +338,6 @@ export class ListPaymentsComponent implements OnInit {
       windowClass: 'fondo-modal',
     });
   }
-
-
 
   async ConciliarPagoRecaudacion() {
     this.sectionBlockUI.start('Comprobando Pago, por favor Espere!!!');

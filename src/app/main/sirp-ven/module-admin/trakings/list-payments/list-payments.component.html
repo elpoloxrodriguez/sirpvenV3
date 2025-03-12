@@ -1,158 +1,6 @@
 <div class="card content-wrapper container-xxl p-0">
   <div class="card-body">
 
-    <!-- <section class="users-list-wrapper">
-
-      <div class="card">
-        <h5 class="card-header">Filtro de búsqueda</h5>
-        <div class="card-body">
-          <div class="users-list-filter">
-            <form>
-              <div class="row">
-                <div class="col-12 col-md-4">
-                  <fieldset class="form-group">
-                    <ng-select [items]="yearsList" [(ngModel)]="anioObligaciones" [ngModelOptions]="{standalone: true}"
-                      (change)="FiltarObligacionAnio($event)" bindValue="year" bindLabel="year"
-                      placeholder="Seleccione Año" autocomplete="off">
-                    </ng-select>
-                  </fieldset>
-                </div>
-                <div class="col-12 col-md-4">
-                  <fieldset class="form-group">
-                    <ng-select [items]="SelectCategoriaPagos" [(ngModel)]="tipoCategoriaPago"
-                      [ngModelOptions]="{standalone: true}" (change)="FiltarObligacionCategoriaPago($event)"
-                      bindValue="id" bindLabel="name" placeholder="Seleccione Categoria de Pago" autocomplete="off">
-                    </ng-select>
-                  </fieldset>
-                </div>
-                <div class="col-12 col-md-4">
-                  <fieldset class="form-group">
-                    <ng-select [items]="SelectTipoPagos" [(ngModel)]="tipoPago" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindValue="id" placeholder="Seleccionar Tipo de Pago"
-                      (change)="FiltarObligacionStatusTipoPago($event)"></ng-select>
-                  </fieldset>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="row">
-          <div class="col-md-6 col-12">
-            <div class="d-flex justify-content-between align-items-center m-1">
-              <label class="d-flex align-items-center">Mostrar
-                <select class="form-control mx-25" [(ngModel)]="selectedOption">
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-                Registros</label>
-            </div>
-          </div>
-
-          <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
-            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
-              <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
-                  name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre Empresa"
-                  (keyup)="filterUpdatePagos($event)" (search)="filterUpdatePagos($event)" /></label>
-            </div>
-          </div>
-        </div>
-
-        <ng-container *ngIf="loadingIndicator">
-          <div class="loading-overlay">
-            <div class="spinner-border" role="status"></div>
-            <div class="loading-message">Cargando datos por favor espere!..</div>
-          </div>
-        </ng-container>
-
-        <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
-          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50">
-
-          <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
-            <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ nombre_empresa }} </span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column name="RIF" prop="rif" [width]="5">
-            <ng-template let-rif="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ rif }}</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column name="Fecha Pago" prop="fecha" [width]="5">
-            <ng-template let-fecha="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ fecha }}</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="60">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-              <div class="badge badge-pill" ngClass="badge-light-primary">
-                <font size="1"> {{row.nombre_tipo_pagos}} </font>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-
-          <ngx-datatable-column name="Monto Adeudado" prop="monto_pagar" [width]="5">
-            <ng-template let-monto_pagar="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ monto_pagar }}</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column name="Monto Pagado" prop="monto_pc" [width]="5">
-            <ng-template let-monto_pc="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ monto_pc }}</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
-            <ng-template let-status_pc="value" ngx-datatable-cell-template>
-              <div *ngIf="status_pc == 0" class="badge badge-pill" ngClass="badge-light-warning">
-                En Revisión
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-
-          <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
-            <ng-template ngx-datatable-cell-template let-row="row">
-              <div ngbDropdown container="body">
-                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
-                </button>
-                <div ngbDropdownMenu>
-                  <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
-                      [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
-                  <a (click)="ConciliarPago(ModalConciliarPago,row)" ngbDropdownItem><span [size]="16"
-                      [data-feather]="'edit'" [class]="'mr-50'"></span> Conciliar Pago</a>
-                </div>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-        </ngx-datatable>
-
-
-      </div>
-    </section> -->
-
-
     <ul ngbNav #nav="ngbNav" class="nav nav-pills nav-pill-primary my-2 justify-content-center">
       <li ngbNavItem>
         <a ngbNavLink (click)="CapturarNav($event)">PAGOS POR LIQUIDAR</a>
@@ -200,7 +48,7 @@
               <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
                 [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50">
 
-                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="300">
                   <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
                     <div>
                       <span class="font-weight-bold">{{ nombre_empresa }} </span>
@@ -208,7 +56,7 @@
                   </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+                <ngx-datatable-column name="RIF" prop="rif" [width]="50">
                   <ng-template let-rif="value" ngx-datatable-cell-template>
                     <div>
                       <span class="font-weight-bold"> {{ rif }}</span>
@@ -216,7 +64,7 @@
                   </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="Fecha Pago" prop="fecha" [width]="5">
+                <ngx-datatable-column name="Fecha Pago" prop="fecha" [width]="50">
                   <ng-template let-fecha="value" ngx-datatable-cell-template>
                     <div>
                       <span class="font-weight-bold"> {{ fecha }}</span>
@@ -233,7 +81,7 @@
                 </ngx-datatable-column>
 
 
-                <ngx-datatable-column name="Monto Adeudado" prop="monto_pagar" [width]="5">
+                <ngx-datatable-column name="Monto Adeudado" prop="monto_pagar" [width]="100">
                   <ng-template let-monto_pagar="value" ngx-datatable-cell-template>
                     <div>
                       <span class="font-weight-bold"> {{ monto_pagar }}</span>
@@ -241,7 +89,7 @@
                   </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="Monto Pagado" prop="monto_pc" [width]="5">
+                <ngx-datatable-column name="Monto Pagado" prop="monto_pc" [width]="100">
                   <ng-template let-monto_pc="value" ngx-datatable-cell-template>
                     <div>
                       <span class="font-weight-bold"> {{ monto_pc }}</span>
@@ -249,7 +97,7 @@
                   </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="50">
                   <ng-template let-status_pc="value" ngx-datatable-cell-template>
                     <div *ngIf="status_pc == 0" class="badge badge-pill" ngClass="badge-light-warning">
                       En Revisión
@@ -258,7 +106,7 @@
                 </ngx-datatable-column>
 
 
-                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                <ngx-datatable-column name="Accion" [width]="20" [sortable]="false">
                   <ng-template ngx-datatable-cell-template let-row="row">
                     <div ngbDropdown container="body">
                       <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
@@ -549,6 +397,105 @@
                   <ng-template let-status_pc="value" ngx-datatable-cell-template>
                     <div *ngIf="status_pc == 2" class="badge badge-pill" ngClass="badge-light-success">
                       Pago Aprobado
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Accion" [width]="5" [sortable]="false">
+                  <ng-template ngx-datatable-cell-template let-row="row">
+                    <div ngbDropdown container="body">
+                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                      </button>
+                      <div ngbDropdownMenu>
+                        <a [href]="dwUrl(row.rif,row.archivo_adjunto)" ngbDropdownItem><span [size]="16"
+                            [data-feather]="'download'" [class]="'mr-50'"></span> Descargar Bauche</a>
+                        <a (click)="DescargarFactura(row)" ngbDropdownItem><span [size]="16" [data-feather]="'download'"
+                            [class]="'mr-50'"></span> Descargar Factura</a>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+              </ngx-datatable>
+
+
+              <!--/ Invoice List -->
+            </div>
+          </section>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink (click)="CapturarNav($event)">PAGOS PENDIENTES</a>
+        <ng-template ngbNavContent>
+          <section class="users-list-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="d-flex justify-content-between align-items-center m-1">
+                    <label class="d-flex align-items-center">Mostrar
+                      <select class="form-control mx-25" [(ngModel)]="selectedOption">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                      Registros</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-12 d-flex justify-content-start justify-content-md-end">
+                  <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+                    <label class="d-flex align-items-center ml-1 ml-md-0">Buscar:<input [(ngModel)]="searchValue"
+                        name="searchValue" type="search" class="form-control ml-25" placeholder="Nombre OPP"
+                        (keyup)="filterUpdatePagosNoLiquidados($event)"
+                        (search)="filterUpdatePagosNoLiquidados($event)" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <ngx-datatable [rows]="rowsPagosConciliacion" rowHeight="auto" class="bootstrap core-bootstrap"
+                [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+                [scrollbarH]="true">
+
+                <ngx-datatable-column name="Empresa" prop="nombre_empresa" width="auto">
+                  <ng-template let-nombre_empresa="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold">{{ nombre_empresa }} </span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="RIF" prop="rif" [width]="5">
+                  <ng-template let-rif="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ rif }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Tipo Pago" prop="iniciales_tipo_pagos" [width]="60">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" ngClass="badge-light-primary">
+                      <font size="1"> {{row.nombre_tipo_pagos}} </font>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="Monto" prop="monto_pc" [width]="5">
+                  <ng-template let-monto_pc="value" ngx-datatable-cell-template>
+                    <div>
+                      <span class="font-weight-bold"> {{ monto_pc }}</span>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="STATUS" prop="status_pc" [width]="5">
+                  <ng-template let-status_pc="value" ngx-datatable-cell-template>
+                    <div *ngIf="status_pc == 4" class="badge badge-pill" ngClass="badge-light-danger">
+                      Pago Pendiente
                     </div>
                   </ng-template>
                 </ngx-datatable-column>

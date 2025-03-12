@@ -341,6 +341,19 @@ export class ReportPaymentComponent implements OnInit {
     }
   }
 
+  filterUpdatePagos(event) {
+    // Reset ng-select on search
+    const val = event.target.value.toLowerCase();
+    // Filter Our Data
+    const temp = this.tempDataPagosConciliacion.filter(function (d) {
+      return d.nombre_empresa.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+    // Update The Rows
+    this.rowsPagosConciliacion = temp;
+    // Whenever The Filter Changes, Always Go Back To The First Page
+    this.table.offset = 0;
+  }
+
 
   cerrarModal() {
     this.List_Pagos_Recaudacion = []
