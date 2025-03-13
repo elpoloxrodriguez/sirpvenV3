@@ -86,7 +86,7 @@ export class ReportsAdminComponent implements OnInit {
         this.xAPI.valores = ''
         await this.apiService.Ejecutar(this.xAPI).subscribe(
           (data) => {
-            this.itemReports = undefined
+            this.itemReports = undefined  
             this.exportAsXLSX(data.Cuerpo, 'FPO - Franqueo Postal Obligatorio')
             this.utilservice.alertConfirmMini('success', 'Archivo Descagado Exitosamente!')
             this.sectionBlockUI.stop();

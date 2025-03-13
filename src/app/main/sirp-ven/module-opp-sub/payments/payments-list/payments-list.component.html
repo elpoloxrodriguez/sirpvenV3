@@ -142,7 +142,7 @@
 
           <ngx-datatable-column name="Accion" [width]="10" [sortable]="false">
             <ng-template ngx-datatable-cell-template let-row="row">
-              <div ngbDropdown container="body" *ngIf="row.montoReal != '0'">
+              <div ngbDropdown container="body">
                 <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
                   <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                 </button>
