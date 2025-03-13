@@ -437,17 +437,23 @@ export class PriceTableComponent implements OnInit {
 
 
   async ListaLotes() {
+    this.isLoading = 0
     this.ListaTarifaLote = []
     this.xAPI.funcion = "IPOSTEL_R_ListarTafiasLotes"
     this.xAPI.parametros = `${this.idOPP}`
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        if (data.Cuerpo.length > 0) {
         data.Cuerpo.map(e => {
           this.ListaTarifaLote.push(e)
         });
+        this.isLoading = 1;
         this.rowsLotes = this.ListaTarifaLote;
         this.tempDataLotes = this.rowsTarifas
+      } else {
+        this.isLoading = 2;
+      }
       },
       (error) => {
         console.log(error)
@@ -489,12 +495,14 @@ export class PriceTableComponent implements OnInit {
   }
 
   async ListaTarifasFranqueoAll() {
+    this.isLoading = 0
+    this.TarifasFranqueoAll = []
     this.xAPI.funcion = "IPOSTEL_R_TarifasFranqueo"
     this.xAPI.parametros = `${this.idOPP}`
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.TarifasFranqueoAll = []
+        if (data.Cuerpo.length > 0) {
         data.Cuerpo.map(e => {
           if (e.status_pef == 1) {
             e.status = 'Autorizado'
@@ -507,11 +515,12 @@ export class PriceTableComponent implements OnInit {
           e.total_pagar = this.utilService.ConvertirMoneda(e.total_pagar);
           this.TarifasFranqueoAll.push(e)
         });
-        // console.log(this.TarifasFranqueoAll)
+        this.isLoading = 1;
         this.rows = this.TarifasFranqueoAll
         this.tempData = this.rows
-        // this.rowsTarifaFranqueoAll = this.TarifasFranqueoAll;
-        // this.tempDataTarifasFranqueoAll = this.rowsTarifaFranqueoAll
+      } else {
+        this.isLoading = 2;
+      }
       },
       (error) => {
         console.log(error)
@@ -1249,11 +1258,13 @@ async ServicioFranqueo() {
   }
 
   filterByServicio(event) {
-    // console.log(event.name)
-    const filter = event ? event.name : '';
-    this.tempServicio = filter;
-    this.temp = this.filterRows(this.tempFecha, filter, this.tempPeso, this.tempStatus);
-    this.rows = this.temp;
+    // console.log(event)
+    if (event != undefined) { 
+      const filter = event ? event.name : '';
+      this.tempServicio = filter;
+      this.temp = this.filterRows(this.tempFecha, filter, this.tempPeso, this.tempStatus);
+      this.rows = this.temp;
+    }
   }
 
   filterByPeso(event) {

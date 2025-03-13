@@ -63,7 +63,8 @@ export class StatementOfPartiesComponent implements OnInit {
     mes: '',
     cantidad_piezas: 0,
     monto_causado: '',
-    user_created: undefined
+    user_created: undefined,
+    id_factura: 0
   }
 
   public IPagosMantenimiento: IPOSTEL_I_Pagos_Mantenimiento = {
@@ -597,35 +598,6 @@ export class StatementOfPartiesComponent implements OnInit {
           this.ListaDeclaracionMovilizacionPiezasDECLARAR()
           this.sectionBlockUI.stop()
         });
-
-
-
-
-
-      // this.xAPI.funcion = 'IPOSTEL_C_MovilizacionPiezas'
-      // this.xAPI.parametros = ''
-      // this.xAPI.valores = JSON.stringify(this.InsertarMovilizacionPiezas)
-      // await this.apiService.Ejecutar(this.xAPI).subscribe(
-      //   (data) => {
-      //     this.sectionBlockUI.start('Guardando Declaración de Piezas, por favor Espere!!!');
-      //     this.rowsDeclaracionPiezas.push(this.DeclaracionPiezas)
-      //     if (data.tipo === 1) {
-      //       this.ListaDeclaracionMovilizacionPiezasDECLARAR()
-      //       this.DeclaracionPiezas = []
-      //       this.ListaDeclaracionMovilizacionPiezas()
-      //       this.modalService.dismissAll('Close')
-      //       this.sectionBlockUI.stop()
-      //       this.utilService.alertConfirmMini('success', 'Declaración Registrada Exitosamente!')
-      //     } else {
-      //       this.ListaDeclaracionMovilizacionPiezasDECLARAR()
-      //       this.sectionBlockUI.stop();
-      //       this.utilService.alertConfirmMini('error', 'Algo salio mal! <br> Verifique e intente de nuevo')
-      //     }
-      //   },
-      //   (error) => {
-      //     console.error(error)
-      //   }
-      // )
     }
   }
 
@@ -745,6 +717,30 @@ export class StatementOfPartiesComponent implements OnInit {
       .catch((error) => {
         // Manejar el reject
         this.utilService.alertConfirmMini('error', 'Lo sentimos algo salio mal en la creacion del pago de mantenimiento!')
+      })
+  }
+
+  async RegistrarNoMovilizacionPiezas(id:number) {
+    this.InsertarMovilizacionPiezas.id_opp = this.idOPP
+    this.InsertarMovilizacionPiezas.id_factura = id
+    this.InsertarMovilizacionPiezas.id_servicio_franqueo = 0
+    this.InsertarMovilizacionPiezas.id_peso_envio = 0
+    this.InsertarMovilizacionPiezas.tarifa_servicio = 0
+    this.InsertarMovilizacionPiezas.cantidad_piezas = 0
+    this.InsertarMovilizacionPiezas.porcentaje_tarifa = this.Porcentaje
+    this.InsertarMovilizacionPiezas.monto_fpo = 0
+    this.InsertarMovilizacionPiezas.mes = this.fechaUri
+    this.InsertarMovilizacionPiezas.monto_causado = 0
+    this.InsertarMovilizacionPiezas.user_created = this.idOPP
+
+    await this.movilizacionPiezas.AgregarMovilizacionPiezas(this.InsertarMovilizacionPiezas)
+      .then((resultado) => {
+        // Manejar el resolve
+        this.utilService.alertConfirmMini('success', 'No Movilización de Piezas Registrado Exitosamente!')
+      })
+      .catch((error) => {
+        // Manejar el reject
+        this.utilService.alertConfirmMini('error', 'Lo sentimos algo salio mal en la creacion de No Movilización de Piezas!')
       })
   }
 
@@ -1285,14 +1281,17 @@ export class StatementOfPartiesComponent implements OnInit {
       try {
         const data = await this.apiService.Ejecutar(this.xAPI).toPromise();
 
+        console.log(data)
+
         if (data.tipo === 1) {
           try {
             const fileData = await this.apiService.EnviarArchivos(frm).toPromise();
             this.modalService.dismissAll('Close');
             this.sectionBlockUI.stop();
             this.utilService.alertConfirmMini('success', 'Declaración Registrada Exitosamente!');
-            this.router.navigate(['payments/payments-list']).then(() => { window.location.reload() });
+            await this.RegistrarNoMovilizacionPiezas(data.msj)
             await this.RegistrarMantenimiento();
+            this.router.navigate(['payments/payments-list']).then(() => { window.location.reload() });
           } catch (err) {
             this.sectionBlockUI.stop();
             this.utilService.alertConfirmMini('error', 'Algo salio mal al cargar el archivo! <br> Verifique e intente de nuevo');
@@ -1321,85 +1320,6 @@ export class StatementOfPartiesComponent implements OnInit {
       keyboard: false,
       windowClass: 'fondo-modal',
     });
-  }
-
-  XonFileChange(event) {
-    this.ListaLote = [];
-    this.rowsListaLote = [];
-    let file = event.target.files[0];
-    this.archivos.push(event.target.files[0]);
-  
-    this.files.hash = this.hashcontrol;
-    var frm = new FormData(document.forms.namedItem("forma"));
-  
-    this.sectionBlockUI.start(`Leyendo Archivo (${file.name}), por favor Espere!!!`);
-  
-    let reader = new FileReader();
-    reader.readAsText(file);
-  
-    reader.onload = () => {
-      let data = reader.result;
-      this.movilizacionPiezas.processCsvPiezas(data)
-        .then((data) => {
-          // Agregar la columnas
-          data.map(e => {
-            e.id_opp = this.idOPP;
-            e.user_created = this.idOPP;
-            e.mes = this.fechaUri;
-            e.id_factura = 0;  
-      
-            const servicioFranqueo = this.VisualTafifasOPPServicio.find(sf => parseInt(sf.id_servicio_franqueo) === parseInt(e.id_servicio_franqueo));
-            e.id_servicio_franqueox = servicioFranqueo ? servicioFranqueo.nombre_servicios_franqueo : 'Servicio No Encontrado';
-            
-            const tarifaPeso = this.VisualTafifasOPPTarifas.find(tp => parseInt(tp.id_peso_envio) === parseInt(e.id_peso_envio));
-            e.id_peso_enviox = tarifaPeso ? tarifaPeso.nombre_peso_envio : 'Tarifa No Encontrada';
-
-
-            const tarifa_servicio = this.VisualTafifasOPPMonto.find(tp => parseInt(tp.id_peso_envio) === parseInt(e.id_peso_envio));
-            e.tarifa_servicio = tarifa_servicio ? tarifa_servicio.tarifa_servicio : 0;
-          
-  
-            // Calcular montos
-            e.porcentaje_tarifa = this.Porcentaje ? this.Porcentaje : 0;
-            e.monto_fpo = parseFloat((e.tarifa_servicio * e.porcentaje_tarifa / 100).toFixed(2));
-            e.monto_causado = parseFloat((e.monto_fpo * e.cantidad_piezas).toFixed(2));
-            e.tarifa_servicio = parseFloat(e.tarifa_servicio).toFixed(2);
-          });
-  
-          setTimeout(() => {
-            this.sectionBlockUI.stop();
-            this.utilService.alertConfirmMini('success', 'Lectura de CSV Exitosa');
-            this.modalService.open(this.modalSubirXLS, {
-              centered: true,
-              size: 'xl',
-              backdrop: false,
-              keyboard: false,
-              windowClass: 'fondo-modal',
-            });
-          }, 6000);
-  
-          // Formatear montos y agregar a ListaLote
-          data.map(e => {
-            e.tarifa_serviciox = this.utilService.ConvertirMoneda(e.tarifa_servicio);
-            e.monto_fpox = this.utilService.ConvertirMoneda(e.monto_fpo);
-            e.monto_causadox = this.utilService.ConvertirMoneda(e.monto_causado);
-            this.ListaLote.push(e);
-          });
-  
-          this.rowsListaLote = this.ListaLote;
-          this.tempListaLote = this.rowsListaLote;
-          console.log(this.rowsListaLote)
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-  
-    reader.onerror = () => {
-      console.log('Error al leer el archivo');
-      this.archivos = [];
-      this.utilService.alertConfirmMini('error', 'Error al leer el archivo');
-    };
   }
 
   onFileChange(event) {
@@ -1493,7 +1413,6 @@ export class StatementOfPartiesComponent implements OnInit {
       this.utilService.alertConfirmMini('error', 'Error al leer el archivo');
     };
   }
-
 
   subirArchivo() {
     var frm = new FormData(document.forms.namedItem("forma"))

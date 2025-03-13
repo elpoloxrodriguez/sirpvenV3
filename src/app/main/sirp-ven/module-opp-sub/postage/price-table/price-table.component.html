@@ -62,7 +62,7 @@
               <ng-container *ngIf="isLoading == 2">
                 <div class="loading-overlay">
                   <div class="spinner-border text-danger" role="status"></div>
-                  <div class="loading-message">No hay registros...</div>
+                  <div class="loading-message">No se encontraron registros...</div>
                 </div>
               </ng-container>
 
@@ -178,7 +178,7 @@
                       </div>
                       <div class="col-12 col-md-3">
                         <fieldset class="form-group">
-                          <ng-select [items]="selectServicioFranqueo" [(ngModel)]="ServicioFranqueo"
+                          <ng-select [items]="selectServicioFranqueo"
                             name="ServicioFranqueo" bindLabel="name" bindValue="id"
                             placeholder="Seleccionar Servicio Franqueo" (change)="filterByServicio($event)"></ng-select>
                         </fieldset>
@@ -192,7 +192,7 @@
                       </div>
                       <div class="col-12 col-md-3">
                         <fieldset class="form-group">
-                          <ng-select [items]="itemsSelectStatus" [(ngModel)]="selectedStatus" name="selectedPesoEnvio"
+                          <ng-select [items]="itemsSelectStatus" [(ngModel)]="selectedStatus" name="selectedStatus"
                             bindLabel="name" bindValue="id" placeholder="Seleccionar Status"
                             (change)="filterByStatus($event)"></ng-select>
                         </fieldset>
@@ -226,13 +226,19 @@
                   </div>
                 </div>
               </div>
-
-              <ng-container *ngIf="!rows || rows.length === 0">
+              <ng-container *ngIf="isLoading == 0">
                 <div class="loading-overlay">
-                  <div class="spinner-border" role="status"></div>
-                  <div class="loading-message">Cargando datos por favor espere!..</div>
+                  <div class="spinner-border text-success" role="status"></div>
+                  <div class="loading-message">Cargando datos, por favor espere...</div>
                 </div>
               </ng-container>
+              <ng-container *ngIf="isLoading == 2">
+                <div class="loading-overlay">
+                  <div class="spinner-border text-danger" role="status"></div>
+                  <div class="loading-message">No se encontraron registros...</div>
+                </div>
+              </ng-container>
+
 
               <ngx-datatable [rows]="rows" rowHeight="auto" class="bootstrap core-bootstrap" [limit]="selectedOption"
                 [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true">
@@ -349,11 +355,16 @@
                   </div>
                 </div>
               </div>
-
-              <ng-container *ngIf="!rowsLotes || rowsLotes.length === 0">
+              <ng-container *ngIf="isLoading == 0">
                 <div class="loading-overlay">
-                  <div class="spinner-border" role="status"></div>
-                  <div class="loading-message">Cargando datos por favor espere!..</div>
+                  <div class="spinner-border text-success" role="status"></div>
+                  <div class="loading-message">Cargando datos, por favor espere...</div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="isLoading == 2">
+                <div class="loading-overlay">
+                  <div class="spinner-border text-danger" role="status"></div>
+                  <div class="loading-message">No se encontraron registros...</div>
                 </div>
               </ng-container>
 

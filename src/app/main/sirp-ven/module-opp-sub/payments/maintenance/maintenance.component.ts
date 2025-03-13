@@ -361,7 +361,7 @@ export class MaintenanceComponent implements OnInit {
     this.UReportarPago.status = 0
     this.UReportarPago.observacion = data.observacion
     this.UReportarPago.monto_pagar = data.monto_pagar
-    this.UReportarPago.monto_pagado = data.monto_pagado
+    this.UReportarPago.monto_pagado = data.monto_pagar
     this.UReportarPago.fecha = data.fecha
     this.UReportarPago.dolar_dia = data.dolar_dia
     this.UReportarPago.user_created = data.user_created

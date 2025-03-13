@@ -289,6 +289,7 @@ export interface IPOSTEL_C_MovilizacionPiezas { //  insertar movilizacion de pie
 	cantidad_piezas: number
 	monto_causado: any
 	user_created: number
+	id_factura?:number
 }
 
 

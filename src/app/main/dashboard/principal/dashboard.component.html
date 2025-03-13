@@ -159,7 +159,7 @@
       <div class="col-xl-12 col-md-6 col-12" *ngIf="usuario">
         <div class="card card-statistics">
           <div class="card-header">
-            <h4 class="card-title">Numeros de Cuenta Autorizados IPOSTEL</h4>
+            <h4 class="card-title">Numeros de Cuenta Autorizados (INSTITUTO POSTAL TELEGRÁFICO DE VENEZUELA) IPOSTEL</h4>
             <div class="d-flex align-items-center">
             </div>
           </div>
@@ -171,7 +171,13 @@
               [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'">
 
 
-              <ngx-datatable-column  name="Banco"  [width]="300">
+              <ngx-datatable-column  name="Rif"  [width]="150">
+                <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-row="row">
+                  {{row.rif}}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column  name="Banco"  [width]="200">
                 <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-row="row">
                   {{row.banco}}
                 </ng-template>
