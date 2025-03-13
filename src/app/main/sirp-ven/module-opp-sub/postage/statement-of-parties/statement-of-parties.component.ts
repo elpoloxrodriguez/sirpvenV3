@@ -3,7 +3,7 @@ import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore } from '@core/services/apicore/api.service';
 import { Router } from '@angular/router';
 import { UtilService } from '@core/services/util/util.service';
-import { NgbModal, NgbModalConfig,} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig, } from '@ng-bootstrap/ng-bootstrap';
 import jwt_decode from "jwt-decode";
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
@@ -266,8 +266,10 @@ export class StatementOfPartiesComponent implements OnInit {
 
 
   public servicios_franqueo = []
-
   public tarifa_peso = []
+  public VisualTafifasOPPServicio = []
+  public VisualTafifasOPPTarifas = []
+  public VisualTafifasOPPMonto = []
 
   constructor(
     private apiService: ApiService,
@@ -278,7 +280,7 @@ export class StatementOfPartiesComponent implements OnInit {
     private movilizacionPiezas: MobilizationPartsService,
     private InsertarMantenimiento: GenerarPagoService,
     private excelservice: ExcelService,
-    
+
   ) { }
 
   async ngOnInit() {
@@ -319,7 +321,7 @@ export class StatementOfPartiesComponent implements OnInit {
     this.llave = this.utilService.GenerarUnicId();
 
 
-
+    await this.VisualizarTarifasOPP()
     this.Precio_Dolar_Petro()
     this.ListaMantenimientoSeguidad()
     await this.BloqueoBtnDeclaracion()
@@ -400,12 +402,12 @@ export class StatementOfPartiesComponent implements OnInit {
   async descargarCSV() {
     this.sectionBlockUI.start('Descargando Archivos, por favor Espere!!!');
     this.listaTafifasOPP = [];
-    
+
     if (this.idOPP != null || this.fechaUri != '') {
       this.xAPI.funcion = "IPOSTEL_R_ListarTarifasOPP";
       this.xAPI.parametros = `${this.idOPP},${this.fechaUri}`;
       this.xAPI.valores = '';
-      
+
       await this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
           // Ordenar los datos según el orden deseado
@@ -418,7 +420,7 @@ export class StatementOfPartiesComponent implements OnInit {
             nombre_peso_envio: item.nombre_peso_envio,
             descripcion: item.descripcion
           }));
-          
+
           // Exportar los datos ordenados
           this.exportAsXLSX(datosOrdenados, 'Movilizacion Piezas FPO');
           this.utilService.alertConfirmMini('success', 'Archivo Descargado Exitosamente!');
@@ -432,6 +434,36 @@ export class StatementOfPartiesComponent implements OnInit {
     } else {
       this.listaTafifasOPP = [];
     }
+  }
+
+  async VisualizarTarifasOPP() {
+    this.VisualTafifasOPPServicio = [];
+    this.VisualTafifasOPPTarifas = [];
+    this.VisualTafifasOPPMonto = [];
+    this.xAPI.funcion = "IPOSTEL_R_ListarTarifasOPP";
+    this.xAPI.parametros = `${this.idOPP},${this.fechaUri}`;
+    this.xAPI.valores = '';
+    
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.VisualTafifasOPPServicio = data.Cuerpo.map(e => {            
+          return e;
+        });
+
+        this.VisualTafifasOPPTarifas = data.Cuerpo.map(e => {            
+          return e;
+        });
+
+        this.VisualTafifasOPPMonto = data.Cuerpo.map(e => {            
+          return e;
+        });
+  
+        // console.log(this.VisualTafifasOPP);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   exportAsXLSX(data: any, fileName: string) {
@@ -1291,46 +1323,52 @@ export class StatementOfPartiesComponent implements OnInit {
     });
   }
 
-  onFileChange(event) {
+  XonFileChange(event) {
     this.ListaLote = [];
     this.rowsListaLote = [];
     let file = event.target.files[0];
     this.archivos.push(event.target.files[0]);
-
+  
     this.files.hash = this.hashcontrol;
     var frm = new FormData(document.forms.namedItem("forma"));
-
+  
     this.sectionBlockUI.start(`Leyendo Archivo (${file.name}), por favor Espere!!!`);
-
+  
     let reader = new FileReader();
     reader.readAsText(file);
-
+  
     reader.onload = () => {
       let data = reader.result;
       this.movilizacionPiezas.processCsvPiezas(data)
         .then((data) => {
           // Agregar la columnas
-          data.forEach(e => {
-            e.id_opp = this.idOPP,
-              e.user_created = this.idOPP
-            e.mes = this.fechax
-            e.id_factura = 0
-            e.porcentaje_tarifa = this.Porcentaje
-            e.monto_fpo = parseFloat((e.tarifa_servicio * e.porcentaje_tarifa / 100).toFixed(2))
-            e.monto_causado = parseFloat((e.monto_fpo * e.cantidad_piezas).toFixed(2))
-            e.tarifa_servicio = parseFloat(e.tarifa_servicio).toFixed(2)
-            // Agregar el nombre del servicio de franqueo
-            const servicioFranqueo = this.servicios_franqueo.find(sf => sf.id === parseInt(e.id_servicio_franqueo));
-            e.id_servicio_franqueox = servicioFranqueo ? servicioFranqueo.name : 'Desconocido';
+          data.map(e => {
+            e.id_opp = this.idOPP;
+            e.user_created = this.idOPP;
+            e.mes = this.fechaUri;
+            e.id_factura = 0;  
+      
+            const servicioFranqueo = this.VisualTafifasOPPServicio.find(sf => parseInt(sf.id_servicio_franqueo) === parseInt(e.id_servicio_franqueo));
+            e.id_servicio_franqueox = servicioFranqueo ? servicioFranqueo.nombre_servicios_franqueo : 'Servicio No Encontrado';
+            
+            const tarifaPeso = this.VisualTafifasOPPTarifas.find(tp => parseInt(tp.id_peso_envio) === parseInt(e.id_peso_envio));
+            e.id_peso_enviox = tarifaPeso ? tarifaPeso.nombre_peso_envio : 'Tarifa No Encontrada';
 
-            // Agregar el nombre del rango de peso
-            const tarifaPeso = this.tarifa_peso.find(tp => tp.id === parseInt(e.id_peso_envio));
-            e.id_peso_enviox = tarifaPeso ? tarifaPeso.name : 'Desconocido';
+
+            const tarifa_servicio = this.VisualTafifasOPPMonto.find(tp => parseInt(tp.id_peso_envio) === parseInt(e.id_peso_envio));
+            e.tarifa_servicio = tarifa_servicio ? tarifa_servicio.tarifa_servicio : 0;
+          
+  
+            // Calcular montos
+            e.porcentaje_tarifa = this.Porcentaje ? this.Porcentaje : 0;
+            e.monto_fpo = parseFloat((e.tarifa_servicio * e.porcentaje_tarifa / 100).toFixed(2));
+            e.monto_causado = parseFloat((e.monto_fpo * e.cantidad_piezas).toFixed(2));
+            e.tarifa_servicio = parseFloat(e.tarifa_servicio).toFixed(2);
           });
-
+  
           setTimeout(() => {
             this.sectionBlockUI.stop();
-            this.utilService.alertConfirmMini('success', 'Lectura de XLS Exitosa');
+            this.utilService.alertConfirmMini('success', 'Lectura de CSV Exitosa');
             this.modalService.open(this.modalSubirXLS, {
               centered: true,
               size: 'xl',
@@ -1339,28 +1377,123 @@ export class StatementOfPartiesComponent implements OnInit {
               windowClass: 'fondo-modal',
             });
           }, 6000);
-
+  
+          // Formatear montos y agregar a ListaLote
           data.map(e => {
             e.tarifa_serviciox = this.utilService.ConvertirMoneda(e.tarifa_servicio);
             e.monto_fpox = this.utilService.ConvertirMoneda(e.monto_fpo);
             e.monto_causadox = this.utilService.ConvertirMoneda(e.monto_causado);
             this.ListaLote.push(e);
-            // console.log(e)
           });
+  
           this.rowsListaLote = this.ListaLote;
           this.tempListaLote = this.rowsListaLote;
+          console.log(this.rowsListaLote)
         })
         .catch((error) => {
           console.log(error);
         });
     };
-
+  
     reader.onerror = () => {
       console.log('Error al leer el archivo');
       this.archivos = [];
       this.utilService.alertConfirmMini('error', 'Error al leer el archivo');
     };
   }
+
+  onFileChange(event) {
+    this.ListaLote = [];
+    this.rowsListaLote = [];
+    let file = event.target.files[0];
+    this.archivos.push(event.target.files[0]);
+  
+    this.files.hash = this.hashcontrol;
+    var frm = new FormData(document.forms.namedItem("forma"));
+  
+    this.sectionBlockUI.start(`Leyendo Archivo (${file.name}), por favor Espere!!!`);
+  
+    let reader = new FileReader();
+    reader.readAsText(file);
+  
+    reader.onload = () => {
+      let data = reader.result;
+      this.movilizacionPiezas.processCsvPiezas(data)
+        .then((data) => {
+          // Validar tarifa_servicio
+          let tarifaInvalida = false;
+          data.map(e => {
+            const tarifa_servicio = this.VisualTafifasOPPMonto.find(tp => parseInt(tp.id_peso_envio) === parseInt(e.id_peso_envio));
+            const tarifaCSV = parseFloat(e.tarifa_servicio);
+            const tarifaBase = tarifa_servicio ? parseFloat(tarifa_servicio.tarifa_servicio) : 0;
+  
+            if (tarifaCSV !== tarifaBase) {
+              tarifaInvalida = true;
+              e.tarifa_servicio = tarifaBase; // Opcional: Corregir la tarifa en el archivo
+            }
+  
+            e.id_opp = this.idOPP;
+            e.user_created = this.idOPP;
+            e.mes = this.fechaUri;
+            e.id_factura = 0;
+  
+            const servicioFranqueo = this.VisualTafifasOPPServicio.find(sf => parseInt(sf.id_servicio_franqueo) === parseInt(e.id_servicio_franqueo));
+            e.id_servicio_franqueox = servicioFranqueo ? servicioFranqueo.nombre_servicios_franqueo : 'Servicio No Encontrado';
+  
+            const tarifaPeso = this.VisualTafifasOPPTarifas.find(tp => parseInt(tp.id_peso_envio) === parseInt(e.id_peso_envio));
+            e.id_peso_enviox = tarifaPeso ? tarifaPeso.nombre_peso_envio : 'Tarifa No Encontrada';
+  
+            e.tarifa_servicio = tarifa_servicio ? tarifa_servicio.tarifa_servicio : 0;
+  
+            // Calcular montos
+            e.porcentaje_tarifa = this.Porcentaje ? this.Porcentaje : 0;
+            e.monto_fpo = parseFloat((e.tarifa_servicio * e.porcentaje_tarifa / 100).toFixed(2));
+            e.monto_causado = parseFloat((e.monto_fpo * e.cantidad_piezas).toFixed(2));
+            e.tarifa_servicio = parseFloat(e.tarifa_servicio).toFixed(2);
+          });
+  
+          if (tarifaInvalida) {
+            this.sectionBlockUI.stop();
+            this.utilService.alertConfirmMini('error', 'Algunas tarifas en el archivo CSV no coinciden con las tarifas base.');
+            return;
+          }
+  
+          setTimeout(() => {
+            this.sectionBlockUI.stop();
+            this.utilService.alertConfirmMini('success', 'Lectura de CSV Exitosa');
+            this.modalService.open(this.modalSubirXLS, {
+              centered: true,
+              size: 'xl',
+              backdrop: false,
+              keyboard: false,
+              windowClass: 'fondo-modal',
+            });
+          }, 6000);
+  
+          // Formatear montos y agregar a ListaLote
+          data.map(e => {
+            e.tarifa_serviciox = this.utilService.ConvertirMoneda(e.tarifa_servicio);
+            e.monto_fpox = this.utilService.ConvertirMoneda(e.monto_fpo);
+            e.monto_causadox = this.utilService.ConvertirMoneda(e.monto_causado);
+            this.ListaLote.push(e);
+          });
+  
+          this.rowsListaLote = this.ListaLote;
+          this.tempListaLote = this.rowsListaLote;
+          console.log(this.rowsListaLote);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+  
+    reader.onerror = () => {
+      console.log('Error al leer el archivo');
+      this.archivos = [];
+      this.utilService.alertConfirmMini('error', 'Error al leer el archivo');
+    };
+  }
+
 
   subirArchivo() {
     var frm = new FormData(document.forms.namedItem("forma"))
@@ -1464,24 +1597,21 @@ export class StatementOfPartiesComponent implements OnInit {
       user: this.DatosConexionBD.usuario,
       port: this.DatosConexionBD.puerto,
 
-      schema:'public',
-      table:'movilizacion_piezas',
-      columns:'id_opp, id_factura, id_servicio_franqueo, id_peso_envio, tarifa_servicio, porcentaje_tarifa, monto_fpo, mes, cantidad_piezas, monto_causado, user_created,transaction_id',
-      delimiter:';',      
+      schema: 'public',
+      table: 'movilizacion_piezas',
+      columns: 'id_opp, id_factura, id_servicio_franqueo, id_peso_envio, tarifa_servicio, porcentaje_tarifa, monto_fpo, mes, cantidad_piezas, monto_causado, user_created,transaction_id',
+      delimiter: ';',
       ruta: `tmp/file/out/${ruta}`,
       original: archivo,
       nuevo: 'movilizacion_piezas_nuevo.csv',
       transaction_id: transaction_id,
       id_opp: this.idOPP.toString(),
       mes: this.fechaUri,
-      porcentaje_tarifa : this.Porcentaje.toString(),
+      porcentaje_tarifa: this.Porcentaje.toString(),
     };
-
-    console.log(config)
 
     try {
       const data = await this.apiService.ExecFnxDevel(config).toPromise();
-      console.log(data)
       if (data.tipo === 1) {
         this.modalService.dismissAll('Close');
         setTimeout(() => {

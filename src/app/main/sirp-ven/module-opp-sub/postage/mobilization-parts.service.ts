@@ -214,7 +214,6 @@ export class MobilizationPartsService {
 
 
     processCsvPiezas(csvData: any): Promise<any> {
-        console.log(csvData)
         return new Promise((resolve, reject) => {
             let lines = csvData.split('\n');
             let result = [];

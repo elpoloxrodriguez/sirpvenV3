@@ -638,7 +638,7 @@ export class PriceTableComponent implements OnInit {
 
                 setTimeout(() => {
                     this.sectionBlockUI.stop();
-                    this.utilService.alertConfirmMini('success', 'Lectura de XLS Exitosa');
+                    this.utilService.alertConfirmMini('success', 'Lectura de CSV Exitosa');
                     this.modalService.open(this.modalSubirXLS, {
                         centered: true,
                         size: 'xl',
