@@ -3,18 +3,15 @@ import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore } from '@core/services/apicore/api.service';
 import { Router } from '@angular/router';
 import { UtilService } from '@core/services/util/util.service';
-import { NgbModal, NgbActiveModal, NgbModalConfig, NgbDateStruct, NgbDate, NgbCalendar, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { CargaMasiva, IPOSTEL_C_Peso_Envio_Franqueo, IPOSTEL_U_TarifasFranqueo } from '@core/services/empresa/form-opp.service';
 import jwt_decode from "jwt-decode";
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import * as XLSX from 'xlsx'; // Importa la librería xlsx
 import { MobilizationPartsService } from '../mobilization-parts.service';
 import { AngularFileUploaderComponent } from 'angular-file-uploader';
-import { exec } from 'child_process';
 
 
 
@@ -142,6 +139,10 @@ export class PriceTableComponent implements OnInit {
       name: 'Diciembre'
     }
   ];
+
+  public servicios_franqueo = []
+  public tarifa_peso = []
+
 
   public token
   public idOPP
@@ -284,13 +285,14 @@ export class PriceTableComponent implements OnInit {
     private apiService: ApiService,
     private utilService: UtilService,
     private modalService: NgbModal,
-    private router: Router,
-    private _formBuilder: FormBuilder,
     private movilizacionPiezas: MobilizationPartsService,
     private RegistroTarifas: MobilizationPartsService,
   ) { }
 
   async ngOnInit() {
+    await this.PesoEnvio()
+    await this.ServicioFranqueo()
+
     await this.RegistroTarifas.listaActualizadaTarifas.subscribe(() => {
       // Vuelve a cargar la lista de registros desde sessionStorage
       this.cargarRegistrosTarifa();
@@ -620,9 +622,18 @@ export class PriceTableComponent implements OnInit {
         let data = reader.result;
         this.movilizacionPiezas.processCsvData(data)
             .then((data) => {
+              // this.modalService.dismissAll('Close')
                 // Agregar la columna status_pef
                 data.forEach(e => {
                     e.status_pef = 1; // Insertar la columna con valor 1
+                // Agregar el nombre del servicio de franqueo
+                const servicioFranqueo = this.servicios_franqueo.find(sf => sf.id === parseInt(e.id_servicio_franqueo));
+                e.id_servicio_franqueox = servicioFranqueo ? servicioFranqueo.name : 'Desconocido';
+
+                // Agregar el nombre del rango de peso
+                const tarifaPeso = this.tarifa_peso.find(tp => tp.id === parseInt(e.id_peso_envio));
+                e.id_peso_enviox = tarifaPeso ? tarifaPeso.name : 'Desconocido';
+
                 });
 
                 setTimeout(() => {
@@ -654,6 +665,38 @@ export class PriceTableComponent implements OnInit {
         this.archivos = [];
         this.utilService.alertConfirmMini('error', 'Error al leer el archivo');
     };
+}
+
+async PesoEnvio() {
+  this.xAPI.funcion = "IPOSTEL_R_PesoEnvio";
+  await this.apiService.Ejecutar(this.xAPI).subscribe(
+    (data) => {
+      this.tarifa_peso = data.Cuerpo.map(e => {
+        e.name = e.nombre_peso_envio
+        e.id = e.id_peso_envio
+        return e
+      });
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+async ServicioFranqueo() {
+  this.xAPI.funcion = "IPOSTEL_R_ServicioFranqueo";
+  await this.apiService.Ejecutar(this.xAPI).subscribe(
+    (data) => {
+      this.servicios_franqueo = data.Cuerpo.map(e => {
+        e.name = e.nombre_servicios_franqueo
+        e.id = e.id_servicios_franqueo
+        return e
+      });
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
 }
 
 

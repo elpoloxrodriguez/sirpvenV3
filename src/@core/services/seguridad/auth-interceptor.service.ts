@@ -32,7 +32,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
 
-        console.log(err)
+        // console.log(err)
 
         if (err.status == 401) {
           console.error('Evaluacion de Token:', err.error.msj)

@@ -49,8 +49,8 @@ export class ReportsAdminComponent implements OnInit {
 
   constructor(
     private excelservice: ExcelService,
-    private apiService: ApiService,
     private utilservice: UtilService,
+    private apiService: ApiService,
     private modalService: NgbModal,
   ) { }
 

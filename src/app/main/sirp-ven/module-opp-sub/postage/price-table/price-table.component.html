@@ -537,18 +537,18 @@
       <ngx-datatable [rows]="rowsListaLote" rowHeight="auto" class="bootstrap core-bootstrap" [limit]="selectedOption"
         [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true">
 
-        <ngx-datatable-column name="Tipo Franqueo" prop="id_servicio_franqueo" [width]="200">
-          <ng-template let-id_servicio_franqueo="value" ngx-datatable-cell-template>
+        <ngx-datatable-column name="Tipo Franqueo" prop="id_servicio_franqueox" [width]="200">
+          <ng-template let-id_servicio_franqueox="value" ngx-datatable-cell-template>
             <div>
-              <span class="font-weight-bold">{{ id_servicio_franqueo }} </span>
+              <span class="font-weight-bold">{{ id_servicio_franqueox }} </span>
             </div>
           </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Peso Envio" prop="id_peso_envio" [width]="200">
-          <ng-template let-id_peso_envio="value" ngx-datatable-cell-template>
+        <ngx-datatable-column name="Peso Envio" prop="id_peso_enviox" [width]="200">
+          <ng-template let-id_peso_enviox="value" ngx-datatable-cell-template>
             <div>
-              <span class="font-weight-bold">{{ id_peso_envio }} </span>
+              <span class="font-weight-bold">{{ id_peso_enviox }} </span>
             </div>
           </ng-template>
         </ngx-datatable-column>

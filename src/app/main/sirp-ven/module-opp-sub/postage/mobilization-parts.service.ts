@@ -213,4 +213,42 @@ export class MobilizationPartsService {
     }
 
 
+    processCsvPiezas(csvData: any): Promise<any> {
+        console.log(csvData)
+        return new Promise((resolve, reject) => {
+            let lines = csvData.split('\n');
+            let result = [];
+
+            let headers = lines[0].split(';').map(header => {
+                switch (header.trim()) {
+                    case 'SERVICIO': return 'id_servicio_franqueo';
+                    case 'PESO': return 'id_peso_envio';
+                    case 'MONTO': return 'tarifa_servicio';
+                    case 'PIEZAS': return 'cantidad_piezas';
+                    default: return header.trim();
+                }
+            });
+            let cantidad = lines.length
+            for (let i = 1; i < cantidad; i++) {
+                if (lines[i] !== '') {
+                    let obj = {};
+                    let currentLine = lines[i].split(';');
+
+                    for (let j = 0; j < headers.length; j++) {
+                        obj[headers[j]] = currentLine[j]; // Asignar valores a los campos basándose en los encabezados reemplazados
+                    }
+
+                    result.push(obj);
+                }
+            }
+
+            if (result.length > 0) {
+                resolve(result); // Resuelve la promesa con el array de objetos con los nombres de campo y encabezados reemplazados
+            } else {
+                reject('No se encontraron datos válidos en el archivo CSV');
+            }
+        });
+    }
+
+
 }
