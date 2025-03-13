@@ -73,7 +73,7 @@ export class NavbarNotificationComponent implements OnInit {
       (data) => {
          data.Cuerpo.map(e => {
           // if (e.referencia_bancaria !== null) {
-            e.nombre_empresa = e.nombre_empresa.slice(0, 45)
+            e.nombre_empresa = typeof e.nombre_empresa === 'string' ? e.nombre_empresa.slice(0, 45) : '';
             e.monto_pc = this.utilService.ConvertirMoneda(e.monto_pc)
             this.Notificaciones.push(e)
           // }

@@ -68,7 +68,8 @@
     <!--/ Search -->
 
     <!-- Notification -->
-    <app-navbar-notification ></app-navbar-notification>
+    <app-navbar-notification *ngIf="ShowNotification"></app-navbar-notification>
+    <app-navbar-maintenance-notification *ngIf="ShowNotification"></app-navbar-maintenance-notification>
     <!--/ Notification -->
 
     <!-- User Dropdown -->
