@@ -41,11 +41,25 @@
             <div class="d-flex justify-content-between align-items-center m-1">
               <button type="button" (click)="AddMovilizacionPiezas(ModalAddRegistrarPiezas)" class="btn btn-success"
                 rippleEffect>
-                Declarar Movilización de Piezas</button>
+                Declarar Piezas</button>
             </div>
           </div>
-          <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
+          <!-- <div class="col-md-3 col-12 d-flex justify-content-start justify-content-md-end">
             <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pb-md-0">
+              <button type="button" (click)="RegresarAtras()" class="btn btn-info" rippleEffect>
+                Regresar Atras</button>
+            </div>
+          </div> -->
+          <div class="col-md-3 col-12">
+            <div class="d-flex align-items-center m-1">
+              <button type="button" (click)="descargarCSV()" class="btn btn-icon btn-warning me-1" rippleEffect>
+                <span [data-feather]="'download-cloud'"></span>
+              </button>
+              &nbsp;
+              <button type="button" (click)="SubirXLS(ModalSubirXLS)" class="btn btn-icon btn-primary" rippleEffect>
+                <span [data-feather]="'upload-cloud'"></span>
+              </button>
+              &nbsp;
               <button type="button" (click)="RegresarAtras()" class="btn btn-info" rippleEffect>
                 Regresar Atras</button>
             </div>
@@ -174,7 +188,7 @@
         <div class="col-md-4 col-12">
           <div class="form-group">
             <label for=" itempmvp">IVA</label>
-            <input type="number" class="form-control" autocomplete="off" [(ngModel)]="montoIVA"
+            <input type="number" class="form-control" readonly autocomplete="off" [(ngModel)]="montoIVA"
               [ngModelOptions]="{standalone: true}" placeholder="Monto IVA" />
           </div>
         </div>
@@ -620,6 +634,195 @@
       <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
     <button type="submit" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarNoDeclaracionPiezas()"
       rippleEffect class="btn btn-success mr-1">Declarar No Movilización de Piezas</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+  </div>
+</ng-template>
+
+
+<ng-template #ModalSubirXLS let-modal>
+  <div class="modal-header">
+    <!-- <h5 class="modal-title" id="myModalLabel160">Registrar Tarifa de Envio <strong><font color="red">{{ NombreTipoFranqueo }}</font></strong></h5> -->
+    <h5 class="modal-title" id="myModalLabel160">Procesar Tarifas por Lote</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+        <div class="row d-flex align-items-end">
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">TASA POSTAL</label>
+              <input type="text" class="form-control" readonly autocomplete="off"
+                [value]="montoTASA+' % '+ montoTASAnombre" placeholder="Tasa Postal" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12">
+            <div class="form-group">
+              <label for=" itempmvp">TARIFA VALIDA PARA EL MES</label>
+              <input type="month" class="form-control" readonly autocomplete="off" [(ngModel)]=" fechaUri"
+                [ngModelOptions]="{standalone: true}" placeholder="Mes" />
+            </div>
+          </div>
+
+          <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+
+          <div class="col-md-12 col-12">
+            <div class="form-group">
+              <label for="mes">Subir Archivo XLS</label>
+              <input (change)="onFileChange($event)" class="form-control" name="archivos" type="file" accept=".csv"
+                placeholder="Subir Archivo CSV">
+            </div>
+          </div>
+
+          <div class="col-12" align="center">
+            <small>
+              <strong>
+                <font color="red">Nota: Ten en cuenta que el archivo debe tener el formato correcto y estar separados por "Punto y Coma ;" para poder
+                  procesarlo.
+                </font>
+              </strong>
+            </small>
+          </div>
+
+
+        </div>
+      </form>
+    </div>
+
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+
+    <!-- <button type="submit" 
+      rippleEffect class="btn btn-success mr-1">Leer Archivo</button> -->
+    <!-- <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button> -->
+  </div>
+</ng-template>
+
+
+<ng-template #CapturarLote let-modal>
+  <div class="modal-header">
+    <!-- <h5 class="modal-title" id="myModalLabel160">Registrar Tarifa de Envio <strong><font color="red">{{ NombreTipoFranqueo }}</font></strong></h5> -->
+    <h5 class="modal-title" id="myModalLabel160">Registrar Movilización de Piezas</h5>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row d-flex align-items-end">
+
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">TASA POSTAL</label>
+            <input type="text" class="form-control" readonly autocomplete="off"
+              [value]="montoTASA+' % '+ montoTASAnombre" placeholder="Tasa Postal" />
+          </div>
+        </div>
+        <div class="col-md-6 col-12">
+          <div class="form-group">
+            <label for=" itempmvp">MES</label>
+            <input type="month" class="form-control" readonly autocomplete="off" [(ngModel)]="fechaUri" 
+               [ngModelOptions]="{standalone: true}"
+              placeholder="Mes" />
+          </div>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <ngx-datatable [rows]="rowsListaLote" rowHeight="auto" class="bootstrap core-bootstrap" [limit]="selectedOption"
+        [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true">
+
+        <ngx-datatable-column name="Tipo Franqueo" prop="id_servicio_franqueox" [width]="200">
+          <ng-template let-id_servicio_franqueox="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold">{{ id_servicio_franqueox }} </span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Peso Envio" prop="id_peso_enviox" [width]="200">
+          <ng-template let-id_peso_enviox="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold">{{ id_peso_enviox }} </span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Tarifa Servicio" prop="tarifa_serviciox" [width]="100">
+          <ng-template let-tarifa_serviciox="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-info">
+                {{ tarifa_serviciox }}
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Tarifa %" prop="porcentaje_tarifa" [width]="100">
+          <ng-template let-porcentaje_tarifa="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-danger">
+                {{ porcentaje_tarifa }} %
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Monto FPO" prop="monto_fpox" [width]="100">
+          <ng-template let-monto_fpox="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-success">
+                {{ monto_fpox }}
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Piezas" prop="cantidad_piezas" [width]="100">
+          <ng-template let-cantidad_piezas="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-info">
+                {{ cantidad_piezas }}
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+        <ngx-datatable-column name="Monto Causado" prop="monto_causadox" [width]="100">
+          <ng-template let-monto_causadox="value" ngx-datatable-cell-template>
+            <div>
+              <div class="badge badge-pill" ngClass="badge-light-info">
+                {{ monto_causadox }}
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+
+
+      </ngx-datatable>
+
+    </div>
+
+  </div>
+  <!--/ Invoice -->
+  <div class="modal-footer">
+    <!-- <button class="btn bg-gradient-success text-white" [disabled]="!formUsersRegister.form.valid" (click)="RegistrarTarifaNacionalAereo()">
+      <span class="fa fa-plus"></span> Registrar Tarifa</button> -->
+    <button type="submit" (click)="subirArchivo()" rippleEffect class="btn btn-success mr-1">Subir Archivo por
+      Lote</button>
     <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>
       Cerrar
     </button>
